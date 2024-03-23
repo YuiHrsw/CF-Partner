@@ -1,5 +1,6 @@
 import 'package:cf_partner/backend/storage.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -219,7 +220,9 @@ class SettingsState extends State<Settings> {
                 fontSize: 16,
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              launchUrl(Uri.https('github.com', '/YuiHrsw/CF-Partner'));
+            },
           )
         ],
       ),

@@ -2,6 +2,7 @@ import 'package:cf_partner/backend/cfapi/cf_helper.dart';
 import 'package:cf_partner/backend/library_helper.dart';
 import 'package:cf_partner/backend/list_item.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ListDetail extends StatefulWidget {
   const ListDetail({super.key, required this.listItem});
@@ -143,7 +144,8 @@ class ListDetailState extends State<ListDetail> {
             height: 60,
             child: InkWell(
               onTap: () {
-                // open link
+                launchUrl(Uri.https('codeforces.com',
+                    '/contest/${widget.listItem.items[index].contestId!}/problem/${widget.listItem.items[index].index!}'));
               },
               borderRadius: BorderRadius.circular(20),
               child: Row(

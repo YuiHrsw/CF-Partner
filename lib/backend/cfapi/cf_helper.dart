@@ -4,6 +4,7 @@ import 'package:cf_partner/backend/cfapi/models/submission.dart';
 import 'package:cf_partner/backend/cfapi/models/submission_request.dart';
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/backend/web_helper.dart';
+import 'package:flutter/foundation.dart';
 
 class CFHelper {
   static Future<List<Submission>> getContestStatus(int id) async {
@@ -31,7 +32,14 @@ class CFHelper {
     var res = List.filled(list.length, false, growable: true);
     int n = list.length;
     for (int i = 0; i < n; ++i) {
-      res[i] = await accepted(list[i]);
+      try {
+        res[i] = await accepted(list[i]);
+      } catch (e) {
+        if (kDebugMode) {
+          print(
+              'can not check problem status: ${list[i].contestId}${list[i].index} ${list[i].name}');
+        }
+      }
     }
     return res;
   }
