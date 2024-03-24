@@ -1,3 +1,5 @@
+import 'package:cf_partner/backend/cfapi/models/contest.dart';
+import 'package:cf_partner/backend/cfapi/models/contests_request.dart';
 import 'package:cf_partner/backend/cfapi/models/problem.dart';
 import 'package:cf_partner/backend/cfapi/models/standing_request.dart';
 import 'package:cf_partner/backend/cfapi/models/submission.dart';
@@ -62,5 +64,12 @@ class CFHelper {
       }
     }
     return list[0];
+  }
+
+  static Future<List<Contest>> getContestList() async {
+    var request =
+        await WebHelper().get('https://codeforces.com/api/contest.list');
+    ContestListRequest requestInfo = ContestListRequest.fromJson(request.data);
+    return requestInfo.result;
   }
 }

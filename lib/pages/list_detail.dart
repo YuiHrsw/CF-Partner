@@ -160,12 +160,14 @@ class ListDetailState extends State<ListDetail> {
                     ),
                     height: 20,
                     width: 50,
-                    child: Text(
-                      widget.listItem.items[index].contestId!.toString() +
-                          widget.listItem.items[index].index!,
-                      style: TextStyle(
-                          color: colorScheme.onPrimaryContainer,
-                          fontWeight: FontWeight.w500),
+                    child: Center(
+                      child: Text(
+                        widget.listItem.items[index].contestId!.toString() +
+                            widget.listItem.items[index].index!,
+                        style: TextStyle(
+                            color: colorScheme.onPrimaryContainer,
+                            fontWeight: FontWeight.w500),
+                      ),
                     ),
                   ),
                   const SizedBox(
