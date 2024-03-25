@@ -1,12 +1,14 @@
 import 'package:cf_partner/backend/cfapi/cf_helper.dart';
 import 'package:cf_partner/backend/library_helper.dart';
 import 'package:cf_partner/backend/list_item.dart';
+import 'package:cf_partner/backend/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ListDetail extends StatefulWidget {
-  const ListDetail({super.key, required this.listItem});
+  const ListDetail({super.key, required this.listItem, required this.online});
   final ListItem listItem;
+  final bool online;
 
   @override
   ListDetailState createState() => ListDetailState();
@@ -178,20 +180,97 @@ class ListDetailState extends State<ListDetail> {
                     widget.listItem.items[index].name!,
                     style: TextStyle(
                       fontSize: 18,
-                      color: mark[index] ? colorScheme.primary : null,
+                      color: index < mark.length && mark[index]
+                          ? colorScheme.primary
+                          : null,
                     ),
                   ),
                   Expanded(
                       child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      IconButton(
-                          onPressed: () {
-                            LibraryHelper.removeProblemFromList(
-                                widget.listItem, widget.listItem.items[index]);
-                            setState(() {});
-                          },
-                          icon: const Icon(Icons.delete_outline)),
+                      widget.online
+                          ? IconButton(
+                              onPressed: () {
+                                showDialog(
+                                  barrierColor:
+                                      colorScheme.surfaceTint.withOpacity(0.12),
+                                  useRootNavigator: false,
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    surfaceTintColor: Colors.transparent,
+                                    title: const Text('Add to list'),
+                                    content: SizedBox(
+                                      width: 200,
+                                      height: 300,
+                                      child: ListView.builder(
+                                        itemBuilder: (context, indexList) {
+                                          return SizedBox(
+                                            height: 60,
+                                            child: InkWell(
+                                              onTap: () {
+                                                LibraryHelper.addProblemToList(
+                                                    AppStorage().problemlists[
+                                                        indexList],
+                                                    widget
+                                                        .listItem.items[index]);
+                                                Navigator.pop(context);
+                                              },
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              child: Row(
+                                                children: [
+                                                  const SizedBox(
+                                                    width: 6,
+                                                  ),
+                                                  Ink(
+                                                    decoration: BoxDecoration(
+                                                      color: colorScheme
+                                                          .primaryContainer,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    height: 50,
+                                                    width: 50,
+                                                    child: Icon(
+                                                      Icons.star_rounded,
+                                                      color: colorScheme
+                                                          .onPrimaryContainer,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 6,
+                                                  ),
+                                                  Text(
+                                                    AppStorage()
+                                                        .problemlists[indexList]
+                                                        .title,
+                                                    style: const TextStyle(
+                                                        fontSize: 18),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        itemCount:
+                                            AppStorage().problemlists.length,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.add_circle_outline))
+                          : IconButton(
+                              onPressed: () {
+                                LibraryHelper.removeProblemFromList(
+                                    widget.listItem,
+                                    widget.listItem.items[index]);
+                                setState(() {});
+                              },
+                              icon: const Icon(Icons.delete_outline)),
                     ],
                   )),
                   const SizedBox(

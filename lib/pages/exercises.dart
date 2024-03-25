@@ -113,6 +113,7 @@ class ExercisesState extends State<Exercises> {
                         MaterialPageRoute(
                           builder: (context) => ListDetail(
                             listItem: AppStorage().problemlists[index],
+                            online: false,
                           ),
                         ),
                       );

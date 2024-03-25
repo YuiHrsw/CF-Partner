@@ -69,9 +69,9 @@ class HomeState extends State<Home> {
               label: Text('Exercises'),
             ),
             NavigationRailDestination(
-              selectedIcon: Icon(Icons.explore),
-              icon: Icon(Icons.explore_outlined),
-              label: Text('Explore'),
+              selectedIcon: Icon(Icons.emoji_events),
+              icon: Icon(Icons.emoji_events_outlined),
+              label: Text('Contests'),
             ),
             NavigationRailDestination(
               selectedIcon: Icon(Icons.settings),
