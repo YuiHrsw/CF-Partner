@@ -31,8 +31,6 @@ class ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-        colorScheme.primary.withOpacity(0.08), colorScheme.surface);
     return Scaffold(
       appBar: AppBar(
         title: const Text(

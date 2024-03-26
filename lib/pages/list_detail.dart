@@ -51,7 +51,7 @@ class ListDetailState extends State<ListDetail> {
                   },
                   icon: const Icon(Icons.refresh)),
           IconButton(
-              onPressed: locked
+              onPressed: locked || widget.online
                   ? null
                   : () {
                       editingController.clear();
@@ -85,7 +85,8 @@ class ListDetailState extends State<ListDetail> {
                                           value.substring(value.length - 1));
                                       LibraryHelper.addProblemToList(
                                           widget.listItem, res);
-                                      mark.add(await CFHelper.accepted(res));
+                                      mark.add(
+                                          await CFHelper.getPloblemStatus(res));
                                       setState(() {
                                         locked = false;
                                       });
@@ -116,7 +117,9 @@ class ListDetailState extends State<ListDetail> {
                                             value.substring(value.length - 1));
                                         LibraryHelper.addProblemToList(
                                             widget.listItem, res);
-                                        mark.add(await CFHelper.accepted(res));
+                                        mark.add(
+                                            await CFHelper.getPloblemStatus(
+                                                res));
                                         setState(() {
                                           locked = false;
                                         });

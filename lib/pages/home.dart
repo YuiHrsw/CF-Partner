@@ -1,6 +1,6 @@
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/pages/exercises.dart';
-import 'package:cf_partner/pages/explore.dart';
+import 'package:cf_partner/pages/contests.dart';
 import 'package:cf_partner/pages/settings.dart';
 import 'package:flutter/material.dart';
 

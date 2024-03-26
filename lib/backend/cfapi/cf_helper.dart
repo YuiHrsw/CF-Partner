@@ -9,7 +9,7 @@ import 'package:cf_partner/backend/web_helper.dart';
 import 'package:flutter/foundation.dart';
 
 class CFHelper {
-  static Future<List<Submission>> getContestStatus(int id) async {
+  static Future<List<Submission>> getContestSubmissions(int id) async {
     var request = await WebHelper()
         .get('https://codeforces.com/api/contest.status', queryParameters: {
       'contestId': id,
@@ -20,8 +20,8 @@ class CFHelper {
     return requestInfo.result;
   }
 
-  static Future<bool> accepted(Problem p) async {
-    var res = await getContestStatus(p.contestId!);
+  static Future<bool> getPloblemStatus(Problem p) async {
+    var res = await getContestSubmissions(p.contestId!);
     for (var item in res) {
       if (item.verdict == 'OK' && item.problem!.name! == p.name!) {
         return true;
@@ -35,7 +35,7 @@ class CFHelper {
     int n = list.length;
     for (int i = 0; i < n; ++i) {
       try {
-        res[i] = await accepted(list[i]);
+        res[i] = await getPloblemStatus(list[i]);
       } catch (e) {
         if (kDebugMode) {
           print(
