@@ -2,6 +2,8 @@ import 'package:cf_partner/backend/cfapi/cf_helper.dart';
 import 'package:cf_partner/backend/library_helper.dart';
 import 'package:cf_partner/backend/list_item.dart';
 import 'package:cf_partner/backend/storage.dart';
+import 'package:cf_partner/backend/web_helper.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -34,10 +36,18 @@ class ListDetailState extends State<ListDetail> {
         title: Text(widget.listItem.title),
         actions: [
           locked
-              ? const SizedBox(
+              ? SizedBox(
                   width: 18,
                   height: 18,
-                  child: CircularProgressIndicator(),
+                  child: InkWell(
+                    onTap: () {
+                      WebHelper().cancel(token: CancelToken());
+                      setState(() {
+                        locked = false;
+                      });
+                    },
+                    child: const CircularProgressIndicator(),
+                  ),
                 )
               : IconButton(
                   onPressed: () async {
@@ -45,9 +55,11 @@ class ListDetailState extends State<ListDetail> {
                       locked = true;
                     });
                     mark = await CFHelper.getListStatus(widget.listItem.items);
-                    setState(() {
-                      locked = false;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        locked = false;
+                      });
+                    }
                   },
                   icon: const Icon(Icons.refresh)),
           IconButton(
@@ -83,6 +95,16 @@ class ListDetailState extends State<ListDetail> {
                                           int.parse(value.substring(
                                               0, value.length - 1)),
                                           value.substring(value.length - 1));
+
+                                      if (res == null) {
+                                        setState(() {
+                                          locked = false;
+                                        });
+                                        if (!context.mounted) return;
+                                        Navigator.pop(context);
+                                        return;
+                                      }
+
                                       LibraryHelper.addProblemToList(
                                           widget.listItem, res);
                                       mark.add(
@@ -115,6 +137,16 @@ class ListDetailState extends State<ListDetail> {
                                             int.parse(value.substring(
                                                 0, value.length - 1)),
                                             value.substring(value.length - 1));
+
+                                        if (res == null) {
+                                          setState(() {
+                                            locked = false;
+                                          });
+                                          if (!context.mounted) return;
+                                          Navigator.pop(context);
+                                          return;
+                                        }
+
                                         LibraryHelper.addProblemToList(
                                             widget.listItem, res);
                                         mark.add(

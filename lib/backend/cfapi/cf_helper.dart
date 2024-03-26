@@ -10,24 +10,32 @@ import 'package:flutter/foundation.dart';
 
 class CFHelper {
   static Future<List<Submission>> getContestSubmissions(int id) async {
-    var request = await WebHelper()
-        .get('https://codeforces.com/api/contest.status', queryParameters: {
-      'contestId': id,
-      'handle': AppStorage().settings.handle
-    });
-    SubmissionRequestResult requestInfo =
-        SubmissionRequestResult.fromJson(request.data);
-    return requestInfo.result;
+    try {
+      var request = await WebHelper()
+          .get('https://codeforces.com/api/contest.status', queryParameters: {
+        'contestId': id,
+        'handle': AppStorage().settings.handle
+      });
+      SubmissionRequestResult requestInfo =
+          SubmissionRequestResult.fromJson(request.data);
+      return requestInfo.result;
+    } catch (e) {
+      return <Submission>[];
+    }
   }
 
   static Future<bool> getPloblemStatus(Problem p) async {
-    var res = await getContestSubmissions(p.contestId!);
-    for (var item in res) {
-      if (item.verdict == 'OK' && item.problem!.name! == p.name!) {
-        return true;
+    try {
+      var res = await getContestSubmissions(p.contestId!);
+      for (var item in res) {
+        if (item.verdict == 'OK' && item.problem!.name! == p.name!) {
+          return true;
+        }
       }
+      return false;
+    } catch (e) {
+      return false;
     }
-    return false;
   }
 
   static Future<List<bool>> getListStatus(List<Problem> list) async {
@@ -47,29 +55,43 @@ class CFHelper {
   }
 
   static Future<List<Problem>> getContestProblems(int id) async {
-    var request = await WebHelper()
-        .get('https://codeforces.com/api/contest.standings', queryParameters: {
-      'contestId': id,
-      'count': 1,
-    });
-    StandingRequest requestInfo = StandingRequest.fromJson(request.data);
-    return requestInfo.result!.problems;
+    try {
+      var request = await WebHelper().get(
+          'https://codeforces.com/api/contest.standings',
+          queryParameters: {
+            'contestId': id,
+            'count': 1,
+          });
+      StandingRequest requestInfo = StandingRequest.fromJson(request.data);
+      return requestInfo.result!.problems;
+    } catch (e) {
+      return <Problem>[];
+    }
   }
 
-  static Future<Problem> getProblem(int id, String index) async {
-    var list = await getContestProblems(id);
-    for (var p in list) {
-      if (p.index! == index) {
-        return p;
+  static Future<Problem?> getProblem(int id, String index) async {
+    try {
+      var list = await getContestProblems(id);
+      for (var p in list) {
+        if (p.index! == index) {
+          return p;
+        }
       }
+      return null;
+    } catch (e) {
+      return null;
     }
-    return list[0];
   }
 
   static Future<List<Contest>> getContestList() async {
-    var request =
-        await WebHelper().get('https://codeforces.com/api/contest.list');
-    ContestListRequest requestInfo = ContestListRequest.fromJson(request.data);
-    return requestInfo.result;
+    try {
+      var request =
+          await WebHelper().get('https://codeforces.com/api/contest.list');
+      ContestListRequest requestInfo =
+          ContestListRequest.fromJson(request.data);
+      return requestInfo.result;
+    } catch (e) {
+      return <Contest>[];
+    }
   }
 }

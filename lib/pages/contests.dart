@@ -1,7 +1,9 @@
 import 'package:cf_partner/backend/cfapi/cf_helper.dart';
 import 'package:cf_partner/backend/cfapi/models/contest.dart';
 import 'package:cf_partner/backend/list_item.dart';
+import 'package:cf_partner/backend/web_helper.dart';
 import 'package:cf_partner/pages/list_detail.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class ExplorePage extends StatefulWidget {
@@ -40,10 +42,18 @@ class ExplorePageState extends State<ExplorePage> {
         actions: [
           // IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded)),
           locked
-              ? const SizedBox(
+              ? SizedBox(
                   width: 18,
                   height: 18,
-                  child: CircularProgressIndicator(),
+                  child: InkWell(
+                    onTap: () {
+                      WebHelper().cancel(token: CancelToken());
+                      setState(() {
+                        locked = false;
+                      });
+                    },
+                    child: const CircularProgressIndicator(),
+                  ),
                 )
               : IconButton(
                   onPressed: () async {
@@ -77,7 +87,7 @@ class ExplorePageState extends State<ExplorePage> {
                         });
                         var problems = await CFHelper.getContestProblems(
                             contests[index].id!);
-                        if (!context.mounted) return;
+                        if (!context.mounted || locked == false) return;
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => ListDetail(
