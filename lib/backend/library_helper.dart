@@ -47,4 +47,16 @@ class LibraryHelper {
     list.items.remove(p);
     saveList(list);
   }
+
+  static void addTagToProblem(ListItem list, int index, String tag) {
+    var p = list.items[index].tags;
+    p.add(tag);
+    saveList(list);
+  }
+
+  static void removeTagToProblem(ListItem list, int index, String tag) {
+    var p = list.items[index].tags;
+    p.remove(tag);
+    saveList(list);
+  }
 }
