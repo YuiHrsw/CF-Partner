@@ -25,6 +25,21 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   build_runner: ^2.3.3
   json_serializable: ^6.7.1
+  flutter_launcher_icons: "^0.13.1"
+  msix: ^3.16.7
+
+flutter_launcher_icons:
+  windows:
+    generate: true
+    image_path: "res/images/icon.png"
+    icon_size: 256
 
 flutter:
   uses-material-design: true
+
+msix_config:
+  display_name: CF Partner
+  identity_name: YuiHrsw.CFPartner
+  msix_version: 1.6.0.0
+  logo_path: res/images/icon.png
+  trim_logo: false

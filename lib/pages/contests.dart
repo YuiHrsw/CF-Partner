@@ -155,7 +155,7 @@ class ExplorePageState extends State<ExplorePage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       height: 20,
-                      width: 50,
+                      width: 60,
                       child: Center(
                         child: Text(
                           '${contests[index].durationSeconds! ~/ 3600}h${(contests[index].durationSeconds! % 3600) ~/ 60}m',
