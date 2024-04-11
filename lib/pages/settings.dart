@@ -200,6 +200,25 @@ class SettingsState extends State<Settings> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
+              'Storage',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              launchUrl(Uri.directory(AppStorage().dataPath));
+            },
+            leading: const Icon(Icons.folder),
+            title: const Text('Open Data Folder'),
+            subtitle: Text(AppStorage().dataPath),
+          ),
+          Container(
+            padding: const EdgeInsets.all(12),
+            child: Text(
               'About',
               style: TextStyle(
                 fontSize: 20,
@@ -215,7 +234,7 @@ class SettingsState extends State<Settings> {
             ),
             title: const Text('CF Partner'),
             trailing: const Text(
-              'v 0.6',
+              'v 1.7',
               style: TextStyle(
                 fontSize: 16,
               ),

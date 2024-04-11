@@ -2,6 +2,7 @@ import 'package:cf_partner/backend/library_helper.dart';
 import 'package:cf_partner/backend/list_item.dart';
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/pages/list_detail.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 class Exercises extends StatefulWidget {
@@ -39,6 +40,23 @@ class ExercisesState extends State<Exercises> {
           style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
         ),
         actions: [
+          IconButton(
+            onPressed: () async {
+              FilePickerResult? result = await FilePicker.platform.pickFiles(
+                dialogTitle: 'Import a json problem list file...',
+                type: FileType.custom,
+                allowedExtensions: ["json"],
+              );
+
+              if (result == null) {
+                return;
+              }
+
+              LibraryHelper.saveListFile(result.files.single.path!);
+              setState(() {});
+            },
+            icon: const Icon(Icons.file_open_outlined),
+          ),
           IconButton(
               onPressed: () {
                 editingController.clear();

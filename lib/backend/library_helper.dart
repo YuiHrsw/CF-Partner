@@ -10,8 +10,8 @@ class LibraryHelper {
   static Future<List<ListItem>> loadLists() async {
     var playlists = <ListItem>[];
     var dir = Directory('${AppStorage().dataPath}/lists/');
-    if (!dir.existsSync()) {
-      dir.createSync(recursive: true);
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
     }
     await for (var item in dir.list()) {
       if (item is File && extension(item.path) == '.json') {
@@ -58,5 +58,21 @@ class LibraryHelper {
     var p = list.items[index].tags;
     p.remove(tag);
     saveList(list);
+  }
+
+  static void saveListFile(String location) async {
+    var fp = File(location);
+    var pl = ListItem.fromJson(jsonDecode(await fp.readAsString()));
+    AppStorage().problemlists.add(pl);
+    saveList(pl);
+  }
+
+  static void exportListFile(ListItem list, String location) {
+    var dst = File(location);
+    if (!dst.existsSync()) {
+      dst.createSync();
+    }
+    var fp = File('${AppStorage().dataPath}/lists/${list.title}.json');
+    fp.copy(location);
   }
 }

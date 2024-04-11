@@ -4,6 +4,7 @@ import 'package:cf_partner/backend/list_item.dart';
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/backend/web_helper.dart';
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -36,6 +37,23 @@ class ListDetailState extends State<ListDetail> {
       appBar: AppBar(
         title: Text(widget.listItem.title),
         actions: [
+          IconButton(
+            onPressed: () async {
+              String? outputFile = await FilePicker.platform.saveFile(
+                dialogTitle: 'Save Problem List As...',
+                fileName: '${widget.listItem.title}.json',
+                type: FileType.custom,
+                allowedExtensions: ["json"],
+              );
+
+              if (outputFile == null) {
+                return;
+              }
+
+              LibraryHelper.exportListFile(widget.listItem, outputFile);
+            },
+            icon: const Icon(Icons.save_outlined),
+          ),
           locked
               ? SizedBox(
                   width: 18,
@@ -92,48 +110,7 @@ class ListDetailState extends State<ListDetail> {
                                       setState(() {
                                         locked = true;
                                       });
-                                      var res = await CFHelper.getProblem(
-                                          int.parse(value.substring(
-                                              0, value.length - 1)),
-                                          value.substring(value.length - 1));
-
-                                      if (res == null) {
-                                        setState(() {
-                                          locked = false;
-                                        });
-                                        if (!context.mounted) return;
-                                        Navigator.pop(context);
-                                        return;
-                                      }
-
-                                      LibraryHelper.addProblemToList(
-                                          widget.listItem, res);
-                                      mark.add(
-                                          await CFHelper.getPloblemStatus(res));
-                                      setState(() {
-                                        locked = false;
-                                      });
-                                      if (!context.mounted) return;
-                                      Navigator.pop(context);
-                                    },
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: locked
-                                    ? null
-                                    : () {
-                                        Navigator.pop(context);
-                                      },
-                                child: const Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: locked
-                                    ? null
-                                    : () async {
-                                        setState(() {
-                                          locked = true;
-                                        });
-                                        var value = editingController.text;
+                                      try {
                                         var res = await CFHelper.getProblem(
                                             int.parse(value.substring(
                                                 0, value.length - 1)),
@@ -153,6 +130,58 @@ class ListDetailState extends State<ListDetail> {
                                         mark.add(
                                             await CFHelper.getPloblemStatus(
                                                 res));
+                                      } catch (e) {}
+                                      setState(() {
+                                        locked = false;
+                                      });
+                                      if (!context.mounted) return;
+                                      Navigator.pop(context);
+                                    },
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  if (locked) {
+                                    WebHelper().cancel(token: CancelToken());
+                                    setState(() {
+                                      locked = false;
+                                    });
+                                  } else {
+                                    Navigator.pop(context);
+                                  }
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: locked
+                                    ? null
+                                    : () async {
+                                        setState(() {
+                                          locked = true;
+                                        });
+                                        var value = editingController.text;
+                                        try {
+                                          var res = await CFHelper.getProblem(
+                                              int.parse(value.substring(
+                                                  0, value.length - 1)),
+                                              value
+                                                  .substring(value.length - 1));
+
+                                          if (res == null) {
+                                            setState(() {
+                                              locked = false;
+                                            });
+                                            if (!context.mounted) return;
+                                            Navigator.pop(context);
+                                            return;
+                                          }
+
+                                          LibraryHelper.addProblemToList(
+                                              widget.listItem, res);
+                                          mark.add(
+                                              await CFHelper.getPloblemStatus(
+                                                  res));
+                                        } catch (e) {}
                                         setState(() {
                                           locked = false;
                                         });
@@ -459,6 +488,9 @@ class ListDetailState extends State<ListDetail> {
                         onPressed: () {
                           LibraryHelper.removeProblemFromList(
                               widget.listItem, widget.listItem.items[index]);
+                          if (index < mark.length) {
+                            mark.removeAt(index);
+                          }
                           setState(() {});
                         },
                         icon: const Icon(Icons.delete_outline)),
