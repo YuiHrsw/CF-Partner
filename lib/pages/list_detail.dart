@@ -221,16 +221,17 @@ class ListDetailState extends State<ListDetail> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       height: 20,
-                      width:
-                          widget.listItem.items[index].tags[tagIndex].length *
-                                  7.2 +
-                              20,
                       child: Center(
-                        child: Text(
-                          widget.listItem.items[index].tags[tagIndex],
-                          style: TextStyle(
-                              color: colorScheme.onTertiaryContainer,
-                              fontWeight: FontWeight.w500),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: FittedBox(
+                            child: Text(
+                              widget.listItem.items[index].tags[tagIndex],
+                              style: TextStyle(
+                                  color: colorScheme.onTertiaryContainer,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
                         ),
                       ),
                     );
