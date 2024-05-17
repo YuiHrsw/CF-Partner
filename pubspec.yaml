@@ -19,6 +19,8 @@ dependencies:
   cookie_jar: ^4.0.8
   url_launcher: ^6.2.5
   file_picker: ^8.0.0+1
+  syncfusion_flutter_calendar: ^25.2.4
+  syncfusion_flutter_core: ^25.2.4
   
 dev_dependencies:
   flutter_test:

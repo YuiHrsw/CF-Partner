@@ -5,6 +5,7 @@ import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/backend/web_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -31,7 +32,8 @@ class ListDetailState extends State<ListDetail> {
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    final TextEditingController editingController = TextEditingController();
+    final TextEditingController contestIdController = TextEditingController();
+    final TextEditingController problemIdController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -85,7 +87,7 @@ class ListDetailState extends State<ListDetail> {
               onPressed: locked || widget.online
                   ? null
                   : () {
-                      editingController.clear();
+                      contestIdController.clear();
                       showDialog(
                         barrierDismissible: false,
                         barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
@@ -96,47 +98,35 @@ class ListDetailState extends State<ListDetail> {
                           return AlertDialog(
                             surfaceTintColor: Colors.transparent,
                             title: const Text('Add Problem'),
-                            content: TextField(
-                              autofocus: true,
-                              maxLines: 1,
-                              controller: editingController,
-                              decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'id',
-                                  hintText: 'e.g. 1946D'),
-                              onSubmitted: locked
-                                  ? null
-                                  : (value) async {
-                                      setState(() {
-                                        locked = true;
-                                      });
-                                      try {
-                                        var res = await CFHelper.getProblem(
-                                            int.parse(value.substring(
-                                                0, value.length - 1)),
-                                            value.substring(value.length - 1));
-
-                                        if (res == null) {
-                                          setState(() {
-                                            locked = false;
-                                          });
-                                          if (!context.mounted) return;
-                                          Navigator.pop(context);
-                                          return;
-                                        }
-
-                                        LibraryHelper.addProblemToList(
-                                            widget.listItem, res);
-                                        mark.add(
-                                            await CFHelper.getPloblemStatus(
-                                                res));
-                                      } catch (e) {}
-                                      setState(() {
-                                        locked = false;
-                                      });
-                                      if (!context.mounted) return;
-                                      Navigator.pop(context);
-                                    },
+                            content: Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    autofocus: true,
+                                    maxLines: 1,
+                                    controller: contestIdController,
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      hintText: '1561',
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                ),
+                                SizedBox(
+                                  width: 70,
+                                  child: TextField(
+                                    autofocus: true,
+                                    maxLines: 1,
+                                    controller: problemIdController,
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      hintText: 'D2',
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             actions: [
                               TextButton(
@@ -159,13 +149,13 @@ class ListDetailState extends State<ListDetail> {
                                         setState(() {
                                           locked = true;
                                         });
-                                        var value = editingController.text;
+                                        var cid = contestIdController.text;
+                                        var pid = problemIdController.text;
                                         try {
                                           var res = await CFHelper.getProblem(
-                                              int.parse(value.substring(
-                                                  0, value.length - 1)),
-                                              value
-                                                  .substring(value.length - 1));
+                                            int.parse(cid),
+                                            pid,
+                                          );
 
                                           if (res == null) {
                                             setState(() {
@@ -181,7 +171,12 @@ class ListDetailState extends State<ListDetail> {
                                           mark.add(
                                               await CFHelper.getPloblemStatus(
                                                   res));
-                                        } catch (e) {}
+                                        } catch (e) {
+                                          if (kDebugMode) {
+                                            print(
+                                                "can not get problem status: $cid$pid");
+                                          }
+                                        }
                                         setState(() {
                                           locked = false;
                                         });
@@ -204,7 +199,10 @@ class ListDetailState extends State<ListDetail> {
         ],
         scrolledUnderElevation: 0,
       ),
-      body: ListView.builder(
+      body: ListView.separated(
+        separatorBuilder: (context, index) {
+          return const Divider();
+        },
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemBuilder: (context, index) {
           return Column(
