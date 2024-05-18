@@ -7,6 +7,8 @@ class Problem {
     required this.points,
     required this.rating,
     required this.tags,
+    this.gym = false,
+    this.accepted = false,
   });
 
   final int? contestId;
@@ -30,7 +32,11 @@ class Problem {
       rating: json["rating"],
       tags: json["tags"] == null
           ? []
-          : List<String>.from(json["tags"]!.map((x) => x)),
+          : List<String>.from(
+              json["tags"]!.map((x) => x),
+            ),
+      gym: json['gym'] ?? false,
+      accepted: json['accepted'] ?? false,
     );
   }
 
@@ -42,5 +48,7 @@ class Problem {
         "tags": tags.map((x) => x).toList(),
         "points": points,
         "rating": rating,
+        "gym": gym,
+        "accepted": accepted,
       };
 }
