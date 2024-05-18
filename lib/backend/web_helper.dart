@@ -1,11 +1,11 @@
-import 'package:cf_partner/backend/storage.dart';
+// import 'package:cf_partner/backend/storage.dart';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:cookie_jar/cookie_jar.dart';
 
 class WebHelper {
   static late final Dio dio;
-  static late CookieManager cookieManager;
+  static late final HttpClient fucker;
   CancelToken _cancelToken = CancelToken();
 
   static final WebHelper _instance = WebHelper._internal();
@@ -18,13 +18,6 @@ class WebHelper {
     );
     dio = Dio(options);
     dio.transformer = BackgroundTransformer();
-  }
-
-  Future<void> init() async {
-    var cookiePath = '${AppStorage().dataPath}/cookies';
-    cookieManager =
-        CookieManager(PersistCookieJar(storage: FileStorage(cookiePath)));
-    dio.interceptors.add(cookieManager);
   }
 
   get(

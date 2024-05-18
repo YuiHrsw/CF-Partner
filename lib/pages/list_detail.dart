@@ -21,6 +21,7 @@ class ListDetail extends StatefulWidget {
 class ListDetailState extends State<ListDetail> {
   final TextEditingController editingController = TextEditingController();
   bool locked = false;
+  bool gym = false;
   late List<bool> mark;
 
   @override
@@ -54,7 +55,7 @@ class ListDetailState extends State<ListDetail> {
 
               LibraryHelper.exportListFile(widget.listItem, outputFile);
             },
-            icon: const Icon(Icons.save_outlined),
+            icon: const Icon(Icons.file_upload_outlined),
           ),
           locked
               ? SizedBox(
@@ -98,35 +99,53 @@ class ListDetailState extends State<ListDetail> {
                           return AlertDialog(
                             surfaceTintColor: Colors.transparent,
                             title: const Text('Add Problem'),
-                            content: Row(
-                              children: [
-                                Expanded(
-                                  child: TextField(
-                                    autofocus: true,
-                                    maxLines: 1,
-                                    controller: contestIdController,
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      hintText: '1561',
-                                    ),
+                            content: SizedBox(
+                              height: 150,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextField(
+                                          autofocus: true,
+                                          maxLines: 1,
+                                          controller: contestIdController,
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            hintText: '1561',
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 6,
+                                      ),
+                                      SizedBox(
+                                        width: 70,
+                                        child: TextField(
+                                          autofocus: true,
+                                          maxLines: 1,
+                                          controller: problemIdController,
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            hintText: 'D2',
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                const SizedBox(
-                                  width: 6,
-                                ),
-                                SizedBox(
-                                  width: 70,
-                                  child: TextField(
-                                    autofocus: true,
-                                    maxLines: 1,
-                                    controller: problemIdController,
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      hintText: 'D2',
-                                    ),
+                                  SwitchListTile(
+                                    title: const Text('Gym'),
+                                    value: gym,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        gym = value;
+                                      });
+                                    },
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                             actions: [
                               TextButton(
@@ -164,6 +183,9 @@ class ListDetailState extends State<ListDetail> {
                                             if (!context.mounted) return;
                                             Navigator.pop(context);
                                             return;
+                                          }
+                                          if (gym) {
+                                            res.gym = true;
                                           }
 
                                           LibraryHelper.addProblemToList(
@@ -208,6 +230,9 @@ class ListDetailState extends State<ListDetail> {
           return Column(
             children: [
               buildListItem(colorScheme, index),
+              const SizedBox(
+                height: 4,
+              ),
               SizedBox(
                 height: 20,
                 child: ListView.separated(
@@ -216,7 +241,7 @@ class ListDetailState extends State<ListDetail> {
                     return Ink(
                       decoration: BoxDecoration(
                         color: colorScheme.tertiaryContainer,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       height: 20,
                       child: Center(
@@ -252,255 +277,268 @@ class ListDetailState extends State<ListDetail> {
 
   Widget buildListItem(ColorScheme colorScheme, int index) {
     return SizedBox(
-      height: 60,
+      height: 50,
       child: InkWell(
-        onTap: () {
-          launchUrl(Uri.https('codeforces.com',
-              '/contest/${widget.listItem.items[index].contestId!}/problem/${widget.listItem.items[index].index!}'));
-        },
-        borderRadius: BorderRadius.circular(20),
-        child: Row(
-          children: [
-            const SizedBox(
-              width: 6,
+          onTap: () {
+            launchUrl(Uri.https('codeforces.com',
+                '/${widget.listItem.items[index].gym ? 'gym' : 'contest'}/${widget.listItem.items[index].contestId!}/problem/${widget.listItem.items[index].index!}'));
+          },
+          borderRadius: BorderRadius.circular(20),
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: index < mark.length && mark[index]
+                  ? colorScheme.secondaryContainer.withOpacity(0.6)
+                  : null,
             ),
-            Ink(
-              decoration: BoxDecoration(
-                color: colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              height: 20,
-              width: 50,
-              child: Center(
-                child: Text(
-                  widget.listItem.items[index].contestId!.toString() +
-                      widget.listItem.items[index].index!,
-                  style: TextStyle(
-                      color: colorScheme.onPrimaryContainer,
-                      fontWeight: FontWeight.w500),
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 6,
-            ),
-            Text(
-              // AppStorage().problemlists[index].title,
-              widget.listItem.items[index].name!,
-              style: TextStyle(
-                  fontSize: 18,
-                  color: index < mark.length && mark[index]
-                      ? colorScheme.primary
-                      : null,
-                  fontWeight: index < mark.length && mark[index]
-                      ? FontWeight.w500
-                      : null),
-            ),
-            Expanded(
-                child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+            child: Row(
               children: [
-                widget.online
-                    ? const SizedBox()
-                    : IconButton(
-                        onPressed: () {
-                          editingController.clear();
-                          showDialog(
-                            barrierColor:
-                                colorScheme.surfaceTint.withOpacity(0.12),
-                            useRootNavigator: false,
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                              surfaceTintColor: Colors.transparent,
-                              title: const Text('Add a tag'),
-                              content: TextField(
-                                autofocus: true,
-                                maxLines: 1,
-                                controller: editingController,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'tag name',
-                                ),
-                                onSubmitted: (value) {
-                                  LibraryHelper.addTagToProblem(
-                                      widget.listItem, index, value);
-                                  setState(() {});
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    LibraryHelper.addTagToProblem(
-                                        widget.listItem,
-                                        index,
-                                        editingController.text);
-                                    setState(() {});
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            ),
-                          );
-                          setState(() {});
-                        },
-                        icon: const Icon(Icons.new_label_outlined),
+                const SizedBox(
+                  width: 6,
+                ),
+                Ink(
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: FittedBox(
+                    child: Text(
+                      ' ${widget.listItem.items[index].contestId!}${widget.listItem.items[index].index!} ',
+                      style: TextStyle(
+                        color: colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.w500,
                       ),
-                widget.online
-                    ? const SizedBox()
-                    : IconButton(
-                        onPressed: () {
-                          showDialog(
-                            barrierColor:
-                                colorScheme.surfaceTint.withOpacity(0.12),
-                            useRootNavigator: false,
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                              surfaceTintColor: Colors.transparent,
-                              title: const Text('Remove Tags'),
-                              content: SizedBox(
-                                width: 200,
-                                height: 300,
-                                child: ListView.builder(
-                                  itemBuilder: (context, indexList) {
-                                    return SizedBox(
-                                        height: 40,
-                                        child: InkWell(
-                                          onTap: () {
-                                            LibraryHelper.removeTagToProblem(
-                                                widget.listItem,
-                                                index,
-                                                widget.listItem.items[index]
-                                                    .tags[indexList]);
-                                            setState(() {});
-                                            Navigator.pop(context);
-                                          },
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          child: Row(
-                                            children: [
-                                              const SizedBox(
-                                                width: 6,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 6,
+                ),
+                Text(
+                  // AppStorage().problemlists[index].title,
+                  widget.listItem.items[index].name!,
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: index < mark.length && mark[index]
+                          ? colorScheme.onSecondaryContainer
+                          : null,
+                      fontWeight: index < mark.length && mark[index]
+                          ? FontWeight.w500
+                          : null),
+                ),
+                Expanded(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    widget.online
+                        ? const SizedBox()
+                        : IconButton(
+                            onPressed: () {
+                              editingController.clear();
+                              showDialog(
+                                barrierColor:
+                                    colorScheme.surfaceTint.withOpacity(0.12),
+                                useRootNavigator: false,
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  surfaceTintColor: Colors.transparent,
+                                  title: const Text('Add a tag'),
+                                  content: TextField(
+                                    autofocus: true,
+                                    maxLines: 1,
+                                    controller: editingController,
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: 'tag name',
+                                    ),
+                                    onSubmitted: (value) {
+                                      LibraryHelper.addTagToProblem(
+                                          widget.listItem, index, value);
+                                      setState(() {});
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        LibraryHelper.addTagToProblem(
+                                            widget.listItem,
+                                            index,
+                                            editingController.text);
+                                        setState(() {});
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              setState(() {});
+                            },
+                            icon: const Icon(Icons.new_label_outlined),
+                          ),
+                    widget.online
+                        ? const SizedBox()
+                        : IconButton(
+                            onPressed: () {
+                              showDialog(
+                                barrierColor:
+                                    colorScheme.surfaceTint.withOpacity(0.12),
+                                useRootNavigator: false,
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  surfaceTintColor: Colors.transparent,
+                                  title: const Text('Remove Tags'),
+                                  content: SizedBox(
+                                    width: 200,
+                                    height: 300,
+                                    child: ListView.builder(
+                                      itemBuilder: (context, indexList) {
+                                        return SizedBox(
+                                            height: 40,
+                                            child: InkWell(
+                                              onTap: () {
+                                                LibraryHelper
+                                                    .removeTagToProblem(
+                                                        widget.listItem,
+                                                        index,
+                                                        widget
+                                                            .listItem
+                                                            .items[index]
+                                                            .tags[indexList]);
+                                                setState(() {});
+                                                Navigator.pop(context);
+                                              },
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              child: Row(
+                                                children: [
+                                                  const SizedBox(
+                                                    width: 6,
+                                                  ),
+                                                  const Icon(Icons
+                                                      .label_outline_rounded),
+                                                  const SizedBox(
+                                                    width: 6,
+                                                  ),
+                                                  Text(
+                                                    widget.listItem.items[index]
+                                                        .tags[indexList],
+                                                    style: const TextStyle(
+                                                        fontSize: 18),
+                                                  ),
+                                                ],
                                               ),
-                                              const Icon(
-                                                  Icons.label_outline_rounded),
-                                              const SizedBox(
-                                                width: 6,
-                                              ),
-                                              Text(
-                                                widget.listItem.items[index]
-                                                    .tags[indexList],
-                                                style: const TextStyle(
-                                                    fontSize: 18),
-                                              ),
-                                            ],
+                                            ));
+                                      },
+                                      itemCount: widget
+                                          .listItem.items[index].tags.length,
+                                    ),
+                                  ),
+                                ),
+                              );
+                              setState(() {});
+                            },
+                            icon: const Icon(Icons.label_off_outlined),
+                          ),
+                    IconButton(
+                      onPressed: () {
+                        showDialog(
+                          barrierColor:
+                              colorScheme.surfaceTint.withOpacity(0.12),
+                          useRootNavigator: false,
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            surfaceTintColor: Colors.transparent,
+                            title: const Text('Add to list'),
+                            content: SizedBox(
+                              width: 200,
+                              height: 300,
+                              child: ListView.builder(
+                                itemBuilder: (context, indexList) {
+                                  return SizedBox(
+                                    height: 60,
+                                    child: InkWell(
+                                      onTap: () {
+                                        LibraryHelper.addProblemToList(
+                                            AppStorage()
+                                                .problemlists[indexList],
+                                            widget.listItem.items[index]);
+                                        Navigator.pop(context);
+                                      },
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Row(
+                                        children: [
+                                          const SizedBox(
+                                            width: 6,
                                           ),
-                                        ));
-                                  },
-                                  itemCount:
-                                      widget.listItem.items[index].tags.length,
-                                ),
-                              ),
-                            ),
-                          );
-                          setState(() {});
-                        },
-                        icon: const Icon(Icons.label_off_outlined),
-                      ),
-                widget.online
-                    ? IconButton(
-                        onPressed: () {
-                          showDialog(
-                            barrierColor:
-                                colorScheme.surfaceTint.withOpacity(0.12),
-                            useRootNavigator: false,
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                              surfaceTintColor: Colors.transparent,
-                              title: const Text('Add to list'),
-                              content: SizedBox(
-                                width: 200,
-                                height: 300,
-                                child: ListView.builder(
-                                  itemBuilder: (context, indexList) {
-                                    return SizedBox(
-                                      height: 60,
-                                      child: InkWell(
-                                        onTap: () {
-                                          LibraryHelper.addProblemToList(
-                                              AppStorage()
-                                                  .problemlists[indexList],
-                                              widget.listItem.items[index]);
-                                          Navigator.pop(context);
-                                        },
-                                        borderRadius: BorderRadius.circular(20),
-                                        child: Row(
-                                          children: [
-                                            const SizedBox(
-                                              width: 6,
+                                          Ink(
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  colorScheme.primaryContainer,
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
                                             ),
-                                            Ink(
-                                              decoration: BoxDecoration(
-                                                color: colorScheme
-                                                    .primaryContainer,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              height: 50,
-                                              width: 50,
-                                              child: Icon(
-                                                Icons.star_rounded,
-                                                color: colorScheme
-                                                    .onPrimaryContainer,
-                                              ),
+                                            height: 50,
+                                            width: 50,
+                                            child: Icon(
+                                              Icons.star_rounded,
+                                              color: colorScheme
+                                                  .onPrimaryContainer,
                                             ),
-                                            const SizedBox(
-                                              width: 6,
-                                            ),
-                                            Text(
-                                              AppStorage()
-                                                  .problemlists[indexList]
-                                                  .title,
-                                              style:
-                                                  const TextStyle(fontSize: 18),
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                          const SizedBox(
+                                            width: 6,
+                                          ),
+                                          Text(
+                                            AppStorage()
+                                                .problemlists[indexList]
+                                                .title,
+                                            style:
+                                                const TextStyle(fontSize: 18),
+                                          ),
+                                        ],
                                       ),
-                                    );
-                                  },
-                                  itemCount: AppStorage().problemlists.length,
-                                ),
+                                    ),
+                                  );
+                                },
+                                itemCount: AppStorage().problemlists.length,
                               ),
                             ),
-                          );
-                        },
-                        icon: const Icon(Icons.add_circle_outline))
-                    : IconButton(
-                        onPressed: () {
-                          LibraryHelper.removeProblemFromList(
-                              widget.listItem, widget.listItem.items[index]);
-                          if (index < mark.length) {
-                            mark.removeAt(index);
-                          }
-                          setState(() {});
-                        },
-                        icon: const Icon(Icons.delete_outline)),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.add_circle_outline,
+                      ),
+                    ),
+                    widget.online
+                        ? const SizedBox()
+                        : IconButton(
+                            onPressed: () {
+                              LibraryHelper.removeProblemFromList(
+                                  widget.listItem,
+                                  widget.listItem.items[index]);
+                              if (index < mark.length) {
+                                mark.removeAt(index);
+                              }
+                              setState(() {});
+                            },
+                            icon: const Icon(Icons.delete_outline)),
+                  ],
+                )),
+                const SizedBox(
+                  width: 6,
+                )
               ],
-            )),
-            const SizedBox(
-              width: 6,
-            )
-          ],
-        ),
-      ),
+            ),
+          )),
     );
   }
 }

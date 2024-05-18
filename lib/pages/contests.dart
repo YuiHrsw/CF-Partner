@@ -40,7 +40,6 @@ class ExplorePageState extends State<ExplorePage> {
           style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
         ),
         actions: [
-          // IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded)),
           locked
               ? SizedBox(
                   width: 18,
@@ -114,11 +113,9 @@ class ExplorePageState extends State<ExplorePage> {
                         color: colorScheme.primaryContainer,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      height: 20,
-                      width: 40,
-                      child: Center(
+                      child: FittedBox(
                         child: Text(
-                          contests[index].id!.toString(),
+                          ' ${contests[index].id!} ',
                           style: TextStyle(
                               color: colorScheme.onPrimaryContainer,
                               fontWeight: FontWeight.w500),
@@ -134,11 +131,9 @@ class ExplorePageState extends State<ExplorePage> {
                               color: colorScheme.secondaryContainer,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            height: 20,
-                            width: 70,
-                            child: Center(
+                            child: FittedBox(
                               child: Text(
-                                'Finished',
+                                ' Finished ',
                                 style: TextStyle(
                                     color: colorScheme.onSecondaryContainer,
                                     fontWeight: FontWeight.w500),
@@ -154,11 +149,9 @@ class ExplorePageState extends State<ExplorePage> {
                         color: colorScheme.tertiaryContainer,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      height: 20,
-                      width: 60,
-                      child: Center(
+                      child: FittedBox(
                         child: Text(
-                          '${contests[index].durationSeconds! ~/ 3600}h${(contests[index].durationSeconds! % 3600) ~/ 60}m',
+                          ' ${contests[index].durationSeconds! ~/ 3600}h${(contests[index].durationSeconds! % 3600) ~/ 60}m ',
                           style: TextStyle(
                               color: colorScheme.onTertiaryContainer,
                               fontWeight: FontWeight.w500),
@@ -168,7 +161,7 @@ class ExplorePageState extends State<ExplorePage> {
                     const SizedBox(
                       width: 4,
                     ),
-                    Text(contests[index].name!)
+                    Expanded(child: Text(contests[index].name!)),
                   ],
                 ),
               ),

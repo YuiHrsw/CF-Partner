@@ -1,5 +1,4 @@
 import 'package:cf_partner/backend/storage.dart';
-import 'package:cf_partner/pages/calendar.dart';
 import 'package:cf_partner/pages/exercises.dart';
 import 'package:cf_partner/pages/contests.dart';
 import 'package:cf_partner/pages/settings.dart';
@@ -16,7 +15,6 @@ class HomeState extends State<Home> {
   int currentPageIndex = 0;
   final questionList = GlobalKey<NavigatorState>();
   final explore = GlobalKey<NavigatorState>();
-  final calendar = GlobalKey<NavigatorState>();
   final settings = GlobalKey<NavigatorState>();
 
   @override
@@ -76,11 +74,6 @@ class HomeState extends State<Home> {
               label: Text('Contests'),
             ),
             NavigationRailDestination(
-              selectedIcon: Icon(Icons.calendar_month),
-              icon: Icon(Icons.calendar_month_outlined),
-              label: Text('Calendar'),
-            ),
-            NavigationRailDestination(
               selectedIcon: Icon(Icons.settings),
               icon: Icon(Icons.settings_outlined),
               label: Text('Settings'),
@@ -111,13 +104,6 @@ class HomeState extends State<Home> {
                     onGenerateRoute: (route) => MaterialPageRoute(
                       settings: route,
                       builder: (context) => const ExplorePage(),
-                    ),
-                  ),
-                  Navigator(
-                    key: calendar,
-                    onGenerateRoute: (route) => MaterialPageRoute(
-                      settings: route,
-                      builder: (context) => const Calendar(),
                     ),
                   ),
                   Navigator(

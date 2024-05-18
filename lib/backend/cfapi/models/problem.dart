@@ -17,6 +17,9 @@ class Problem {
   final int? rating;
   final List<String> tags;
 
+  bool gym = false;
+  bool accepted = false;
+
   factory Problem.fromJson(Map<String, dynamic> json) {
     return Problem(
       contestId: json["contestId"],
