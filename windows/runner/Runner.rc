@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "cf_partner" "\0"
+            VALUE "CompanyName", "dev.yuihrsw" "\0"
+            VALUE "FileDescription", "CF Partner 2" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "cf_partner" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "cf_partner.exe" "\0"
-            VALUE "ProductName", "cf_partner" "\0"
+            VALUE "InternalName", "CF Partner 2" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 dev.yuihrsw. All rights reserved." "\0"
+            VALUE "OriginalFilename", "CF Partner 2.exe" "\0"
+            VALUE "ProductName", "CF Partner 2" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

@@ -1,4 +1,4 @@
-import 'package:cf_partner/backend/cfapi/models/problem.dart';
+import 'package:cf_partner/backend/problem_item.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'list_item.g.dart';
 
@@ -8,7 +8,7 @@ class ListItem {
     required this.items,
     required this.title,
   });
-  List<Problem> items;
+  List<ProblemItem> items;
   String title;
 
   factory ListItem.fromJson(Map<String, dynamic> json) =>

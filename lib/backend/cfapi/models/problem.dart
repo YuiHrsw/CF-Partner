@@ -8,7 +8,7 @@ class Problem {
     required this.rating,
     required this.tags,
     this.gym = false,
-    this.accepted = false,
+    this.status = "unknown",
   });
 
   final int? contestId;
@@ -20,7 +20,7 @@ class Problem {
   final List<String> tags;
 
   bool gym = false;
-  bool accepted = false;
+  String status = "unknown";
 
   factory Problem.fromJson(Map<String, dynamic> json) {
     return Problem(
@@ -36,7 +36,7 @@ class Problem {
               json["tags"]!.map((x) => x),
             ),
       gym: json['gym'] ?? false,
-      accepted: json['accepted'] ?? false,
+      status: json['status'] ?? "unknown",
     );
   }
 
@@ -49,6 +49,6 @@ class Problem {
         "points": points,
         "rating": rating,
         "gym": gym,
-        "accepted": accepted,
+        "status": status,
       };
 }

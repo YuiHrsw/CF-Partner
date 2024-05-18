@@ -232,9 +232,9 @@ class SettingsState extends State<Settings> {
               Icons.bar_chart_rounded,
               size: 34,
             ),
-            title: const Text('CF Partner'),
+            title: const Text('CF Partner 2'),
             trailing: const Text(
-              'v 1.9',
+              'v 2.0',
               style: TextStyle(
                 fontSize: 16,
               ),

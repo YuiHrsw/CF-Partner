@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cf_partner/backend/cfapi/models/problem.dart';
 import 'package:cf_partner/backend/list_item.dart';
+import 'package:cf_partner/backend/problem_item.dart';
 import 'package:cf_partner/backend/storage.dart';
 import 'package:path/path.dart';
 
@@ -38,12 +38,12 @@ class LibraryHelper {
     }
   }
 
-  static void addProblemToList(ListItem list, Problem p) {
+  static void addProblemToList(ListItem list, ProblemItem p) {
     list.items.add(p);
     saveList(list);
   }
 
-  static void removeProblemFromList(ListItem list, Problem p) {
+  static void removeProblemFromList(ListItem list, ProblemItem p) {
     list.items.remove(p);
     saveList(list);
   }

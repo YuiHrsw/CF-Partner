@@ -84,8 +84,9 @@ class ExplorePageState extends State<ExplorePage> {
                         setState(() {
                           locked = true;
                         });
-                        var problems = await CFHelper.getContestProblems(
-                            contests[index].id!);
+                        var problems =
+                            await CFHelper.getContestProblemsWithStatus(
+                                contests[index].id!);
                         if (!context.mounted || locked == false) return;
                         Navigator.of(context).push(
                           MaterialPageRoute(

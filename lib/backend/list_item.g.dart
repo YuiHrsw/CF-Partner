@@ -8,7 +8,7 @@ part of 'list_item.dart';
 
 ListItem _$ListItemFromJson(Map<String, dynamic> json) => ListItem(
       items: (json['items'] as List<dynamic>)
-          .map((e) => Problem.fromJson(e as Map<String, dynamic>))
+          .map((e) => ProblemItem.fromJson(e as Map<String, dynamic>))
           .toList(),
       title: json['title'] as String,
     );

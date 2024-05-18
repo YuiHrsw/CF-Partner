@@ -4,11 +4,24 @@ import 'package:cf_partner/backend/cfapi/models/problem.dart';
 import 'package:cf_partner/backend/cfapi/models/standing_request.dart';
 import 'package:cf_partner/backend/cfapi/models/submission.dart';
 import 'package:cf_partner/backend/cfapi/models/submission_request.dart';
+import 'package:cf_partner/backend/problem_item.dart';
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/backend/web_helper.dart';
 import 'package:flutter/foundation.dart';
 
 class CFHelper {
+  static ProblemItem toLocalProblem(Problem p) {
+    return ProblemItem(
+      title: p.name!,
+      source: p.gym ? 'Gym' : 'CF',
+      url:
+          'https://codeforces.com/${p.gym ? 'gym' : 'contest'}/${p.contestId!}/problem/${p.index!}',
+      status: p.status,
+      note: '',
+      tags: p.tags,
+    );
+  }
+
   static Future<List<Submission>> getContestSubmissions(int id) async {
     try {
       var request = await WebHelper()
@@ -66,6 +79,37 @@ class CFHelper {
       return requestInfo.result!.problems;
     } catch (e) {
       return <Problem>[];
+    }
+  }
+
+  static Future<List<ProblemItem>> getContestProblemsWithStatus(int id) async {
+    try {
+      var request = await WebHelper().get(
+          'https://codeforces.com/api/contest.standings',
+          queryParameters: {
+            'contestId': id,
+            'count': 1,
+          });
+      StandingRequest requestInfo = StandingRequest.fromJson(request.data);
+      // return requestInfo.result!.problems;
+      var problems = requestInfo.result!.problems;
+      var submissions = await getContestSubmissions(id);
+      Map<String, Problem> map = {};
+      for (var p in problems) {
+        map.addAll({p.index!: p});
+      }
+      for (var s in submissions) {
+        String sid = s.problem!.index!;
+        if (map[sid]!.status == 'unknown') {
+          map[sid]!.status = s.verdict! == 'OK' ? 'Accepted' : 'Attempted';
+        } else if (s.verdict! == 'OK' && map[sid]!.status != 'Accepted') {
+          map[sid]!.status = 'Accepted';
+        }
+      }
+      var res = map.values.toList();
+      return List.generate(res.length, (index) => toLocalProblem(res[index]));
+    } catch (e) {
+      return <ProblemItem>[];
     }
   }
 
