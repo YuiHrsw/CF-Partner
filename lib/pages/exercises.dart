@@ -12,6 +12,7 @@ class Exercises extends StatefulWidget {
   ExercisesState createState() => ExercisesState();
 }
 
+// TODO: random exercise
 class ExercisesState extends State<Exercises> {
   final TextEditingController editingController = TextEditingController();
   bool loaded = false;
@@ -55,7 +56,7 @@ class ExercisesState extends State<Exercises> {
               LibraryHelper.saveListFile(result.files.single.path!);
               setState(() {});
             },
-            icon: const Icon(Icons.file_open_outlined),
+            icon: const Icon(Icons.insert_drive_file),
           ),
           IconButton(
               onPressed: () {
@@ -112,7 +113,7 @@ class ExercisesState extends State<Exercises> {
                   ),
                 );
               },
-              icon: const Icon(Icons.add)),
+              icon: const Icon(Icons.add_circle)),
           const SizedBox(
             width: 6,
           )

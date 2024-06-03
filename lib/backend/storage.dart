@@ -9,6 +9,48 @@ import 'package:path_provider/path_provider.dart';
 class AppStorage extends ChangeNotifier {
   late AppSettings settings;
   List<ListItem> problemlists = [];
+  List<MaterialColor> colors = [
+    Colors.amber,
+    Colors.blue,
+    Colors.blueGrey,
+    Colors.brown,
+    Colors.cyan,
+    Colors.deepOrange,
+    Colors.deepPurple,
+    Colors.green,
+    Colors.grey,
+    Colors.indigo,
+    Colors.lightBlue,
+    Colors.lightGreen,
+    Colors.lime,
+    Colors.orange,
+    Colors.pink,
+    Colors.purple,
+    Colors.red,
+    Colors.teal,
+    Colors.yellow,
+  ];
+  List<String> themes = [
+    "amber",
+    "blue+",
+    "grey+",
+    "brown",
+    "miku",
+    "orange+",
+    "purple+",
+    "green+",
+    "grey",
+    "indigo",
+    "blue",
+    "green",
+    "lime",
+    "orange",
+    "pink",
+    "purple",
+    "red",
+    "teal",
+    "yellow",
+  ];
 
   String dataPath = '';
 
@@ -43,6 +85,10 @@ class AppStorage extends ChangeNotifier {
     var str = jsonEncode(data);
     await fp.writeAsString(str);
     // notifyListeners();
+  }
+
+  MaterialColor getColorTheme() {
+    return colors[settings.themeCode];
   }
 
   void updateStatus() {

@@ -1,11 +1,10 @@
-import 'package:cf_partner/backend/cfapi/cf_helper.dart';
+// import 'package:cf_partner/backend/cfapi/cf_helper.dart';
 import 'package:cf_partner/backend/library_helper.dart';
 import 'package:cf_partner/backend/list_item.dart';
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/backend/web_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -33,11 +32,20 @@ class ListDetailState extends State<ListDetail> {
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    final TextEditingController contestIdController = TextEditingController();
-    final TextEditingController problemIdController = TextEditingController();
+    final TextEditingController urlController = TextEditingController();
+    final TextEditingController titleController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          constraints: const BoxConstraints(),
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        titleSpacing: 0,
         title: Text(widget.listItem.title),
         actions: [
           IconButton(
@@ -55,87 +63,47 @@ class ListDetailState extends State<ListDetail> {
 
               LibraryHelper.exportListFile(widget.listItem, outputFile);
             },
-            icon: const Icon(Icons.file_upload_outlined),
+            icon: const Icon(Icons.save),
           ),
-          locked
-              ? SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: InkWell(
-                    onTap: () {
-                      WebHelper().cancel(token: CancelToken());
-                      setState(() {
-                        locked = false;
-                      });
-                    },
-                    child: const CircularProgressIndicator(),
-                  ),
-                )
-              : IconButton(
-                  onPressed: () async {
-                    setState(() {
-                      locked = true;
-                    });
-                    // mark = await CFHelper.getListStatus(widget.listItem.items);
-                    if (mounted) {
-                      setState(() {
-                        locked = false;
-                      });
-                    }
-                  },
-                  icon: const Icon(Icons.refresh)),
           IconButton(
             onPressed: locked || widget.online
                 ? null
                 : () {
-                    contestIdController.clear();
+                    urlController.clear();
                     showDialog(
                       barrierDismissible: false,
                       barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
-                      useRootNavigator: false,
                       context: context,
                       builder: (BuildContext context) =>
                           StatefulBuilder(builder: (context, setState) {
                         return AlertDialog(
                           surfaceTintColor: Colors.transparent,
-                          title: const Text('Add CF Problems'),
+                          title: const Text('Add a problem'),
                           content: SizedBox(
-                            height: 150,
+                            height: 200,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: TextField(
-                                        autofocus: true,
-                                        maxLines: 1,
-                                        controller: contestIdController,
-                                        decoration: const InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          hintText: '1561',
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 6,
-                                    ),
-                                    SizedBox(
-                                      width: 70,
-                                      child: TextField(
-                                        autofocus: true,
-                                        maxLines: 1,
-                                        controller: problemIdController,
-                                        decoration: const InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          hintText: 'D2',
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                TextField(
+                                  autofocus: true,
+                                  maxLines: 1,
+                                  controller: titleController,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: '(optional) title',
+                                  ),
+                                ),
+                                TextField(
+                                  autofocus: true,
+                                  maxLines: 1,
+                                  controller: urlController,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: 'url',
+                                  ),
                                 ),
                                 SwitchListTile(
-                                  title: const Text('Gym'),
+                                  title: const Text('Source'),
                                   value: gym,
                                   onChanged: (value) {
                                     setState(() {
@@ -167,39 +135,9 @@ class ListDetailState extends State<ListDetail> {
                                       setState(() {
                                         locked = true;
                                       });
-                                      var cid = contestIdController.text;
-                                      var pid = problemIdController.text;
-                                      try {
-                                        var res = await CFHelper.getProblem(
-                                          int.parse(cid),
-                                          pid,
-                                        );
-
-                                        if (res == null) {
-                                          setState(() {
-                                            locked = false;
-                                          });
-                                          if (!context.mounted) return;
-                                          Navigator.pop(context);
-                                          return;
-                                        }
-                                        if (gym) {
-                                          res.gym = true;
-                                        }
-
-                                        LibraryHelper.addProblemToList(
-                                          widget.listItem,
-                                          CFHelper.toLocalProblem(res),
-                                        );
-                                        mark.add(
-                                            await CFHelper.getPloblemStatus(
-                                                res));
-                                      } catch (e) {
-                                        if (kDebugMode) {
-                                          print(
-                                              "can not get problem status: $cid$pid");
-                                        }
-                                      }
+                                      // TODO: add cf problem
+                                      // var cid = contestIdController.text;
+                                      // var pid = problemIdController.text;
                                       setState(() {
                                         locked = false;
                                       });
@@ -216,12 +154,8 @@ class ListDetailState extends State<ListDetail> {
                     });
                   },
             icon: const Icon(
-              Icons.add_chart_rounded,
+              Icons.add_circle,
             ),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.add),
           ),
           const SizedBox(
             width: 6,
@@ -233,7 +167,7 @@ class ListDetailState extends State<ListDetail> {
         separatorBuilder: (context, index) {
           return const Divider();
         },
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
         itemBuilder: (context, index) {
           return Column(
             children: [
@@ -247,7 +181,7 @@ class ListDetailState extends State<ListDetail> {
                   padding: const EdgeInsets.only(left: 4),
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, tagIndex) {
-                    return Ink(
+                    return Container(
                       decoration: BoxDecoration(
                         color: colorScheme.tertiaryContainer,
                         borderRadius: BorderRadius.circular(12),
@@ -308,7 +242,7 @@ class ListDetailState extends State<ListDetail> {
                           color:
                               widget.listItem.items[index].status == 'Accepted'
                                   ? colorScheme.primaryContainer
-                                  : colorScheme.secondaryContainer,
+                                  : colorScheme.errorContainer,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: FittedBox(
@@ -318,7 +252,7 @@ class ListDetailState extends State<ListDetail> {
                               color: widget.listItem.items[index].status ==
                                       'Accepted'
                                   ? colorScheme.onPrimaryContainer
-                                  : colorScheme.onSecondaryContainer,
+                                  : colorScheme.onErrorContainer,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -348,146 +282,322 @@ class ListDetailState extends State<ListDetail> {
                         ? const SizedBox()
                         : IconButton(
                             onPressed: () {
-                              //show note
+                              showDialog(
+                                barrierColor:
+                                    colorScheme.surfaceTint.withOpacity(0.12),
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  surfaceTintColor: Colors.transparent,
+                                  title: const Text('Change status'),
+                                  content: SizedBox(
+                                    width: 200,
+                                    height: 200,
+                                    child: ListView(
+                                      children: [
+                                        SizedBox(
+                                          height: 50,
+                                          child: InkWell(
+                                            onTap: () {
+                                              LibraryHelper.changeProblemStatus(
+                                                  widget.listItem,
+                                                  index,
+                                                  'Accepted');
+                                              setState(() {});
+                                              Navigator.pop(context);
+                                            },
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            child: Ink(
+                                              decoration: BoxDecoration(
+                                                color: colorScheme
+                                                    .primaryContainer,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  const SizedBox(
+                                                    width: 12,
+                                                  ),
+                                                  Icon(
+                                                    Icons.check_circle_outline,
+                                                    color: colorScheme
+                                                        .onPrimaryContainer,
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 6,
+                                                  ),
+                                                  Text(
+                                                    'Accepted',
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      color: colorScheme
+                                                          .onPrimaryContainer,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        SizedBox(
+                                          height: 50,
+                                          child: InkWell(
+                                            onTap: () {
+                                              LibraryHelper.changeProblemStatus(
+                                                  widget.listItem,
+                                                  index,
+                                                  'Attempted');
+                                              setState(() {});
+                                              Navigator.pop(context);
+                                            },
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            child: Ink(
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    colorScheme.errorContainer,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  const SizedBox(
+                                                    width: 12,
+                                                  ),
+                                                  Icon(
+                                                    Icons.cancel_outlined,
+                                                    color: colorScheme
+                                                        .onErrorContainer,
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 6,
+                                                  ),
+                                                  Text(
+                                                    'Attempted',
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      color: colorScheme
+                                                          .onErrorContainer,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        // TODO: custom status
+                                        SizedBox(
+                                          height: 50,
+                                          child: InkWell(
+                                            onTap: () {
+                                              LibraryHelper.changeProblemStatus(
+                                                  widget.listItem,
+                                                  index,
+                                                  'unknown');
+                                              setState(() {});
+                                              Navigator.pop(context);
+                                            },
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            child: const Row(
+                                              children: [
+                                                SizedBox(
+                                                  width: 12,
+                                                ),
+                                                Icon(Icons
+                                                    .remove_circle_outline),
+                                                SizedBox(
+                                                  width: 6,
+                                                ),
+                                                Text(
+                                                  'Clear Status',
+                                                  style:
+                                                      TextStyle(fontSize: 18),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
                             },
-                            icon: const Icon(Icons.notes),
+                            icon: const Icon(
+                              Icons.flag_outlined,
+                            ),
                           ),
                     widget.online
                         ? const SizedBox()
                         : IconButton(
                             onPressed: () {
-                              //add/remove label, edit note, change status
+                              showDialog(
+                                  barrierColor:
+                                      colorScheme.surfaceTint.withOpacity(0.12),
+                                  context: context,
+                                  builder: (context) => StatefulBuilder(
+                                          builder: (context, setState) {
+                                        return AlertDialog(
+                                          surfaceTintColor: Colors.transparent,
+                                          title: Row(
+                                            children: [
+                                              const Expanded(
+                                                  child: Text('Edit Tags')),
+                                              IconButton(
+                                                onPressed: () {
+                                                  editingController.clear();
+                                                  showDialog(
+                                                    barrierColor: colorScheme
+                                                        .surfaceTint
+                                                        .withOpacity(0.12),
+                                                    context: context,
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        AlertDialog(
+                                                      surfaceTintColor:
+                                                          Colors.transparent,
+                                                      title: const Text(
+                                                          'Add a tag'),
+                                                      content: TextField(
+                                                        autofocus: true,
+                                                        maxLines: 1,
+                                                        controller:
+                                                            editingController,
+                                                        decoration:
+                                                            const InputDecoration(
+                                                          border:
+                                                              OutlineInputBorder(),
+                                                          labelText: 'tag name',
+                                                        ),
+                                                        onSubmitted: (value) {
+                                                          LibraryHelper
+                                                              .addTagToProblem(
+                                                                  widget
+                                                                      .listItem,
+                                                                  index,
+                                                                  value);
+                                                          setState(() {});
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: const Text(
+                                                              'Cancel'),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            LibraryHelper
+                                                                .addTagToProblem(
+                                                                    widget
+                                                                        .listItem,
+                                                                    index,
+                                                                    editingController
+                                                                        .text);
+                                                            setState(() {});
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child:
+                                                              const Text('OK'),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                  setState(() {});
+                                                },
+                                                icon: const Icon(
+                                                  Icons.new_label,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          content: SizedBox(
+                                            width: 200,
+                                            height: 300,
+                                            child: ListView.builder(
+                                              itemBuilder:
+                                                  (context, indexList) {
+                                                return SizedBox(
+                                                  height: 40,
+                                                  child: Row(
+                                                    children: [
+                                                      const SizedBox(
+                                                        width: 6,
+                                                      ),
+                                                      const Icon(
+                                                        Icons
+                                                            .label_outline_rounded,
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 6,
+                                                      ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          widget
+                                                              .listItem
+                                                              .items[index]
+                                                              .tags[indexList],
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 18),
+                                                        ),
+                                                      ),
+                                                      IconButton(
+                                                        onPressed: () {
+                                                          LibraryHelper
+                                                              .removeTagFromProblem(
+                                                                  widget
+                                                                      .listItem,
+                                                                  index,
+                                                                  widget
+                                                                      .listItem
+                                                                      .items[
+                                                                          index]
+                                                                      .tags[indexList]);
+                                                          setState(() {});
+                                                        },
+                                                        icon: const Icon(
+                                                          Icons.close,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              itemCount: widget.listItem
+                                                  .items[index].tags.length,
+                                            ),
+                                          ),
+                                        );
+                                      })).then((value) {
+                                setState(() {});
+                              });
                             },
-                            icon: const Icon(
-                                Icons.drive_file_rename_outline_outlined),
+                            icon: const Icon(Icons.label_outline),
                           ),
-                    // widget.online
-                    //     ? const SizedBox()
-                    //     : IconButton(
-                    //         onPressed: () {
-                    //           editingController.clear();
-                    //           showDialog(
-                    //             barrierColor:
-                    //                 colorScheme.surfaceTint.withOpacity(0.12),
-                    //             useRootNavigator: false,
-                    //             context: context,
-                    //             builder: (BuildContext context) => AlertDialog(
-                    //               surfaceTintColor: Colors.transparent,
-                    //               title: const Text('Add a tag'),
-                    //               content: TextField(
-                    //                 autofocus: true,
-                    //                 maxLines: 1,
-                    //                 controller: editingController,
-                    //                 decoration: const InputDecoration(
-                    //                   border: OutlineInputBorder(),
-                    //                   labelText: 'tag name',
-                    //                 ),
-                    //                 onSubmitted: (value) {
-                    //                   LibraryHelper.addTagToProblem(
-                    //                       widget.listItem, index, value);
-                    //                   setState(() {});
-                    //                   Navigator.pop(context);
-                    //                 },
-                    //               ),
-                    //               actions: <Widget>[
-                    //                 TextButton(
-                    //                   onPressed: () {
-                    //                     Navigator.pop(context);
-                    //                   },
-                    //                   child: const Text('Cancel'),
-                    //                 ),
-                    //                 TextButton(
-                    //                   onPressed: () {
-                    //                     LibraryHelper.addTagToProblem(
-                    //                         widget.listItem,
-                    //                         index,
-                    //                         editingController.text);
-                    //                     setState(() {});
-                    //                     Navigator.pop(context);
-                    //                   },
-                    //                   child: const Text('OK'),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           );
-                    //           setState(() {});
-                    //         },
-                    //         icon: const Icon(Icons.new_label_outlined),
-                    //       ),
-                    // widget.online
-                    //     ? const SizedBox()
-                    //     : IconButton(
-                    //         onPressed: () {
-                    //           showDialog(
-                    //             barrierColor:
-                    //                 colorScheme.surfaceTint.withOpacity(0.12),
-                    //             useRootNavigator: false,
-                    //             context: context,
-                    //             builder: (BuildContext context) => AlertDialog(
-                    //               surfaceTintColor: Colors.transparent,
-                    //               title: const Text('Remove Tags'),
-                    //               content: SizedBox(
-                    //                 width: 200,
-                    //                 height: 300,
-                    //                 child: ListView.builder(
-                    //                   itemBuilder: (context, indexList) {
-                    //                     return SizedBox(
-                    //                         height: 40,
-                    //                         child: InkWell(
-                    //                           onTap: () {
-                    //                             LibraryHelper
-                    //                                 .removeTagToProblem(
-                    //                                     widget.listItem,
-                    //                                     index,
-                    //                                     widget
-                    //                                         .listItem
-                    //                                         .items[index]
-                    //                                         .tags[indexList]);
-                    //                             setState(() {});
-                    //                             Navigator.pop(context);
-                    //                           },
-                    //                           borderRadius:
-                    //                               BorderRadius.circular(20),
-                    //                           child: Row(
-                    //                             children: [
-                    //                               const SizedBox(
-                    //                                 width: 6,
-                    //                               ),
-                    //                               const Icon(Icons
-                    //                                   .label_outline_rounded),
-                    //                               const SizedBox(
-                    //                                 width: 6,
-                    //                               ),
-                    //                               Text(
-                    //                                 widget.listItem.items[index]
-                    //                                     .tags[indexList],
-                    //                                 style: const TextStyle(
-                    //                                     fontSize: 18),
-                    //                               ),
-                    //                             ],
-                    //                           ),
-                    //                         ));
-                    //                   },
-                    //                   itemCount: widget
-                    //                       .listItem.items[index].tags.length,
-                    //                 ),
-                    //               ),
-                    //             ),
-                    //           );
-                    //           setState(() {});
-                    //         },
-                    //         icon: const Icon(Icons.label_off_outlined),
-                    //       ),
                     IconButton(
                       onPressed: () {
                         showDialog(
                           barrierColor:
                               colorScheme.surfaceTint.withOpacity(0.12),
-                          useRootNavigator: false,
                           context: context,
                           builder: (BuildContext context) => AlertDialog(
                             surfaceTintColor: Colors.transparent,
-                            title: const Text('Add to list'),
+                            title: const Text('Copy to'),
                             content: SizedBox(
                               width: 200,
                               height: 300,
@@ -546,7 +656,7 @@ class ListDetailState extends State<ListDetail> {
                         );
                       },
                       icon: const Icon(
-                        Icons.add_circle_outline,
+                        Icons.copy_rounded,
                       ),
                     ),
                     widget.online

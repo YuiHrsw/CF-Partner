@@ -19,6 +19,7 @@ class Problem {
   final int? rating;
   final List<String> tags;
 
+  // TODO
   bool gym = false;
   String status = "unknown";
 

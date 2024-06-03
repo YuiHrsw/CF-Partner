@@ -39,13 +39,14 @@ class SettingsState extends State<Settings> {
             trailing: Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              width: 120,
-              height: 40,
+              width: 140,
+              height: 50,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(16),
                 color: Theme.of(context).colorScheme.secondaryContainer,
               ),
               child: TextField(
+                textAlign: TextAlign.center,
                 controller: controller,
                 maxLines: 1,
                 decoration: InputDecoration.collapsed(
@@ -63,13 +64,66 @@ class SettingsState extends State<Settings> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              'Theme Mode',
+              'Theme',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
+          ),
+          ListTile(
+            title: const Text('Theme Color'),
+            trailing: SizedBox(
+              height: 50,
+              width: 140,
+              child: DropdownButtonFormField(
+                // icon: const SizedBox(),
+                isExpanded: true,
+                borderRadius: BorderRadius.circular(16),
+                decoration: InputDecoration(
+                  isDense: true,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      width: 0,
+                      style: BorderStyle.none,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  fillColor: Theme.of(context).colorScheme.secondaryContainer,
+                ),
+                value: AppStorage().settings.themeCode,
+                items: List.generate(AppStorage().colors.length, (index) {
+                  return DropdownMenuItem(
+                    value: index,
+                    child: Row(
+                      children: [
+                        ColoredBox(
+                          color: AppStorage().colors[index],
+                          child: const SizedBox(
+                            height: 16,
+                            width: 16,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(AppStorage().themes[index]),
+                      ],
+                    ),
+                  );
+                }),
+                onChanged: (value) {
+                  AppStorage().settings.themeCode = value!;
+                  AppStorage().saveSettings();
+                  AppStorage().updateStatus();
+                },
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 6,
           ),
           SwitchListTile(
               title: const Text('Theme Mode follow system'),
@@ -90,6 +144,9 @@ class SettingsState extends State<Settings> {
                 AppStorage().saveSettings();
                 AppStorage().updateStatus();
               }),
+          const SizedBox(
+            height: 8,
+          ),
           AppStorage().settings.themeMode == ThemeMode.system
               ? const SizedBox()
               : SwitchListTile(
@@ -112,94 +169,6 @@ class SettingsState extends State<Settings> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              'Colors',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-          ),
-          RadioListTile(
-              title: const Text('Pink'),
-              value: 0,
-              groupValue: AppStorage().settings.themeCode,
-              onChanged: (int? value) {
-                setState(() {
-                  AppStorage().settings.themeCode = value!;
-                });
-                AppStorage().saveSettings();
-                AppStorage().updateStatus();
-              }),
-          RadioListTile(
-              title: const Text('Orange'),
-              value: 1,
-              groupValue: AppStorage().settings.themeCode,
-              onChanged: (int? value) {
-                setState(() {
-                  AppStorage().settings.themeCode = value!;
-                });
-                AppStorage().saveSettings();
-                AppStorage().updateStatus();
-              }),
-          RadioListTile(
-              title: const Text('Amber'),
-              value: 2,
-              groupValue: AppStorage().settings.themeCode,
-              onChanged: (int? value) {
-                setState(() {
-                  AppStorage().settings.themeCode = value!;
-                });
-                AppStorage().saveSettings();
-                AppStorage().updateStatus();
-              }),
-          RadioListTile(
-              title: const Text('Teal'),
-              value: 3,
-              groupValue: AppStorage().settings.themeCode,
-              onChanged: (int? value) {
-                setState(() {
-                  AppStorage().settings.themeCode = value!;
-                });
-                AppStorage().saveSettings();
-                AppStorage().updateStatus();
-              }),
-          RadioListTile(
-              title: const Text('Blue'),
-              value: 4,
-              groupValue: AppStorage().settings.themeCode,
-              onChanged: (int? value) {
-                setState(() {
-                  AppStorage().settings.themeCode = value!;
-                });
-                AppStorage().saveSettings();
-                AppStorage().updateStatus();
-              }),
-          RadioListTile(
-              title: const Text('Indigo'),
-              value: 5,
-              groupValue: AppStorage().settings.themeCode,
-              onChanged: (int? value) {
-                setState(() {
-                  AppStorage().settings.themeCode = value!;
-                });
-                AppStorage().saveSettings();
-                AppStorage().updateStatus();
-              }),
-          RadioListTile(
-              title: const Text('Purple'),
-              value: 6,
-              groupValue: AppStorage().settings.themeCode,
-              onChanged: (int? value) {
-                setState(() {
-                  AppStorage().settings.themeCode = value!;
-                });
-                AppStorage().saveSettings();
-                AppStorage().updateStatus();
-              }),
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: Text(
               'Storage',
               style: TextStyle(
                 fontSize: 20,
@@ -212,7 +181,7 @@ class SettingsState extends State<Settings> {
             onTap: () {
               launchUrl(Uri.directory(AppStorage().dataPath));
             },
-            leading: const Icon(Icons.folder),
+            leading: const Icon(Icons.folder_outlined),
             title: const Text('Open Data Folder'),
             subtitle: Text(AppStorage().dataPath),
           ),
@@ -229,8 +198,7 @@ class SettingsState extends State<Settings> {
           ),
           ListTile(
             leading: const Icon(
-              Icons.bar_chart_rounded,
-              size: 34,
+              Icons.bar_chart,
             ),
             title: const Text('CF Partner 2'),
             trailing: const Text(

@@ -26,6 +26,7 @@ class HomeState extends State<Home> {
       children: <Widget>[
         NavigationRail(
           backgroundColor: backgroundColor,
+          indicatorColor: colorScheme.primaryContainer,
           selectedIndex: currentPageIndex,
           onDestinationSelected: (int index) {
             setState(() {
@@ -40,10 +41,11 @@ class HomeState extends State<Home> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   IconButton(
+                    hoverColor: colorScheme.primaryContainer,
                     iconSize: 28,
                     icon: Theme.of(context).brightness == Brightness.dark
-                        ? const Icon(Icons.wb_sunny_outlined)
-                        : const Icon(Icons.mode_night_outlined),
+                        ? const Icon(Icons.wb_sunny)
+                        : const Icon(Icons.mode_night),
                     onPressed: () {
                       setState(() {
                         AppStorage().settings.themeMode =
@@ -64,58 +66,45 @@ class HomeState extends State<Home> {
           ),
           destinations: const <NavigationRailDestination>[
             NavigationRailDestination(
-              selectedIcon: Icon(Icons.sticky_note_2),
-              icon: Icon(Icons.sticky_note_2_outlined),
+              icon: Icon(Icons.sticky_note_2),
               label: Text('Exercises'),
             ),
             NavigationRailDestination(
-              selectedIcon: Icon(Icons.emoji_events),
-              icon: Icon(Icons.emoji_events_outlined),
+              icon: Icon(Icons.emoji_events),
               label: Text('Contests'),
             ),
             NavigationRailDestination(
-              selectedIcon: Icon(Icons.settings),
-              icon: Icon(Icons.settings_outlined),
+              icon: Icon(Icons.filter_vintage),
               label: Text('Settings'),
             ),
           ],
         ),
         Expanded(
-          child: Container(
-            color: backgroundColor,
-            padding: const EdgeInsets.only(right: 10, top: 10),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(25),
-                topRight: Radius.circular(25),
+          child: IndexedStack(
+            index: currentPageIndex,
+            children: [
+              Navigator(
+                key: questionList,
+                onGenerateRoute: (route) => MaterialPageRoute(
+                  settings: route,
+                  builder: (context) => const Exercises(),
+                ),
               ),
-              child: IndexedStack(
-                index: currentPageIndex,
-                children: [
-                  Navigator(
-                    key: questionList,
-                    onGenerateRoute: (route) => MaterialPageRoute(
-                      settings: route,
-                      builder: (context) => const Exercises(),
-                    ),
-                  ),
-                  Navigator(
-                    key: explore,
-                    onGenerateRoute: (route) => MaterialPageRoute(
-                      settings: route,
-                      builder: (context) => const ExplorePage(),
-                    ),
-                  ),
-                  Navigator(
-                    key: settings,
-                    onGenerateRoute: (route) => MaterialPageRoute(
-                      settings: route,
-                      builder: (context) => const Settings(),
-                    ),
-                  ),
-                ],
+              Navigator(
+                key: explore,
+                onGenerateRoute: (route) => MaterialPageRoute(
+                  settings: route,
+                  builder: (context) => const ExplorePage(),
+                ),
               ),
-            ),
+              Navigator(
+                key: settings,
+                onGenerateRoute: (route) => MaterialPageRoute(
+                  settings: route,
+                  builder: (context) => const Settings(),
+                ),
+              ),
+            ],
           ),
         )
       ],

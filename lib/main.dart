@@ -19,16 +19,18 @@ class CFPartner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AppStorage>(
       builder: (BuildContext context, AppStorage value, Widget? child) {
-        MaterialColor themeColor = value.settings.getColorTheme();
+        MaterialColor themeColor = value.getColorTheme();
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'CF Partner',
+          title: 'CF Partner 2',
           theme: ThemeData(
+            fontFamilyFallback: const ['SimHei'],
             colorScheme: ColorScheme.fromSeed(
                 seedColor: themeColor, brightness: Brightness.light),
             useMaterial3: true,
           ),
           darkTheme: ThemeData(
+            fontFamilyFallback: const ['SimHei'],
             colorScheme: ColorScheme.fromSeed(
                 seedColor: themeColor, brightness: Brightness.dark),
             useMaterial3: true,

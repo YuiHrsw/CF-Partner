@@ -10,7 +10,7 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
       listview: json['listview'] as bool? ?? true,
       themeMode: $enumDecodeNullable(_$ThemeModeEnumMap, json['themeMode']) ??
           ThemeMode.system,
-      themeCode: json['themeCode'] as int? ?? 4,
+      themeCode: json['themeCode'] as int? ?? 0,
       handle: json['handle'] as String? ?? 'tourist',
     );
 

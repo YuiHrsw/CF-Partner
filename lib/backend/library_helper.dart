@@ -54,9 +54,14 @@ class LibraryHelper {
     saveList(list);
   }
 
-  static void removeTagToProblem(ListItem list, int index, String tag) {
+  static void removeTagFromProblem(ListItem list, int index, String tag) {
     var p = list.items[index].tags;
     p.remove(tag);
+    saveList(list);
+  }
+
+  static void changeProblemStatus(ListItem list, int index, String status) {
+    list.items[index].status = status;
     saveList(list);
   }
 

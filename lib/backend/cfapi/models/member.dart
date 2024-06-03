@@ -10,4 +10,8 @@ class Member {
       handle: json["handle"],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        "handle": handle,
+      };
 }
