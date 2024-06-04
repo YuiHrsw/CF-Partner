@@ -7,7 +7,6 @@ class Problem {
     required this.points,
     required this.rating,
     required this.tags,
-    this.gym = false,
     this.status = "unknown",
   });
 
@@ -20,7 +19,6 @@ class Problem {
   final List<String> tags;
 
   // TODO
-  bool gym = false;
   String status = "unknown";
 
   factory Problem.fromJson(Map<String, dynamic> json) {
@@ -36,7 +34,6 @@ class Problem {
           : List<String>.from(
               json["tags"]!.map((x) => x),
             ),
-      gym: json['gym'] ?? false,
       status: json['status'] ?? "unknown",
     );
   }
@@ -49,7 +46,6 @@ class Problem {
         "tags": tags.map((x) => x).toList(),
         "points": points,
         "rating": rating,
-        "gym": gym,
         "status": status,
       };
 }

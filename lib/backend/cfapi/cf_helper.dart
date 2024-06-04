@@ -1,7 +1,11 @@
 import 'package:cf_partner/backend/cfapi/models/contest.dart';
 import 'package:cf_partner/backend/cfapi/models/contests_request.dart';
 import 'package:cf_partner/backend/cfapi/models/problem.dart';
+import 'package:cf_partner/backend/cfapi/models/problemset_request.dart';
 import 'package:cf_partner/backend/cfapi/models/standing_request.dart';
+import 'package:cf_partner/backend/cfapi/models/submission.dart';
+import 'package:cf_partner/backend/cfapi/models/submission_request.dart';
+import 'package:cf_partner/backend/list_item.dart';
 import 'package:cf_partner/backend/problem_item.dart';
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/backend/web_helper.dart';
@@ -9,10 +13,9 @@ import 'package:cf_partner/backend/web_helper.dart';
 class CFHelper {
   static ProblemItem toLocalProblem(Problem p) {
     return ProblemItem(
-      title: p.name!,
-      source: p.gym ? 'Gym' : 'CF',
-      url:
-          'https://codeforces.com/${p.gym ? 'gym' : 'contest'}/${p.contestId!}/problem/${p.index!}',
+      title: '${p.index!}. ${p.name!}',
+      source: 'Codeforces',
+      url: 'https://codeforces.com/contest/${p.contestId!}/problem/${p.index!}',
       status: p.status,
       note: '',
       tags: p.tags,
@@ -25,13 +28,84 @@ class CFHelper {
           await WebHelper().get('https://codeforces.com/api/contest.list');
       ContestListRequest requestInfo =
           ContestListRequest.fromJson(request.data);
+      requestInfo.result.removeWhere((element) => element.phase != 'FINISHED');
       return requestInfo.result;
     } catch (e) {
       return <Contest>[];
     }
   }
 
-  static Future<List<ProblemItem>> getContestProblems(int id) async {
+  static Future<List<Problem>> getProblemSet() async {
+    try {
+      var request = await WebHelper()
+          .get('https://codeforces.com/api/problemset.problems');
+      ProblemSetRequest requestInfo = ProblemSetRequest.fromJson(request.data);
+      return requestInfo.result!.problems;
+    } catch (e) {
+      return <Problem>[];
+    }
+  }
+
+  static Future<List<Submission>> getSubmissions() async {
+    try {
+      var request = await WebHelper()
+          .get('https://codeforces.com/api/user.status', queryParameters: {
+        'handle': AppStorage().settings.handle,
+      });
+      SubmissionRequestResult requestInfo =
+          SubmissionRequestResult.fromJson(request.data);
+      return requestInfo.result;
+    } catch (e) {
+      return <Submission>[];
+    }
+  }
+
+  static Future<List<ListItem>> getContestsWithProblems() async {
+    try {
+      var contests = await getContestList();
+      var problems = await getProblemSet();
+      var submissions = await getSubmissions();
+      Map<int, ListItem> res = {};
+      Map<String, String> status = {};
+
+      for (var s in submissions) {
+        if (s.contestId == null || s.verdict == null) {
+          continue;
+        }
+        var id = '${s.contestId!}${s.problem!.index!}';
+        var result = s.verdict! == 'OK' ? 'Accepted' : 'Attempted';
+        if (!status.containsKey(id)) {
+          status.addAll({id: result});
+        } else if ((status[id] == 'Attempted') && (result == 'Accepted')) {
+          status[id] = 'Accepted';
+        }
+      }
+
+      for (var c in contests) {
+        res.addAll({c.id!: ListItem(title: c.name!, items: [])});
+      }
+
+      for (var p in problems.reversed) {
+        if (!res.containsKey(p.contestId!)) {
+          res.addAll({
+            p.contestId!: ListItem(title: 'Contest ${p.contestId!}', items: [])
+          });
+        }
+        var id = '${p.contestId!}${p.index!}';
+        var tmp = toLocalProblem(p);
+        if (status.containsKey(id)) {
+          tmp.status = status[id]!;
+        }
+        res[p.contestId!]!.items.add(tmp);
+      }
+      return res.values.toList()
+        ..removeWhere((element) => element.items.isEmpty);
+    } catch (e) {
+      return <ListItem>[];
+    }
+  }
+
+  static Future<List<ProblemItem>> getContestDetails(int id) async {
     try {
       var request = await WebHelper().get(
           'https://codeforces.com/api/contest.standings',
@@ -39,7 +113,6 @@ class CFHelper {
             'contestId': id,
             'showUnofficial': true,
             // TODO: display multi rows
-            // 'count': 1,
             'handles': AppStorage().settings.handle,
           });
       StandingRequest requestInfo = StandingRequest.fromJson(request.data);

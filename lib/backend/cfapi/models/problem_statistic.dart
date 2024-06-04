@@ -16,4 +16,9 @@ class ProblemStatistic {
       solvedCount: json["solvedCount"],
     );
   }
+  Map<String, dynamic> toJson() => {
+        "contestId": contestId,
+        "index": index,
+        "solvedCount": solvedCount,
+      };
 }

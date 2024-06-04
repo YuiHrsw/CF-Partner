@@ -63,7 +63,6 @@ class ExercisesState extends State<Exercises> {
                 editingController.clear();
                 showDialog(
                   barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
-                  useRootNavigator: false,
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
                     surfaceTintColor: Colors.transparent,

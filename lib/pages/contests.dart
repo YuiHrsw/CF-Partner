@@ -1,10 +1,12 @@
 import 'package:cf_partner/backend/cfapi/cf_helper.dart';
-import 'package:cf_partner/backend/cfapi/models/contest.dart';
+import 'package:cf_partner/backend/library_helper.dart';
 import 'package:cf_partner/backend/list_item.dart';
+import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/backend/web_helper.dart';
 import 'package:cf_partner/pages/list_detail.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ExplorePage extends StatefulWidget {
   const ExplorePage({super.key});
@@ -14,8 +16,12 @@ class ExplorePage extends StatefulWidget {
 }
 
 class ExplorePageState extends State<ExplorePage> {
-  List<Contest> contests = [];
+  List<ListItem> contests = [];
   bool locked = true;
+  bool urlMode = true;
+  final int pageCount = 100;
+  int currentPage = 0;
+  int totalPage = 1;
 
   @override
   void initState() {
@@ -24,152 +30,270 @@ class ExplorePageState extends State<ExplorePage> {
   }
 
   void init() async {
-    contests.addAll(await CFHelper.getContestList());
+    contests.addAll(await CFHelper.getContestsWithProblems());
     setState(() {
       locked = false;
+      totalPage = (contests.length + pageCount - 1) ~/ 100;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
+    final Map<String, Color> statusColor = {
+      'Accepted': colorScheme.primaryContainer,
+      'Attempted': colorScheme.errorContainer,
+      'unknown': colorScheme.background,
+    };
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Contests',
-          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
+        title: Row(
+          children: [
+            const Text(
+              'Contests',
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            locked
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(),
+                  )
+                : const SizedBox(),
+          ],
         ),
         actions: [
-          locked
-              ? SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: InkWell(
-                    onTap: () {
-                      WebHelper().cancel(token: CancelToken());
-                      setState(() {
-                        locked = false;
-                      });
-                    },
-                    child: const CircularProgressIndicator(),
-                  ),
-                )
-              : IconButton(
-                  onPressed: () async {
-                    setState(() {
-                      locked = true;
-                    });
-                    contests.clear();
-                    contests.addAll(await CFHelper.getContestList());
+          TextButton(
+            onPressed: () {
+              setState(() {
+                urlMode = !urlMode;
+              });
+            },
+            child: Text(
+              urlMode ? 'URL Mode' : 'Copy Mode',
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              setState(() {
+                currentPage--;
+                currentPage %= totalPage;
+              });
+            },
+            icon: const Icon(
+              Icons.skip_previous,
+            ),
+          ),
+          Container(
+            alignment: Alignment.center,
+            width: 50,
+            child: Text('${currentPage + 1} / $totalPage'),
+          ),
+          IconButton(
+            onPressed: () {
+              setState(() {
+                currentPage++;
+                currentPage %= totalPage;
+              });
+            },
+            icon: const Icon(
+              Icons.skip_next,
+            ),
+          ),
+          IconButton(
+            onPressed: locked
+                ? () {
+                    WebHelper().cancel(token: CancelToken());
                     setState(() {
                       locked = false;
                     });
+                  }
+                : () async {
+                    setState(() {
+                      currentPage = 0;
+                      totalPage = 1;
+                      locked = true;
+                    });
+                    contests.clear();
+                    contests.addAll(await CFHelper.getContestsWithProblems());
+                    setState(() {
+                      totalPage = (contests.length + pageCount - 1) ~/ 100;
+                      locked = false;
+                    });
                   },
-                  icon: const Icon(Icons.refresh)),
-          SizedBox(
-            width: locked ? 14 : 6,
+            icon: Icon(locked ? Icons.close : Icons.refresh),
+          ),
+          const SizedBox(
+            width: 6,
           )
         ],
         scrolledUnderElevation: 0,
       ),
-      body: ListView.builder(
-        itemBuilder: (context, index) {
-          return SizedBox(
-            height: 50,
-            child: Card.outlined(
-              child: InkWell(
-                borderRadius: BorderRadius.circular(12),
-                onTap: contests[index].phase! == 'FINISHED' && !locked
-                    ? () async {
-                        setState(() {
-                          locked = true;
-                        });
-                        var problems = await CFHelper.getContestProblems(
-                            contests[index].id!);
-                        if (!context.mounted || locked == false) return;
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ListDetail(
-                              listItem: ListItem(
-                                items: problems,
-                                title: contests[index].name!,
+      body: contests.isEmpty
+          ? const Center(
+              child: Text('Loading...'),
+            )
+          : ListView.builder(
+              itemBuilder: (context, index) {
+                index += pageCount * currentPage;
+                return SizedBox(
+                  height: 100,
+                  child: Column(
+                    children: [
+                      Card.filled(
+                        color: colorScheme.secondaryContainer,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ListDetail(
+                                  listItem: contests[index],
+                                  online: true,
+                                ),
                               ),
-                              online: true,
+                            );
+                          },
+                          child: SizedBox(
+                            height: 30,
+                            child: Row(
+                              children: [
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    contests[index].title,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        );
-                        setState(() {
-                          locked = false;
-                        });
-                      }
-                    : null,
-                child: Row(
-                  children: [
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Ink(
-                      decoration: BoxDecoration(
-                        color: colorScheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: FittedBox(
-                        child: Text(
-                          ' ${contests[index].id!} ',
-                          style: TextStyle(
-                              color: colorScheme.onPrimaryContainer,
-                              fontWeight: FontWeight.w500),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    contests[index].phase! == 'FINISHED'
-                        ? Ink(
-                            decoration: BoxDecoration(
-                              color: colorScheme.secondaryContainer,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: FittedBox(
-                              child: Text(
-                                ' Finished ',
-                                style: TextStyle(
-                                    color: colorScheme.onSecondaryContainer,
-                                    fontWeight: FontWeight.w500),
+                      Expanded(
+                        child: ListView.separated(
+                          padding: const EdgeInsets.only(left: 4),
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, problemIndex) {
+                            return InkWell(
+                              borderRadius: BorderRadius.circular(12),
+                              onTap: () {
+                                if (urlMode) {
+                                  launchUrl(Uri.parse(
+                                      contests[index].items[problemIndex].url));
+                                } else {
+                                  showDialog(
+                                    barrierColor: colorScheme.surfaceTint
+                                        .withOpacity(0.12),
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      surfaceTintColor: Colors.transparent,
+                                      title: const Text('Copy to'),
+                                      content: SizedBox(
+                                        width: 200,
+                                        height: 300,
+                                        child: ListView.builder(
+                                          itemBuilder: (context, indexList) {
+                                            return SizedBox(
+                                              height: 60,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  LibraryHelper
+                                                      .addProblemToList(
+                                                          AppStorage()
+                                                                  .problemlists[
+                                                              indexList],
+                                                          contests[index].items[
+                                                              problemIndex]);
+                                                  Navigator.pop(context);
+                                                },
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                child: Row(
+                                                  children: [
+                                                    const SizedBox(
+                                                      width: 6,
+                                                    ),
+                                                    Ink(
+                                                      decoration: BoxDecoration(
+                                                        color: colorScheme
+                                                            .primaryContainer,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                      ),
+                                                      height: 50,
+                                                      width: 50,
+                                                      child: Icon(
+                                                        Icons.star_rounded,
+                                                        color: colorScheme
+                                                            .onPrimaryContainer,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 6,
+                                                    ),
+                                                    Text(
+                                                      AppStorage()
+                                                          .problemlists[
+                                                              indexList]
+                                                          .title,
+                                                      style: const TextStyle(
+                                                          fontSize: 18),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          itemCount:
+                                              AppStorage().problemlists.length,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Ink(
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: colorScheme.secondary),
+                                  color: statusColor[contests[index]
+                                      .items[problemIndex]
+                                      .status],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.all(4),
+                                height: 20,
+                                width: 100,
+                                child: Text(
+                                  contests[index].items[problemIndex].title,
+                                  maxLines: 2,
+                                ),
                               ),
-                            ),
-                          )
-                        : const SizedBox(),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Ink(
-                      decoration: BoxDecoration(
-                        color: colorScheme.tertiaryContainer,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: FittedBox(
-                        child: Text(
-                          ' ${contests[index].durationSeconds! ~/ 3600}h${(contests[index].durationSeconds! % 3600) ~/ 60}m ',
-                          style: TextStyle(
-                              color: colorScheme.onTertiaryContainer,
-                              fontWeight: FontWeight.w500),
+                            );
+                          },
+                          itemCount: contests[index].items.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const SizedBox(
+                              width: 4,
+                            );
+                          },
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Expanded(child: Text(contests[index].name!)),
-                  ],
-                ),
-              ),
+                    ],
+                  ),
+                );
+              },
+              itemCount: currentPage == totalPage - 1
+                  ? contests.length % pageCount
+                  : pageCount,
             ),
-          );
-        },
-        itemCount: contests.length,
-      ),
     );
   }
 }

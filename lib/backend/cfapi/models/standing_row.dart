@@ -1,4 +1,4 @@
-import 'package:cf_partner/backend/cfapi/models/member.dart';
+// import 'package:cf_partner/backend/cfapi/models/member.dart';
 import 'package:cf_partner/backend/cfapi/models/party.dart';
 import 'package:cf_partner/backend/cfapi/models/problem_result.dart';
 

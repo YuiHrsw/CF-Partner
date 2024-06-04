@@ -1,9 +1,6 @@
-// import 'package:cf_partner/backend/cfapi/cf_helper.dart';
 import 'package:cf_partner/backend/library_helper.dart';
 import 'package:cf_partner/backend/list_item.dart';
 import 'package:cf_partner/backend/storage.dart';
-import 'package:cf_partner/backend/web_helper.dart';
-import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,7 +17,6 @@ class ListDetail extends StatefulWidget {
 class ListDetailState extends State<ListDetail> {
   final TextEditingController editingController = TextEditingController();
   bool locked = false;
-  bool gym = false;
   late List<bool> mark;
 
   @override
@@ -32,8 +28,9 @@ class ListDetailState extends State<ListDetail> {
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    final TextEditingController urlController = TextEditingController();
     final TextEditingController titleController = TextEditingController();
+    final TextEditingController urlController = TextEditingController();
+    final TextEditingController sourceController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -71,7 +68,6 @@ class ListDetailState extends State<ListDetail> {
                 : () {
                     urlController.clear();
                     showDialog(
-                      barrierDismissible: false,
                       barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
                       context: context,
                       builder: (BuildContext context) =>
@@ -89,8 +85,9 @@ class ListDetailState extends State<ListDetail> {
                                   maxLines: 1,
                                   controller: titleController,
                                   decoration: const InputDecoration(
+                                    label: Text('Title'),
                                     border: OutlineInputBorder(),
-                                    hintText: '(optional) title',
+                                    hintText: 'A + B Problem',
                                   ),
                                 ),
                                 TextField(
@@ -98,18 +95,21 @@ class ListDetailState extends State<ListDetail> {
                                   maxLines: 1,
                                   controller: urlController,
                                   decoration: const InputDecoration(
+                                    label: Text('URL'),
                                     border: OutlineInputBorder(),
-                                    hintText: 'url',
+                                    hintText:
+                                        'https://codeforces.com/problemset/problem/1772/A',
                                   ),
                                 ),
-                                SwitchListTile(
-                                  title: const Text('Source'),
-                                  value: gym,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      gym = value;
-                                    });
-                                  },
+                                TextField(
+                                  autofocus: true,
+                                  maxLines: 1,
+                                  controller: sourceController,
+                                  decoration: const InputDecoration(
+                                    label: Text('Source (optional)'),
+                                    border: OutlineInputBorder(),
+                                    hintText: 'Codeforces/AtCoder/Luogu/...',
+                                  ),
                                 ),
                               ],
                             ),
@@ -117,33 +117,18 @@ class ListDetailState extends State<ListDetail> {
                           actions: [
                             TextButton(
                               onPressed: () {
-                                if (locked) {
-                                  WebHelper().cancel(token: CancelToken());
-                                  setState(() {
-                                    locked = false;
-                                  });
-                                } else {
-                                  Navigator.pop(context);
-                                }
+                                Navigator.pop(context);
                               },
                               child: const Text('Cancel'),
                             ),
                             TextButton(
-                              onPressed: locked
-                                  ? null
-                                  : () async {
-                                      setState(() {
-                                        locked = true;
-                                      });
-                                      // TODO: add cf problem
-                                      // var cid = contestIdController.text;
-                                      // var pid = problemIdController.text;
-                                      setState(() {
-                                        locked = false;
-                                      });
-                                      if (!context.mounted) return;
-                                      Navigator.pop(context);
-                                    },
+                              onPressed: () {
+                                // TODO: add cf problem
+                                // var cid = contestIdController.text;
+                                // var pid = problemIdController.text;
+                                if (!context.mounted) return;
+                                Navigator.pop(context);
+                              },
                               child: const Text('OK'),
                             ),
                           ],
