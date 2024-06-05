@@ -11,6 +11,8 @@ import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/backend/web_helper.dart';
 
 class CFHelper {
+  static List<Contest> contests = [];
+  static List<Problem> problems = [];
   static ProblemItem toLocalProblem(Problem p) {
     return ProblemItem(
       title: '${p.index!}. ${p.name!}',
@@ -62,8 +64,52 @@ class CFHelper {
 
   static Future<List<ListItem>> getContestsWithProblems() async {
     try {
-      var contests = await getContestList();
-      var problems = await getProblemSet();
+      contests = await getContestList();
+      problems = await getProblemSet();
+      var submissions = await getSubmissions();
+      Map<int, ListItem> res = {};
+      Map<String, String> status = {};
+
+      for (var s in submissions) {
+        if (s.contestId == null || s.verdict == null) {
+          continue;
+        }
+        var id = '${s.contestId!}${s.problem!.index!}';
+        var result = s.verdict! == 'OK' ? 'Accepted' : 'Attempted';
+        if (!status.containsKey(id)) {
+          status.addAll({id: result});
+        } else if ((status[id] == 'Attempted') && (result == 'Accepted')) {
+          status[id] = 'Accepted';
+        }
+      }
+
+      for (var c in contests) {
+        res.addAll({c.id!: ListItem(title: c.name!, items: [])});
+      }
+
+      for (var p in problems.reversed) {
+        if (!res.containsKey(p.contestId!)) {
+          res.addAll({
+            p.contestId!: ListItem(title: 'Contest ${p.contestId!}', items: [])
+          });
+        }
+        var id = '${p.contestId!}${p.index!}';
+        var tmp = toLocalProblem(p);
+        if (status.containsKey(id)) {
+          tmp.status = status[id]!;
+        }
+        res[p.contestId!]!.items.add(tmp);
+      }
+
+      return res.values.toList()
+        ..removeWhere((element) => element.items.isEmpty);
+    } catch (e) {
+      return <ListItem>[];
+    }
+  }
+
+  static Future<List<ListItem>> getContestsWithProblemsCached() async {
+    try {
       var submissions = await getSubmissions();
       Map<int, ListItem> res = {};
       Map<String, String> status = {};

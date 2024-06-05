@@ -77,6 +77,32 @@ class ExplorePageState extends State<ExplorePage> {
             ),
           ),
           IconButton(
+            onPressed: locked
+                ? () {
+                    WebHelper().cancel(token: CancelToken());
+                    setState(() {
+                      locked = false;
+                    });
+                  }
+                : () async {
+                    setState(() {
+                      currentPage = 0;
+                      totalPage = 1;
+                      locked = true;
+                    });
+                    contests.clear();
+                    contests
+                        .addAll(await CFHelper.getContestsWithProblemsCached());
+                    setState(() {
+                      totalPage = (contests.length + pageCount - 1) ~/ 100;
+                      locked = false;
+                    });
+                  },
+            icon: const Icon(
+              Icons.person_search,
+            ),
+          ),
+          IconButton(
             onPressed: () {
               setState(() {
                 currentPage--;
