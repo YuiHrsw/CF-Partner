@@ -1,5 +1,6 @@
 import 'package:cf_partner/backend/library_helper.dart';
 import 'package:cf_partner/backend/list_item.dart';
+import 'package:cf_partner/backend/problem_item.dart';
 import 'package:cf_partner/backend/storage.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,6 @@ class ListDetailState extends State<ListDetail> {
     late final colorScheme = Theme.of(context).colorScheme;
     final TextEditingController titleController = TextEditingController();
     final TextEditingController urlController = TextEditingController();
-    final TextEditingController sourceController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -66,74 +66,77 @@ class ListDetailState extends State<ListDetail> {
             onPressed: locked || widget.online
                 ? null
                 : () {
+                    titleController.clear();
                     urlController.clear();
                     showDialog(
                       barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
                       context: context,
-                      builder: (BuildContext context) =>
-                          StatefulBuilder(builder: (context, setState) {
-                        return AlertDialog(
-                          surfaceTintColor: Colors.transparent,
-                          title: const Text('Add a problem'),
-                          content: SizedBox(
-                            height: 200,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                TextField(
-                                  autofocus: true,
-                                  maxLines: 1,
-                                  controller: titleController,
-                                  decoration: const InputDecoration(
-                                    label: Text('Title'),
-                                    border: OutlineInputBorder(),
-                                    hintText: 'A + B Problem',
-                                  ),
+                      builder: (BuildContext context) => AlertDialog(
+                        surfaceTintColor: Colors.transparent,
+                        title: const Text('Add a problem'),
+                        content: SizedBox(
+                          height: 200,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              TextField(
+                                autofocus: true,
+                                maxLines: 1,
+                                controller: titleController,
+                                decoration: const InputDecoration(
+                                  label: Text('Title'),
+                                  border: OutlineInputBorder(),
+                                  hintText: 'A + B Problem',
                                 ),
-                                TextField(
-                                  autofocus: true,
-                                  maxLines: 1,
-                                  controller: urlController,
-                                  decoration: const InputDecoration(
-                                    label: Text('URL'),
-                                    border: OutlineInputBorder(),
-                                    hintText:
-                                        'https://codeforces.com/problemset/problem/1772/A',
-                                  ),
+                              ),
+                              TextField(
+                                autofocus: true,
+                                maxLines: 3,
+                                controller: urlController,
+                                decoration: const InputDecoration(
+                                  label: Text('URL'),
+                                  border: OutlineInputBorder(),
+                                  hintText:
+                                      'https://codeforces.com/problemset/problem/1772/A',
                                 ),
-                                TextField(
-                                  autofocus: true,
-                                  maxLines: 1,
-                                  controller: sourceController,
-                                  decoration: const InputDecoration(
-                                    label: Text('Source (optional)'),
-                                    border: OutlineInputBorder(),
-                                    hintText: 'Codeforces/AtCoder/Luogu/...',
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                // TODO: add cf problem
-                                // var cid = contestIdController.text;
-                                // var pid = problemIdController.text;
-                                if (!context.mounted) return;
-                                Navigator.pop(context);
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        );
-                      }),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              var p = ProblemItem(
+                                title: titleController.text,
+                                url: urlController.text,
+                                status: 'unknown',
+                                source: 'others',
+                                tags: [],
+                                note: '',
+                              );
+                              if (urlController.text
+                                  .contains('codeforces.com')) {
+                                p.source = 'Codeforces';
+                              } else if (urlController.text
+                                  .contains('atcoder.com')) {
+                                p.source = 'AtCoder';
+                              }
+                              LibraryHelper.addProblemToList(
+                                widget.listItem,
+                                p,
+                              );
+                              Navigator.pop(context);
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
                     ).then((value) {
                       setState(() {});
                     });

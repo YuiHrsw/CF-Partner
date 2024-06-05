@@ -98,6 +98,7 @@ class CFHelper {
         }
         res[p.contestId!]!.items.add(tmp);
       }
+
       return res.values.toList()
         ..removeWhere((element) => element.items.isEmpty);
     } catch (e) {
