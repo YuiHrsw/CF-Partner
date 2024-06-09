@@ -42,9 +42,10 @@ class ExercisesState extends State<Exercises> {
         ),
         actions: [
           IconButton(
+            tooltip: 'Import list',
             onPressed: () async {
               FilePickerResult? result = await FilePicker.platform.pickFiles(
-                dialogTitle: 'Import a json problem list file...',
+                dialogTitle: 'Import a problems list file',
                 type: FileType.custom,
                 allowedExtensions: ["json"],
               );
@@ -59,6 +60,7 @@ class ExercisesState extends State<Exercises> {
             icon: const Icon(Icons.insert_drive_file),
           ),
           IconButton(
+              tooltip: 'New list',
               onPressed: () {
                 editingController.clear();
                 showDialog(
@@ -66,7 +68,7 @@ class ExercisesState extends State<Exercises> {
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
                     surfaceTintColor: Colors.transparent,
-                    title: const Text('New List'),
+                    title: const Text('New Problems List'),
                     content: TextField(
                       autofocus: true,
                       maxLines: 1,

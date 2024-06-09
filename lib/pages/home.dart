@@ -1,6 +1,6 @@
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/pages/exercises.dart';
-import 'package:cf_partner/pages/contests.dart';
+import 'package:cf_partner/pages/tracker.dart';
 import 'package:cf_partner/pages/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -41,11 +41,12 @@ class HomeState extends State<Home> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   IconButton(
+                    tooltip: 'Change theme mode',
                     hoverColor: colorScheme.primaryContainer,
                     iconSize: 28,
                     icon: Theme.of(context).brightness == Brightness.dark
                         ? const Icon(Icons.wb_sunny)
-                        : const Icon(Icons.mode_night),
+                        : const Icon(Icons.dark_mode),
                     onPressed: () {
                       setState(() {
                         AppStorage().settings.themeMode =
@@ -66,12 +67,12 @@ class HomeState extends State<Home> {
           ),
           destinations: const <NavigationRailDestination>[
             NavigationRailDestination(
-              icon: Icon(Icons.sticky_note_2),
+              icon: Icon(Icons.text_snippet),
               label: Text('Exercises'),
             ),
             NavigationRailDestination(
-              icon: Icon(Icons.emoji_events),
-              label: Text('Contests'),
+              icon: Icon(Icons.track_changes),
+              label: Text('Tracker'),
             ),
             NavigationRailDestination(
               icon: Icon(Icons.filter_vintage),
@@ -94,7 +95,7 @@ class HomeState extends State<Home> {
                 key: explore,
                 onGenerateRoute: (route) => MaterialPageRoute(
                   settings: route,
-                  builder: (context) => const ExplorePage(),
+                  builder: (context) => const TrackerPage(),
                 ),
               ),
               Navigator(

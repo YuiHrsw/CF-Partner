@@ -8,14 +8,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ExplorePage extends StatefulWidget {
-  const ExplorePage({super.key});
+class TrackerPage extends StatefulWidget {
+  const TrackerPage({super.key});
 
   @override
-  ExplorePageState createState() => ExplorePageState();
+  TrackerPageState createState() => TrackerPageState();
 }
 
-class ExplorePageState extends State<ExplorePage> {
+class TrackerPageState extends State<TrackerPage> {
   List<ListItem> contests = [];
   bool locked = true;
   bool urlMode = true;
@@ -50,7 +50,7 @@ class ExplorePageState extends State<ExplorePage> {
         title: Row(
           children: [
             const Text(
-              'Contests',
+              'Tracker',
               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
             ),
             const SizedBox(
@@ -66,17 +66,21 @@ class ExplorePageState extends State<ExplorePage> {
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () {
-              setState(() {
-                urlMode = !urlMode;
-              });
-            },
-            child: Text(
-              urlMode ? 'URL Mode' : 'Copy Mode',
+          Tooltip(
+            message: 'Tap to switch mode',
+            child: TextButton(
+              onPressed: () {
+                setState(() {
+                  urlMode = !urlMode;
+                });
+              },
+              child: Text(
+                urlMode ? 'URL Mode' : 'Copy Mode',
+              ),
             ),
           ),
           IconButton(
+            tooltip: 'Refresh personal status',
             onPressed: locked
                 ? null
                 : () async {
@@ -125,6 +129,7 @@ class ExplorePageState extends State<ExplorePage> {
             ),
           ),
           IconButton(
+            tooltip: locked ? 'Cancel loading' : 'Reload problems and contests',
             onPressed: locked
                 ? () {
                     WebHelper().cancel(token: CancelToken());
@@ -284,15 +289,8 @@ class ExplorePageState extends State<ExplorePage> {
                               },
                               child: Tooltip(
                                 waitDuration: const Duration(milliseconds: 500),
-                                message: '${problem.title}\n${problem.url}',
-                                decoration: BoxDecoration(
-                                  color: colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                textStyle: TextStyle(
-                                  color: colorScheme.onPrimary,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                message:
+                                    '${problem.title}\n${problem.url}\n\nTap to ${urlMode ? 'open url' : 'copy problem'}',
                                 child: Ink(
                                   decoration: BoxDecoration(
                                     border: problem.status == 'unknown'

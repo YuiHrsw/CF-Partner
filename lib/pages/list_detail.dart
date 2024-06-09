@@ -46,9 +46,10 @@ class ListDetailState extends State<ListDetail> {
         title: Text(widget.listItem.title),
         actions: [
           IconButton(
+            tooltip: 'Export list',
             onPressed: () async {
               String? outputFile = await FilePicker.platform.saveFile(
-                dialogTitle: 'Save Problem List As...',
+                dialogTitle: 'Export problem list file',
                 fileName: '${widget.listItem.title}.json',
                 type: FileType.custom,
                 allowedExtensions: ["json"],
@@ -63,6 +64,7 @@ class ListDetailState extends State<ListDetail> {
             icon: const Icon(Icons.save),
           ),
           IconButton(
+            tooltip: 'New problem',
             onPressed: locked || widget.online
                 ? null
                 : () {
@@ -269,6 +271,7 @@ class ListDetailState extends State<ListDetail> {
                     widget.online
                         ? const SizedBox()
                         : IconButton(
+                            tooltip: 'Change status',
                             onPressed: () {
                               showDialog(
                                 barrierColor:
@@ -426,6 +429,7 @@ class ListDetailState extends State<ListDetail> {
                     widget.online
                         ? const SizedBox()
                         : IconButton(
+                            tooltip: 'Edit tags',
                             onPressed: () {
                               showDialog(
                                   barrierColor:
@@ -578,6 +582,7 @@ class ListDetailState extends State<ListDetail> {
                             icon: const Icon(Icons.label_outline),
                           ),
                     IconButton(
+                      tooltip: 'Copy problem',
                       onPressed: () {
                         showDialog(
                           barrierColor:
@@ -650,6 +655,7 @@ class ListDetailState extends State<ListDetail> {
                     widget.online
                         ? const SizedBox()
                         : IconButton(
+                            tooltip: 'Delete problem',
                             onPressed: () {
                               LibraryHelper.removeProblemFromList(
                                   widget.listItem,

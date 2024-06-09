@@ -35,7 +35,8 @@ class SettingsState extends State<Settings> {
             ),
           ),
           ListTile(
-            title: const Text('Codeforces Handle'),
+            leading: const Icon(Icons.person_outline),
+            title: const Text('Codeforces handle'),
             trailing: Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -73,7 +74,8 @@ class SettingsState extends State<Settings> {
             ),
           ),
           ListTile(
-            title: const Text('Theme Color'),
+            leading: const Icon(Icons.color_lens_outlined),
+            title: const Text('Theme color'),
             trailing: SizedBox(
               height: 50,
               width: 140,
@@ -126,7 +128,17 @@ class SettingsState extends State<Settings> {
             height: 6,
           ),
           SwitchListTile(
-              title: const Text('Theme Mode follow system'),
+              title: const Row(
+                children: [
+                  Icon(
+                    Icons.brightness_auto_outlined,
+                  ),
+                  SizedBox(
+                    width: 12,
+                  ),
+                  Text('Follow system theme mode')
+                ],
+              ),
               value: AppStorage().settings.themeMode == ThemeMode.system,
               onChanged: (bool value) {
                 if (value) {
@@ -150,7 +162,17 @@ class SettingsState extends State<Settings> {
           AppStorage().settings.themeMode == ThemeMode.system
               ? const SizedBox()
               : SwitchListTile(
-                  title: const Text('Dark Mode'),
+                  title: const Row(
+                    children: [
+                      Icon(
+                        Icons.dark_mode_outlined,
+                      ),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Text('Dark mode')
+                    ],
+                  ),
                   value: AppStorage().settings.themeMode == ThemeMode.dark,
                   onChanged: (bool value) {
                     if (value) {
@@ -182,7 +204,7 @@ class SettingsState extends State<Settings> {
               launchUrl(Uri.directory(AppStorage().dataPath));
             },
             leading: const Icon(Icons.folder_outlined),
-            title: const Text('Open Data Folder'),
+            title: const Text('Open data folder'),
             subtitle: Text(AppStorage().dataPath),
           ),
           Container(
@@ -198,11 +220,11 @@ class SettingsState extends State<Settings> {
           ),
           ListTile(
             leading: const Icon(
-              Icons.bar_chart,
+              Icons.assessment_outlined,
             ),
             title: const Text('CF Partner 2'),
             trailing: const Text(
-              'v 2.0',
+              'v 2.1',
               style: TextStyle(
                 fontSize: 16,
               ),
