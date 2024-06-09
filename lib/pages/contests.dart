@@ -78,12 +78,7 @@ class ExplorePageState extends State<ExplorePage> {
           ),
           IconButton(
             onPressed: locked
-                ? () {
-                    WebHelper().cancel(token: CancelToken());
-                    setState(() {
-                      locked = false;
-                    });
-                  }
+                ? null
                 : () async {
                     setState(() {
                       currentPage = 0;
@@ -160,7 +155,7 @@ class ExplorePageState extends State<ExplorePage> {
       ),
       body: contests.isEmpty
           ? const Center(
-              child: Text('Loading...'),
+              child: Text('List is empty'),
             )
           : ListView.builder(
               itemBuilder: (context, index) {
@@ -169,42 +164,44 @@ class ExplorePageState extends State<ExplorePage> {
                   height: 100,
                   child: Column(
                     children: [
-                      Card.filled(
-                        color: colorScheme.secondaryContainer,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(12),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ListDetail(
-                                  listItem: contests[index],
-                                  online: true,
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ListDetail(
+                                listItem: contests[index],
+                                online: true,
+                              ),
+                            ),
+                          );
+                        },
+                        child: SizedBox(
+                          height: 30,
+                          child: Row(
+                            children: [
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  contests[index].title,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500),
                                 ),
                               ),
-                            );
-                          },
-                          child: SizedBox(
-                            height: 30,
-                            child: Row(
-                              children: [
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    contests[index].title,
-                                  ),
-                                ),
-                              ],
-                            ),
+                            ],
                           ),
                         ),
+                      ),
+                      const SizedBox(
+                        height: 4,
                       ),
                       Expanded(
                         child: ListView.separated(
                           padding: const EdgeInsets.only(left: 4),
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, problemIndex) {
+                            var problem = contests[index].items[problemIndex];
                             return InkWell(
                               borderRadius: BorderRadius.circular(12),
                               onTap: () {
@@ -285,21 +282,35 @@ class ExplorePageState extends State<ExplorePage> {
                                   );
                                 }
                               },
-                              child: Ink(
+                              child: Tooltip(
+                                waitDuration: const Duration(milliseconds: 500),
+                                message: '${problem.title}\n${problem.url}',
                                 decoration: BoxDecoration(
-                                  border:
-                                      Border.all(color: colorScheme.secondary),
-                                  color: statusColor[contests[index]
-                                      .items[problemIndex]
-                                      .status],
-                                  borderRadius: BorderRadius.circular(12),
+                                  color: colorScheme.primary,
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                                padding: const EdgeInsets.all(4),
-                                height: 20,
-                                width: 100,
-                                child: Text(
-                                  contests[index].items[problemIndex].title,
-                                  maxLines: 2,
+                                textStyle: TextStyle(
+                                  color: colorScheme.onPrimary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                    border: problem.status == 'unknown'
+                                        ? Border.all(
+                                            color:
+                                                colorScheme.secondaryContainer,
+                                            width: 4,
+                                          )
+                                        : null,
+                                    color: statusColor[problem.status],
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: const EdgeInsets.all(4),
+                                  width: 100,
+                                  child: Text(
+                                    problem.title,
+                                    maxLines: 2,
+                                  ),
                                 ),
                               ),
                             );
@@ -311,6 +322,9 @@ class ExplorePageState extends State<ExplorePage> {
                             );
                           },
                         ),
+                      ),
+                      const SizedBox(
+                        height: 4,
                       ),
                     ],
                   ),
