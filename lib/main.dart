@@ -32,11 +32,11 @@ class CFPartner extends StatelessWidget {
             colorScheme: lightTheme,
             tooltipTheme: TooltipThemeData(
               decoration: BoxDecoration(
-                color: lightTheme.primary,
+                color: lightTheme.secondary,
                 borderRadius: BorderRadius.circular(10),
               ),
               textStyle: TextStyle(
-                color: lightTheme.onPrimary,
+                color: lightTheme.onSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -47,11 +47,11 @@ class CFPartner extends StatelessWidget {
             colorScheme: darkTheme,
             tooltipTheme: TooltipThemeData(
               decoration: BoxDecoration(
-                color: darkTheme.primary,
+                color: darkTheme.secondary,
                 borderRadius: BorderRadius.circular(10),
               ),
               textStyle: TextStyle(
-                color: darkTheme.onPrimary,
+                color: darkTheme.onSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),

@@ -41,9 +41,14 @@ class TrackerPageState extends State<TrackerPage> {
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
     final Map<String, Color> statusColor = {
-      'Accepted': colorScheme.primaryContainer,
-      'Attempted': colorScheme.errorContainer,
+      'Accepted': colorScheme.secondaryContainer,
+      'Attempted': colorScheme.tertiaryContainer,
       'unknown': colorScheme.background,
+    };
+    final Map<String, Color> textColor = {
+      'Accepted': colorScheme.onSecondaryContainer,
+      'Attempted': colorScheme.onTertiaryContainer,
+      'unknown': colorScheme.onBackground,
     };
     return Scaffold(
       appBar: AppBar(
@@ -191,7 +196,8 @@ class TrackerPageState extends State<TrackerPage> {
                                 child: Text(
                                   contests[index].title,
                                   style: const TextStyle(
-                                      fontWeight: FontWeight.w500),
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ],
@@ -304,10 +310,17 @@ class TrackerPageState extends State<TrackerPage> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   padding: const EdgeInsets.all(4),
-                                  width: 100,
+                                  width: 110,
                                   child: Text(
                                     problem.title,
+                                    overflow: TextOverflow.ellipsis,
                                     maxLines: 2,
+                                    style: TextStyle(
+                                      color: textColor[problem.status],
+                                      // fontWeight: problem.status == 'unknown'
+                                      //     ? null
+                                      //     : FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ),

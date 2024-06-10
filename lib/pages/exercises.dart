@@ -168,6 +168,7 @@ class ExercisesState extends State<Exercises> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             IconButton(
+                                tooltip: 'Delete list',
                                 onPressed: () {
                                   LibraryHelper.deleteList(
                                       AppStorage().problemlists[index]);

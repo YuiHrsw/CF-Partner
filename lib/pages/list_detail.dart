@@ -173,7 +173,7 @@ class ListDetailState extends State<ListDetail> {
                   itemBuilder: (context, tagIndex) {
                     return Container(
                       decoration: BoxDecoration(
-                        color: colorScheme.tertiaryContainer,
+                        color: colorScheme.secondaryContainer,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       height: 20,
@@ -184,8 +184,9 @@ class ListDetailState extends State<ListDetail> {
                             child: Text(
                               widget.listItem.items[index].tags[tagIndex],
                               style: TextStyle(
-                                  color: colorScheme.onTertiaryContainer,
-                                  fontWeight: FontWeight.w500),
+                                color: colorScheme.onSecondaryContainer,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ),
@@ -232,7 +233,7 @@ class ListDetailState extends State<ListDetail> {
                           color:
                               widget.listItem.items[index].status == 'Accepted'
                                   ? colorScheme.primaryContainer
-                                  : colorScheme.errorContainer,
+                                  : colorScheme.tertiaryContainer,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: FittedBox(
@@ -242,7 +243,7 @@ class ListDetailState extends State<ListDetail> {
                               color: widget.listItem.items[index].status ==
                                       'Accepted'
                                   ? colorScheme.onPrimaryContainer
-                                  : colorScheme.onErrorContainer,
+                                  : colorScheme.onTertiaryContainer,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -257,7 +258,7 @@ class ListDetailState extends State<ListDetail> {
                   style: TextStyle(
                       fontSize: 18,
                       color: widget.listItem.items[index].status == 'Accepted'
-                          ? colorScheme.primary
+                          ? colorScheme.onPrimaryContainer
                           : null,
                       fontWeight:
                           widget.listItem.items[index].status == 'Accepted'
@@ -349,8 +350,8 @@ class ListDetailState extends State<ListDetail> {
                                                 BorderRadius.circular(20),
                                             child: Ink(
                                               decoration: BoxDecoration(
-                                                color:
-                                                    colorScheme.errorContainer,
+                                                color: colorScheme
+                                                    .tertiaryContainer,
                                                 borderRadius:
                                                     BorderRadius.circular(20),
                                               ),
@@ -362,7 +363,7 @@ class ListDetailState extends State<ListDetail> {
                                                   Icon(
                                                     Icons.cancel_outlined,
                                                     color: colorScheme
-                                                        .onErrorContainer,
+                                                        .onTertiaryContainer,
                                                   ),
                                                   const SizedBox(
                                                     width: 6,
@@ -372,7 +373,7 @@ class ListDetailState extends State<ListDetail> {
                                                     style: TextStyle(
                                                       fontSize: 18,
                                                       color: colorScheme
-                                                          .onErrorContainer,
+                                                          .onTertiaryContainer,
                                                     ),
                                                   ),
                                                 ],
@@ -518,7 +519,7 @@ class ListDetailState extends State<ListDetail> {
                                             ],
                                           ),
                                           content: SizedBox(
-                                            width: 200,
+                                            width: 400,
                                             height: 300,
                                             child: ListView.builder(
                                               itemBuilder:
@@ -539,6 +540,9 @@ class ListDetailState extends State<ListDetail> {
                                                       ),
                                                       Expanded(
                                                         child: Text(
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                           widget
                                                               .listItem
                                                               .items[index]
@@ -592,7 +596,7 @@ class ListDetailState extends State<ListDetail> {
                             surfaceTintColor: Colors.transparent,
                             title: const Text('Copy to'),
                             content: SizedBox(
-                              width: 200,
+                              width: 400,
                               height: 300,
                               child: ListView.builder(
                                 itemBuilder: (context, indexList) {
