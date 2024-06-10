@@ -67,7 +67,7 @@ class TrackerPageState extends State<TrackerPage> {
         ),
         actions: [
           Tooltip(
-            message: 'Tap to switch mode',
+            message: 'Click to switch mode',
             child: TextButton(
               onPressed: () {
                 setState(() {
@@ -290,7 +290,7 @@ class TrackerPageState extends State<TrackerPage> {
                               child: Tooltip(
                                 waitDuration: const Duration(milliseconds: 500),
                                 message:
-                                    '${problem.title}\n${problem.url}\n\nTap to ${urlMode ? 'open url' : 'copy problem'}',
+                                    '${problem.title}\n${problem.url}\n\nClick to ${urlMode ? 'open url' : 'copy problem'}',
                                 child: Ink(
                                   decoration: BoxDecoration(
                                     border: problem.status == 'unknown'
