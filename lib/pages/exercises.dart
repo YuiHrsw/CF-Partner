@@ -168,14 +168,17 @@ class ExercisesState extends State<Exercises> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             IconButton(
-                                tooltip: 'Delete list',
-                                onPressed: () {
-                                  LibraryHelper.deleteList(
-                                      AppStorage().problemlists[index]);
-                                  AppStorage().problemlists.removeAt(index);
-                                  setState(() {});
-                                },
-                                icon: const Icon(Icons.delete_outline)),
+                              tooltip: 'Delete list',
+                              onPressed: () {
+                                LibraryHelper.deleteList(
+                                    AppStorage().problemlists[index]);
+                                AppStorage().problemlists.removeAt(index);
+                                setState(() {});
+                              },
+                              icon: const Icon(
+                                Icons.delete_outline,
+                              ),
+                            ),
                           ],
                         )),
                         const SizedBox(

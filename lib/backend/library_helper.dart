@@ -65,6 +65,11 @@ class LibraryHelper {
     saveList(list);
   }
 
+  static void changeProblemNote(ListItem list, int index, String note) {
+    list.items[index].note = note;
+    saveList(list);
+  }
+
   static void saveListFile(String location) async {
     var fp = File(location);
     var pl = ListItem.fromJson(jsonDecode(await fp.readAsString()));

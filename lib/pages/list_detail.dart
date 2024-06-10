@@ -17,6 +17,8 @@ class ListDetail extends StatefulWidget {
 
 class ListDetailState extends State<ListDetail> {
   final TextEditingController editingController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController urlController = TextEditingController();
   bool locked = false;
   late List<bool> mark;
 
@@ -29,8 +31,6 @@ class ListDetailState extends State<ListDetail> {
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    final TextEditingController titleController = TextEditingController();
-    final TextEditingController urlController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -584,6 +584,71 @@ class ListDetailState extends State<ListDetail> {
                               });
                             },
                             icon: const Icon(Icons.label_outline),
+                          ),
+                    widget.online
+                        ? const SizedBox()
+                        : IconButton(
+                            tooltip: 'Edit note',
+                            onPressed: () {
+                              editingController.text =
+                                  widget.listItem.items[index].note;
+                              showDialog(
+                                barrierColor:
+                                    colorScheme.surfaceTint.withOpacity(0.12),
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  surfaceTintColor: Colors.transparent,
+                                  title: Text(
+                                    widget.listItem.items[index].title,
+                                  ),
+                                  content: SizedBox(
+                                    height: 400,
+                                    width: 600,
+                                    child: TextField(
+                                      autofocus: true,
+                                      minLines: null,
+                                      maxLines: null,
+                                      expands: true,
+                                      controller: editingController,
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      onSubmitted: (value) {
+                                        LibraryHelper.changeProblemNote(
+                                          widget.listItem,
+                                          index,
+                                          value,
+                                        );
+                                        setState(() {});
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        LibraryHelper.changeProblemNote(
+                                          widget.listItem,
+                                          index,
+                                          editingController.text,
+                                        );
+                                        setState(() {});
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              setState(() {});
+                            },
+                            icon: const Icon(Icons.notes_outlined),
                           ),
                     IconButton(
                       tooltip: 'Copy problem',
