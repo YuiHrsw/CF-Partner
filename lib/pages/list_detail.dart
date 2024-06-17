@@ -20,12 +20,10 @@ class ListDetailState extends State<ListDetail> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController urlController = TextEditingController();
   bool locked = false;
-  late List<bool> mark;
 
   @override
   void initState() {
     super.initState();
-    mark = List.filled(widget.listItem.items.length, false, growable: true);
   }
 
   @override
@@ -445,12 +443,13 @@ class ListDetailState extends State<ListDetail> {
                                               const Expanded(
                                                   child: Text('Edit Tags')),
                                               IconButton(
+                                                tooltip: 'Add a tag',
                                                 onPressed: () {
                                                   editingController.clear();
                                                   showDialog(
                                                     barrierColor: colorScheme
                                                         .surfaceTint
-                                                        .withOpacity(0.12),
+                                                        .withOpacity(0.06),
                                                     context: context,
                                                     builder: (BuildContext
                                                             context) =>
@@ -729,9 +728,6 @@ class ListDetailState extends State<ListDetail> {
                               LibraryHelper.removeProblemFromList(
                                   widget.listItem,
                                   widget.listItem.items[index]);
-                              if (index < mark.length) {
-                                mark.removeAt(index);
-                              }
                               setState(() {});
                             },
                             icon: const Icon(Icons.delete_outline),

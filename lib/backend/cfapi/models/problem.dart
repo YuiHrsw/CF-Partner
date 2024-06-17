@@ -7,7 +7,6 @@ class Problem {
     required this.points,
     required this.rating,
     required this.tags,
-    this.status = "unknown",
   });
 
   final int? contestId;
@@ -17,9 +16,6 @@ class Problem {
   final double? points;
   final int? rating;
   final List<String> tags;
-
-  // TODO
-  String status = "unknown";
 
   factory Problem.fromJson(Map<String, dynamic> json) {
     return Problem(
@@ -34,7 +30,6 @@ class Problem {
           : List<String>.from(
               json["tags"]!.map((x) => x),
             ),
-      status: json['status'] ?? "unknown",
     );
   }
 
@@ -46,6 +41,5 @@ class Problem {
         "tags": tags.map((x) => x).toList(),
         "points": points,
         "rating": rating,
-        "status": status,
       };
 }

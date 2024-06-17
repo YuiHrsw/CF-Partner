@@ -43,12 +43,12 @@ class TrackerPageState extends State<TrackerPage> {
     final Map<String, Color> statusColor = {
       'Accepted': colorScheme.secondaryContainer,
       'Attempted': colorScheme.tertiaryContainer,
-      'unknown': colorScheme.background,
+      'unknown': colorScheme.surface,
     };
     final Map<String, Color> textColor = {
       'Accepted': colorScheme.onSecondaryContainer,
       'Attempted': colorScheme.onTertiaryContainer,
-      'unknown': colorScheme.onBackground,
+      'unknown': colorScheme.onSurface,
     };
     return Scaffold(
       appBar: AppBar(
@@ -296,7 +296,7 @@ class TrackerPageState extends State<TrackerPage> {
                               child: Tooltip(
                                 waitDuration: const Duration(milliseconds: 500),
                                 message:
-                                    '${problem.title}\n${problem.url}\n\nClick to ${urlMode ? 'open url' : 'copy problem'}',
+                                    '${problem.title} - ${problem.tags.last}\n${problem.url}\n\nClick to ${urlMode ? 'open url' : 'copy problem'}',
                                 child: Ink(
                                   decoration: BoxDecoration(
                                     border: problem.status == 'unknown'

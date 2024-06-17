@@ -14,11 +14,12 @@ class CFHelper {
   static List<Contest> contests = [];
   static List<Problem> problems = [];
   static ProblemItem toLocalProblem(Problem p) {
+    p.tags.add(p.rating == null ? 'N/A' : p.rating.toString());
     return ProblemItem(
       title: '${p.index!}. ${p.name!}',
       source: 'Codeforces',
       url: 'https://codeforces.com/contest/${p.contestId!}/problem/${p.index!}',
-      status: p.status,
+      status: 'unknown',
       note: '',
       tags: p.tags,
     );

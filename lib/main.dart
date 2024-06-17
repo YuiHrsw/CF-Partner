@@ -28,7 +28,7 @@ class CFPartner extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'CF Partner 2',
           theme: ThemeData(
-            fontFamily: 'Microsoft YaHei UI',
+            fontFamilyFallback: const ['SimHei'],
             colorScheme: lightTheme,
             tooltipTheme: TooltipThemeData(
               decoration: BoxDecoration(
@@ -43,7 +43,7 @@ class CFPartner extends StatelessWidget {
             useMaterial3: true,
           ),
           darkTheme: ThemeData(
-            fontFamily: 'Microsoft YaHei UI',
+            fontFamilyFallback: const ['SimHei'],
             colorScheme: darkTheme,
             tooltipTheme: TooltipThemeData(
               decoration: BoxDecoration(

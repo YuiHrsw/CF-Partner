@@ -41,7 +41,7 @@ class SettingsState extends State<Settings> {
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               width: 140,
-              height: 50,
+              height: 40,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 color: Theme.of(context).colorScheme.secondaryContainer,
@@ -77,7 +77,7 @@ class SettingsState extends State<Settings> {
             leading: const Icon(Icons.color_lens_outlined),
             title: const Text('Theme color'),
             trailing: SizedBox(
-              height: 50,
+              height: 40,
               width: 140,
               child: DropdownButtonFormField(
                 // icon: const SizedBox(),
@@ -224,7 +224,7 @@ class SettingsState extends State<Settings> {
             ),
             title: const Text('CF Partner 2'),
             trailing: const Text(
-              'v 2.1',
+              'v 2.1.1',
               style: TextStyle(
                 fontSize: 16,
               ),
