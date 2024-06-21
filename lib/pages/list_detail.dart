@@ -150,6 +150,7 @@ class ListDetailState extends State<ListDetail> {
           )
         ],
         scrolledUnderElevation: 0,
+        backgroundColor: colorScheme.surface,
       ),
       body: ListView.separated(
         separatorBuilder: (context, index) {

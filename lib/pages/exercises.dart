@@ -120,6 +120,7 @@ class ExercisesState extends State<Exercises> {
           )
         ],
         scrolledUnderElevation: 0,
+        backgroundColor: colorScheme.surface,
       ),
       body: loaded
           ? ListView.builder(
