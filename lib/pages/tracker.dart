@@ -16,6 +16,7 @@ class TrackerPage extends StatefulWidget {
 }
 
 class TrackerPageState extends State<TrackerPage> {
+  final ScrollController _scrollController = ScrollController();
   List<ListItem> contests = [];
   bool locked = true;
   bool urlMode = true;
@@ -112,6 +113,7 @@ class TrackerPageState extends State<TrackerPage> {
                 currentPage--;
                 currentPage %= totalPage;
               });
+              _scrollController.jumpTo(0);
             },
             icon: const Icon(
               Icons.skip_previous,
@@ -128,6 +130,7 @@ class TrackerPageState extends State<TrackerPage> {
                 currentPage++;
                 currentPage %= totalPage;
               });
+              _scrollController.jumpTo(0);
             },
             icon: const Icon(
               Icons.skip_next,
@@ -169,6 +172,8 @@ class TrackerPageState extends State<TrackerPage> {
               child: Text('List is empty'),
             )
           : ListView.builder(
+              itemExtent: 100,
+              controller: _scrollController,
               itemBuilder: (context, index) {
                 index += pageCount * currentPage;
                 return SizedBox(
