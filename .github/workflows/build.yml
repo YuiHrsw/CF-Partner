@@ -1,0 +1,70 @@
+name: Build CF Partner Releases
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.2'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Set up Flutter for Windows
+        run: flutter config --enable-windows-desktop
+
+      - name: Build Windows App
+        run: flutter build windows
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.2'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Set up Flutter for Linux
+        run: flutter config --enable-linux-desktop
+
+      - name: Build Linux App
+        run: flutter build linux
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.2'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Set up Flutter for macOS
+        run: flutter config --enable-macos-desktop
+
+      - name: Build macOS App
+        run: flutter build macos
