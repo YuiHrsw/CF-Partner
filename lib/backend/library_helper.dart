@@ -31,6 +31,12 @@ class LibraryHelper {
     fp.writeAsString(jsonEncode(data));
   }
 
+  static void renameList(ListItem list, String name) {
+    deleteList(list);
+    list.title = name;
+    saveList(list);
+  }
+
   static void deleteList(ListItem list) {
     var fp = File('${AppStorage().dataPath}/lists/${list.title}.json');
     if (fp.existsSync()) {

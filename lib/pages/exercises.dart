@@ -12,7 +12,6 @@ class Exercises extends StatefulWidget {
   ExercisesState createState() => ExercisesState();
 }
 
-// TODO: random exercise
 class ExercisesState extends State<Exercises> {
   final TextEditingController editingController = TextEditingController();
   bool loaded = false;
@@ -41,6 +40,11 @@ class ExercisesState extends State<Exercises> {
           style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
         ),
         actions: [
+          // IconButton(
+          //   tooltip: 'Open filter',
+          //   onPressed: () {},
+          //   icon: const Icon(Icons.filter_list_rounded),
+          // ),
           IconButton(
             tooltip: 'Import list',
             onPressed: () async {
@@ -64,10 +68,8 @@ class ExercisesState extends State<Exercises> {
               onPressed: () {
                 editingController.clear();
                 showDialog(
-                  barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
-                    surfaceTintColor: Colors.transparent,
                     title: const Text('New Problems List'),
                     content: TextField(
                       autofocus: true,
@@ -119,8 +121,6 @@ class ExercisesState extends State<Exercises> {
             width: 6,
           )
         ],
-        scrolledUnderElevation: 0,
-        backgroundColor: colorScheme.surface,
       ),
       body: loaded
           ? ListView.builder(
@@ -168,6 +168,61 @@ class ExercisesState extends State<Exercises> {
                             child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
+                            IconButton(
+                              tooltip: 'Rename list',
+                              onPressed: () {
+                                editingController.clear();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    title: const Text('Rename List'),
+                                    content: TextField(
+                                      autofocus: true,
+                                      maxLines: 1,
+                                      controller: editingController,
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        labelText: 'name',
+                                      ),
+                                      onSubmitted: (value) {
+                                        LibraryHelper.renameList(
+                                            AppStorage().problemlists[index],
+                                            value);
+                                        AppStorage().problemlists[index].title =
+                                            value;
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          LibraryHelper.renameList(
+                                              AppStorage().problemlists[index],
+                                              editingController.text);
+                                          AppStorage()
+                                              .problemlists[index]
+                                              .title = editingController.text;
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                ).then((value) {
+                                  setState(() {});
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.drive_file_rename_outline,
+                              ),
+                            ),
                             IconButton(
                               tooltip: 'Delete list',
                               onPressed: () {

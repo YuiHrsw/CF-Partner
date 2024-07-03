@@ -164,8 +164,6 @@ class TrackerPageState extends State<TrackerPage> {
             width: 6,
           )
         ],
-        scrolledUnderElevation: 0,
-        backgroundColor: colorScheme.surface,
       ),
       body: contests.isEmpty
           ? const Center(

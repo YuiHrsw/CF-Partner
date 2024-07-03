@@ -20,13 +20,9 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-        colorScheme.primary.withOpacity(0.04), colorScheme.surface);
     return Row(
       children: <Widget>[
         NavigationRail(
-          backgroundColor: backgroundColor,
-          indicatorColor: colorScheme.primaryContainer,
           selectedIndex: currentPageIndex,
           onDestinationSelected: (int index) {
             setState(() {

@@ -13,15 +13,12 @@ class SettingsState extends State<Settings> {
   TextEditingController controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    var colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'Settings',
           style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
         ),
-        scrolledUnderElevation: 0,
-        backgroundColor: colorScheme.surface,
       ),
       body: ListView(
         children: [

@@ -40,7 +40,19 @@ class CFPartner extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            useMaterial3: true,
+            dialogTheme: DialogTheme(
+              surfaceTintColor: Colors.transparent,
+              barrierColor: lightTheme.surfaceTint.withOpacity(0.12),
+            ),
+            appBarTheme: AppBarTheme(
+              scrolledUnderElevation: 0,
+              backgroundColor: lightTheme.surface,
+            ),
+            navigationRailTheme: NavigationRailThemeData(
+              backgroundColor: Color.alphaBlend(
+                  lightTheme.primary.withOpacity(0.04), lightTheme.surface),
+              indicatorColor: lightTheme.primaryContainer,
+            ),
           ),
           darkTheme: ThemeData(
             fontFamilyFallback: const ['SimHei'],
@@ -55,7 +67,19 @@ class CFPartner extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            useMaterial3: true,
+            dialogTheme: DialogTheme(
+              surfaceTintColor: Colors.transparent,
+              barrierColor: darkTheme.surfaceTint.withOpacity(0.12),
+            ),
+            appBarTheme: AppBarTheme(
+              scrolledUnderElevation: 0,
+              backgroundColor: darkTheme.surface,
+            ),
+            navigationRailTheme: NavigationRailThemeData(
+              backgroundColor: Color.alphaBlend(
+                  darkTheme.primary.withOpacity(0.04), darkTheme.surface),
+              indicatorColor: darkTheme.primaryContainer,
+            ),
           ),
           themeMode: value.settings.themeMode,
           home: const Home(),
