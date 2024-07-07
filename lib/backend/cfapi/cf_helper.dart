@@ -14,7 +14,6 @@ class CFHelper {
   static List<Contest> contests = [];
   static List<Problem> problems = [];
   static ProblemItem toLocalProblem(Problem p) {
-    p.tags.add(p.rating == null ? 'N/A' : p.rating.toString());
     return ProblemItem(
       title: '${p.index!}. ${p.name!}',
       source: 'Codeforces',
@@ -43,7 +42,11 @@ class CFHelper {
       var request = await WebHelper()
           .get('https://codeforces.com/api/problemset.problems');
       ProblemSetRequest requestInfo = ProblemSetRequest.fromJson(request.data);
-      return requestInfo.result!.problems;
+      var problems = requestInfo.result!.problems;
+      for (var p in problems) {
+        p.tags.add(p.rating == null ? 'N/A' : p.rating.toString());
+      }
+      return problems;
     } catch (e) {
       return <Problem>[];
     }
