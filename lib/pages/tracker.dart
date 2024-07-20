@@ -257,7 +257,7 @@ class TrackerPageState extends State<TrackerPage> {
                                                     const SizedBox(
                                                       width: 6,
                                                     ),
-                                                    Ink(
+                                                    Container(
                                                       decoration: BoxDecoration(
                                                         color: colorScheme
                                                             .primaryContainer,

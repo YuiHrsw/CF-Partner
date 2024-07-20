@@ -341,7 +341,7 @@ class ListDetailState extends State<ListDetail> {
                                           },
                                           borderRadius:
                                               BorderRadius.circular(20),
-                                          child: Ink(
+                                          child: Container(
                                             decoration: BoxDecoration(
                                               color:
                                                   colorScheme.tertiaryContainer,
@@ -656,7 +656,7 @@ class ListDetailState extends State<ListDetail> {
                                         const SizedBox(
                                           width: 6,
                                         ),
-                                        Ink(
+                                        Container(
                                           decoration: BoxDecoration(
                                             color: colorScheme.primaryContainer,
                                             borderRadius:

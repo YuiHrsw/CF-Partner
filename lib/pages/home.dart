@@ -1,4 +1,5 @@
 import 'package:cf_partner/backend/storage.dart';
+import 'package:cf_partner/pages/challenge.dart';
 import 'package:cf_partner/pages/exercises.dart';
 import 'package:cf_partner/pages/tracker.dart';
 import 'package:cf_partner/pages/settings.dart';
@@ -13,8 +14,9 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   int currentPageIndex = 0;
-  final questionList = GlobalKey<NavigatorState>();
-  final explore = GlobalKey<NavigatorState>();
+  final exercise = GlobalKey<NavigatorState>();
+  final tracker = GlobalKey<NavigatorState>();
+  final challenge = GlobalKey<NavigatorState>();
   final settings = GlobalKey<NavigatorState>();
 
   @override
@@ -71,6 +73,10 @@ class HomeState extends State<Home> {
               label: Text('Tracker'),
             ),
             NavigationRailDestination(
+              icon: Icon(Icons.task_alt),
+              label: Text('Challenge'),
+            ),
+            NavigationRailDestination(
               icon: Icon(Icons.filter_vintage),
               label: Text('Settings'),
             ),
@@ -81,17 +87,24 @@ class HomeState extends State<Home> {
             index: currentPageIndex,
             children: [
               Navigator(
-                key: questionList,
+                key: exercise,
                 onGenerateRoute: (route) => MaterialPageRoute(
                   settings: route,
                   builder: (context) => const Exercises(),
                 ),
               ),
               Navigator(
-                key: explore,
+                key: tracker,
                 onGenerateRoute: (route) => MaterialPageRoute(
                   settings: route,
                   builder: (context) => const TrackerPage(),
+                ),
+              ),
+              Navigator(
+                key: challenge,
+                onGenerateRoute: (route) => MaterialPageRoute(
+                  settings: route,
+                  builder: (context) => const Challenge(),
                 ),
               ),
               Navigator(
