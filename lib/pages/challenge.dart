@@ -14,7 +14,8 @@ class Challenge extends StatefulWidget {
 
 class ChallengeState extends State<Challenge> {
   TextEditingController controller = TextEditingController();
-  List<ProblemItem> problems = [];
+  List<ChallengeProblem> problems = [];
+  String errorMsg = '';
 
   @override
   void initState() {
@@ -23,11 +24,18 @@ class ChallengeState extends State<Challenge> {
   }
 
   void init() async {
-    var res = await WebHelper().get(
-        "https://raw.githubusercontent.com/Yawn-Sean/Daily_CF_Problems/main/README.md");
-    setState(() {
-      problems = parse(res.data);
-    });
+    try {
+      var res = await WebHelper().get(
+          "https://raw.githubusercontent.com/Yawn-Sean/Daily_CF_Problems/main/README.md");
+      setState(() {
+        problems = parse(res.data);
+        errorMsg = '';
+      });
+    } catch (e) {
+      setState(() {
+        errorMsg = e.toString();
+      });
+    }
   }
 
   @override
@@ -40,7 +48,29 @@ class ChallengeState extends State<Challenge> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            tooltip: 'Open Project Website',
+            onPressed: () {
+              launchUrl(
+                  Uri.parse('https://github.com/Yawn-Sean/Daily_CF_Problems'));
+            },
+            icon: const Icon(Icons.open_in_new),
+          ),
+          IconButton(
+            tooltip: 'Refresh',
+            onPressed: () async {
+              try {
+                var res = await WebHelper().get(
+                    "https://raw.githubusercontent.com/Yawn-Sean/Daily_CF_Problems/main/README.md");
+                setState(() {
+                  problems = parse(res.data);
+                  errorMsg = '';
+                });
+              } catch (e) {
+                setState(() {
+                  errorMsg = e.toString();
+                });
+              }
+            },
             icon: const Icon(Icons.refresh),
           ),
           const SizedBox(
@@ -48,40 +78,40 @@ class ChallengeState extends State<Challenge> {
           )
         ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return Container(
-              height: 260,
-              alignment: Alignment.center,
-              child: Text(
-                '${DateTime.now().year} - ${DateTime.now().month} - ${DateTime.now().day}',
-                style: const TextStyle(fontSize: 30),
-              ),
-            );
-          } else {
-            return buildProblemListTile(problems[index - 1]);
-          }
-        },
-        itemCount: problems.length + 1,
-        // children: [
-        //   Container(
-        //     height: 260,
-        //     alignment: Alignment.center,
-        //     child: Text(
-        //       '${DateTime.now().year} - ${DateTime.now().month} - ${DateTime.now().day}',
-        //       style: const TextStyle(fontSize: 30),
-        //     ),
-        //   ),
-        //   buildProblemListTile(context, problems[0]),
-        //   buildProblemListTile(context, problems[1]),
-        // ],
-      ),
+      body: errorMsg != ''
+          ? Center(
+              child: Text(errorMsg),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return Container(
+                    height: 260,
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${DateTime.now().year} - ${DateTime.now().month} - ${DateTime.now().day}',
+                          style: const TextStyle(fontSize: 30),
+                        ),
+                        const Text(
+                          'Daily CF Problems by Yawn-Sean',
+                        )
+                      ],
+                    ),
+                  );
+                } else {
+                  return buildProblemListTile(problems[index - 1]);
+                }
+              },
+              itemCount: problems.length + 1,
+            ),
     );
   }
 
-  Widget buildProblemListTile(ProblemItem p) {
+  Widget buildProblemListTile(ChallengeProblem p) {
     var colorScheme = Theme.of(context).colorScheme;
     return SizedBox(
       height: 46,
@@ -99,47 +129,36 @@ class ChallengeState extends State<Challenge> {
               const SizedBox(
                 width: 4,
               ),
-              p.status == 'unknown'
-                  ? const SizedBox()
-                  : Ink(
-                      decoration: BoxDecoration(
-                        color: p.status == 'Accepted'
-                            ? colorScheme.primaryContainer
-                            : colorScheme.tertiaryContainer,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: FittedBox(
-                        child: Text(
-                          ' ${p.status} ',
-                          style: TextStyle(
-                            color: p.status == 'Accepted'
-                                ? colorScheme.onPrimaryContainer
-                                : colorScheme.onTertiaryContainer,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
+              Ink(
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: FittedBox(
+                  child: Text(
+                    ' ${p.difficulty} ',
+                    style: TextStyle(
+                      color: colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w500,
                     ),
+                  ),
+                ),
+              ),
               const SizedBox(
                 width: 6,
               ),
               Text(
-                // AppStorage().problemlists[index].title,
                 p.title,
-                style: TextStyle(
-                    fontSize: 18,
-                    color: p.status == 'Accepted'
-                        ? colorScheme.onPrimaryContainer
-                        : null,
-                    fontWeight:
-                        p.status == 'Accepted' ? FontWeight.w500 : null),
+                style: const TextStyle(
+                  fontSize: 18,
+                ),
               ),
               Expanded(
                   child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   IconButton(
-                    tooltip: 'Show hint',
+                    tooltip: 'Hint',
                     onPressed: () {
                       showDialog(
                         context: context,
@@ -147,27 +166,33 @@ class ChallengeState extends State<Challenge> {
                           title: const Text(
                             'Hint',
                           ),
-                          content: Text(p.note),
+                          content: Text(p.hint),
                           actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                launchUrl(Uri.parse(p.tutorial));
+                              },
+                              child: const Text('Tutorial'),
+                            ),
                             TextButton(
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: const Text('OK'),
+                              child: const Text('Close'),
                             ),
                           ],
                         ),
                       );
                     },
-                    icon: const Icon(Icons.help_outline),
+                    icon: const Icon(Icons.tips_and_updates_outlined),
                   ),
                   IconButton(
-                    tooltip: 'Copy problem',
+                    tooltip: 'Save',
                     onPressed: () {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) => AlertDialog(
-                          title: const Text('Copy to'),
+                          title: const Text('Add to list'),
                           content: SizedBox(
                             width: 400,
                             height: 300,
@@ -239,8 +264,8 @@ class ChallengeState extends State<Challenge> {
   }
 }
 
-List<ProblemItem> parse(String markdownContent) {
-  List<ProblemItem> res = [];
+List<ChallengeProblem> parse(String markdownContent) {
+  List<ChallengeProblem> res = [];
 
   final tableStartPattern =
       RegExp(r'\| Difficulty \| Problems \| Hints \| Solution \|');
@@ -282,16 +307,37 @@ List<ProblemItem> parse(String markdownContent) {
           RegExp(r'\((.*?)\)').firstMatch(columns[3])?.group(1) ?? 'N/A';
 
       res.add(
-        ProblemItem(
-            title: problemName,
-            source: problemLink,
-            url: problemLink,
-            status: 'Unknown',
-            note: '$hint\n$solutionLink',
-            tags: [difficulty]),
+        ChallengeProblem(
+          title: problemName,
+          source: 'Codeforces',
+          url: problemLink,
+          status: 'unknown',
+          note: '',
+          tags: [],
+          hint: hint,
+          tutorial: solutionLink,
+          difficulty: difficulty,
+        ),
       );
     }
   }
 
   return res;
+}
+
+class ChallengeProblem extends ProblemItem {
+  ChallengeProblem({
+    required super.title,
+    required super.source,
+    required super.url,
+    required super.status,
+    required super.note,
+    required super.tags,
+    required this.hint,
+    required this.tutorial,
+    required this.difficulty,
+  });
+  String difficulty;
+  String hint;
+  String tutorial;
 }
