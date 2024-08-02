@@ -24,16 +24,6 @@ class CodespaceState extends State<Codespace> {
             onPressed: () {},
             icon: const Icon(Icons.settings),
           ),
-          // IconButton(
-          //   tooltip: 'Build',
-          //   onPressed: () {},
-          //   icon: const Icon(Icons.construction),
-          // ),
-          IconButton(
-            tooltip: 'Open Problem Link',
-            onPressed: () {},
-            icon: const Icon(Icons.open_in_new),
-          ),
           const SizedBox(
             width: 6,
           ),

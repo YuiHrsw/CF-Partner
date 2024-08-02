@@ -32,6 +32,12 @@ class LibraryHelper {
     fp.writeAsString(str);
   }
 
+  static Future<void> refreshList(ListItem list) async {
+    var fp = File('${AppStorage().dataPath}/lists/${list.title}.json');
+    var pl = ListItem.fromJson(jsonDecode(await fp.readAsString()));
+    list.items = pl.items;
+  }
+
   static void renameList(ListItem list, String name) {
     deleteList(list);
     list.title = name;
