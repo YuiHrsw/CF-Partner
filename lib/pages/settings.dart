@@ -198,6 +198,8 @@ class SettingsState extends State<Settings> {
               ),
             ),
           ),
+          // TODO: data backup
+          // TODO: change work directory
           ListTile(
             onTap: () {
               launchUrl(Uri.directory(AppStorage().dataPath));
@@ -223,7 +225,7 @@ class SettingsState extends State<Settings> {
             ),
             title: const Text('CF Partner 2'),
             trailing: const Text(
-              'v 2.3',
+              'v 2.4',
               style: TextStyle(
                 fontSize: 16,
               ),

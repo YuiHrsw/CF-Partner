@@ -22,11 +22,6 @@ class ListDetailState extends State<ListDetail> {
   bool locked = false;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
 
@@ -44,10 +39,10 @@ class ListDetailState extends State<ListDetail> {
         title: Text(widget.listItem.title),
         actions: [
           IconButton(
-            tooltip: 'Export list',
+            tooltip: 'Save as',
             onPressed: () async {
               String? outputFile = await FilePicker.platform.saveFile(
-                dialogTitle: 'Export problem list file',
+                dialogTitle: 'Save as',
                 fileName: '${widget.listItem.title}.json',
                 type: FileType.custom,
                 allowedExtensions: ["json"],
@@ -163,7 +158,7 @@ class ListDetailState extends State<ListDetail> {
                 height: 4,
               ),
               SizedBox(
-                height: 20,
+                height: widget.listItem.items[index].tags.isEmpty ? 0 : 20,
                 child: ListView.separated(
                   padding: const EdgeInsets.only(left: 4),
                   scrollDirection: Axis.horizontal,
@@ -173,7 +168,8 @@ class ListDetailState extends State<ListDetail> {
                         color: colorScheme.secondaryContainer,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      height: 20,
+                      height:
+                          widget.listItem.items[index].tags.isEmpty ? 0 : 20,
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 6),

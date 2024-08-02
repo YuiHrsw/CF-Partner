@@ -32,6 +32,7 @@ class TrackerPageState extends State<TrackerPage> {
 
   void init() async {
     contests.addAll(await CFHelper.getContestsWithProblems());
+    if (!mounted) return;
     setState(() {
       locked = false;
       totalPage = (contests.length + pageCount - 1) ~/ 100;
@@ -53,11 +54,20 @@ class TrackerPageState extends State<TrackerPage> {
     };
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          constraints: const BoxConstraints(),
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        titleSpacing: 0,
         title: Row(
           children: [
             const Text(
-              'Tracker',
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
+              'CF Tracker',
+              // style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
             ),
             const SizedBox(
               width: 10,

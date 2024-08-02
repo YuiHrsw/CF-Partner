@@ -1,7 +1,8 @@
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/pages/challenge.dart';
+import 'package:cf_partner/pages/codespace.dart';
 import 'package:cf_partner/pages/exercises.dart';
-import 'package:cf_partner/pages/tracker.dart';
+import 'package:cf_partner/pages/toolbox.dart';
 import 'package:cf_partner/pages/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -13,10 +14,11 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
-  int currentPageIndex = 0;
+  int currentPageIndex = 1;
   final exercise = GlobalKey<NavigatorState>();
   final tracker = GlobalKey<NavigatorState>();
   final challenge = GlobalKey<NavigatorState>();
+  final toolbox = GlobalKey<NavigatorState>();
   final settings = GlobalKey<NavigatorState>();
 
   @override
@@ -31,7 +33,11 @@ class HomeState extends State<Home> {
               currentPageIndex = index;
             });
           },
-          labelType: NavigationRailLabelType.all,
+          // indicatorShape: const CircleBorder(),
+
+          minWidth: 70,
+          // labelType: NavigationRailLabelType.all,
+          labelType: NavigationRailLabelType.none,
           trailing: Expanded(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 10),
@@ -65,19 +71,43 @@ class HomeState extends State<Home> {
           ),
           destinations: const <NavigationRailDestination>[
             NavigationRailDestination(
-              icon: Icon(Icons.text_snippet),
-              label: Text('Exercises'),
+              padding: EdgeInsets.symmetric(vertical: 4),
+              icon: Icon(
+                Icons.feed,
+                size: 28,
+              ),
+              label: Text('Codespace'),
             ),
             NavigationRailDestination(
-              icon: Icon(Icons.track_changes),
-              label: Text('Tracker'),
+              padding: EdgeInsets.symmetric(vertical: 4),
+              icon: Icon(
+                Icons.category,
+                size: 28,
+              ),
+              label: Text('Categories'),
             ),
             NavigationRailDestination(
-              icon: Icon(Icons.task_alt),
+              padding: EdgeInsets.symmetric(vertical: 4),
+              icon: Icon(
+                Icons.calendar_month_rounded,
+                size: 28,
+              ),
               label: Text('Challenge'),
             ),
             NavigationRailDestination(
-              icon: Icon(Icons.filter_vintage),
+              padding: EdgeInsets.symmetric(vertical: 4),
+              icon: Icon(
+                Icons.token_rounded,
+                size: 28,
+              ),
+              label: Text('Toolbox'),
+            ),
+            NavigationRailDestination(
+              padding: EdgeInsets.symmetric(vertical: 4),
+              icon: Icon(
+                Icons.filter_vintage,
+                size: 28,
+              ),
               label: Text('Settings'),
             ),
           ],
@@ -87,6 +117,13 @@ class HomeState extends State<Home> {
             index: currentPageIndex,
             children: [
               Navigator(
+                key: tracker,
+                onGenerateRoute: (route) => MaterialPageRoute(
+                  settings: route,
+                  builder: (context) => const Codespace(),
+                ),
+              ),
+              Navigator(
                 key: exercise,
                 onGenerateRoute: (route) => MaterialPageRoute(
                   settings: route,
@@ -94,17 +131,17 @@ class HomeState extends State<Home> {
                 ),
               ),
               Navigator(
-                key: tracker,
-                onGenerateRoute: (route) => MaterialPageRoute(
-                  settings: route,
-                  builder: (context) => const TrackerPage(),
-                ),
-              ),
-              Navigator(
                 key: challenge,
                 onGenerateRoute: (route) => MaterialPageRoute(
                   settings: route,
                   builder: (context) => const Challenge(),
+                ),
+              ),
+              Navigator(
+                key: toolbox,
+                onGenerateRoute: (route) => MaterialPageRoute(
+                  settings: route,
+                  builder: (context) => const Toolbox(),
                 ),
               ),
               Navigator(

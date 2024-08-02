@@ -28,7 +28,8 @@ class LibraryHelper {
       fp.createSync(recursive: true);
     }
     var data = list.toJson();
-    fp.writeAsString(jsonEncode(data));
+    var str = const JsonEncoder.withIndent('  ').convert(data);
+    fp.writeAsString(str);
   }
 
   static void renameList(ListItem list, String name) {

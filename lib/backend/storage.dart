@@ -71,7 +71,7 @@ class AppStorage extends ChangeNotifier {
     if (!await fp.exists()) {
       await fp.create(recursive: true);
       var data = AppSettings().toJson();
-      var str = jsonEncode(data);
+      var str = const JsonEncoder.withIndent('  ').convert(data);
       await fp.writeAsString(str);
     }
     settings = AppSettings.fromJson(jsonDecode(await fp.readAsString()));
@@ -82,7 +82,8 @@ class AppStorage extends ChangeNotifier {
     var settingsPath = "$dataPath/config/settings.json";
     var fp = File(settingsPath);
     var data = settings.toJson();
-    var str = jsonEncode(data);
+    // var str = jsonEncode(data);
+    var str = const JsonEncoder.withIndent('  ').convert(data);
     await fp.writeAsString(str);
     // notifyListeners();
   }

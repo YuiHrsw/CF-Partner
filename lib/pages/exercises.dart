@@ -2,8 +2,8 @@ import 'package:cf_partner/backend/library_helper.dart';
 import 'package:cf_partner/backend/list_item.dart';
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/pages/list_detail.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Exercises extends StatefulWidget {
   const Exercises({super.key});
@@ -36,32 +36,31 @@ class ExercisesState extends State<Exercises> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Exercises',
+          'Categories',
           style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
         ),
         actions: [
-          // IconButton(
-          //   tooltip: 'Open filter',
-          //   onPressed: () {},
-          //   icon: const Icon(Icons.filter_list_rounded),
-          // ),
           IconButton(
-            tooltip: 'Import list',
+            tooltip: 'Refresh',
             onPressed: () async {
-              FilePickerResult? result = await FilePicker.platform.pickFiles(
-                dialogTitle: 'Import a problems list file',
-                type: FileType.custom,
-                allowedExtensions: ["json"],
-              );
-
-              if (result == null) {
-                return;
-              }
-
-              LibraryHelper.saveListFile(result.files.single.path!);
-              setState(() {});
+              setState(() {
+                loaded = false;
+              });
+              AppStorage().problemlists.clear();
+              AppStorage().problemlists.addAll(await LibraryHelper.loadLists());
+              setState(() {
+                loaded = true;
+              });
             },
-            icon: const Icon(Icons.insert_drive_file),
+            icon: const Icon(Icons.refresh_rounded),
+          ),
+          IconButton(
+            tooltip: 'Open folder',
+            onPressed: () {
+              var path = "${AppStorage().dataPath}/lists/";
+              launchUrl(Uri.directory(path));
+            },
+            icon: const Icon(Icons.folder),
           ),
           IconButton(
               tooltip: 'New list',
@@ -154,6 +153,8 @@ class ExercisesState extends State<Exercises> {
                           width: 50,
                           child: Icon(
                             Icons.star_rounded,
+                            // TODO: custom icon
+                            // const IconData(57344, fontFamily: 'MaterialIcons'),
                             color: colorScheme.onPrimaryContainer,
                           ),
                         ),
