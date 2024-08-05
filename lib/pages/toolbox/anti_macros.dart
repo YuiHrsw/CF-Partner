@@ -21,7 +21,6 @@ class AntiMacrosState extends State<AntiMacros> {
       appBar: AppBar(
         title: const Text(
           'Anti-Macros',
-          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
         ),
         actions: [
           IconButton(
