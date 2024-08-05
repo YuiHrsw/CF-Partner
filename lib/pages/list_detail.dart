@@ -470,155 +470,155 @@ class ListDetailState extends State<ListDetail> {
                             Icons.flag_outlined,
                           ),
                         ),
-                  // widget.online
-                  //     ? const SizedBox()
-                  //     : IconButton(
-                  //         tooltip: 'Edit tags',
-                  //         onPressed: () {
-                  //           showDialog(
-                  //               context: context,
-                  //               builder: (context) => StatefulBuilder(
-                  //                       builder: (context, setState) {
-                  //                     return AlertDialog(
-                  //                       title: Row(
-                  //                         children: [
-                  //                           const Expanded(
-                  //                               child: Text('Edit Tags')),
-                  //                           IconButton(
-                  //                             tooltip: 'Add a tag',
-                  //                             onPressed: () {
-                  //                               editingController.clear();
-                  //                               showDialog(
-                  //                                 barrierColor: colorScheme
-                  //                                     .surfaceTint
-                  //                                     .withOpacity(0.06),
-                  //                                 context: context,
-                  //                                 builder:
-                  //                                     (BuildContext context) =>
-                  //                                         AlertDialog(
-                  //                                   title:
-                  //                                       const Text('Add a tag'),
-                  //                                   content: TextField(
-                  //                                     autofocus: true,
-                  //                                     maxLines: 1,
-                  //                                     controller:
-                  //                                         editingController,
-                  //                                     decoration:
-                  //                                         const InputDecoration(
-                  //                                       border:
-                  //                                           OutlineInputBorder(),
-                  //                                       labelText: 'tag name',
-                  //                                     ),
-                  //                                     onSubmitted: (value) {
-                  //                                       LibraryHelper
-                  //                                           .addTagToProblem(
-                  //                                               widget.listItem,
-                  //                                               index,
-                  //                                               value);
-                  //                                       setState(() {});
-                  //                                       Navigator.pop(context);
-                  //                                     },
-                  //                                   ),
-                  //                                   actions: <Widget>[
-                  //                                     TextButton(
-                  //                                       onPressed: () {
-                  //                                         Navigator.pop(
-                  //                                             context);
-                  //                                       },
-                  //                                       child: const Text(
-                  //                                           'Cancel'),
-                  //                                     ),
-                  //                                     TextButton(
-                  //                                       onPressed: () {
-                  //                                         LibraryHelper
-                  //                                             .addTagToProblem(
-                  //                                                 widget
-                  //                                                     .listItem,
-                  //                                                 index,
-                  //                                                 editingController
-                  //                                                     .text);
-                  //                                         setState(() {});
-                  //                                         Navigator.pop(
-                  //                                             context);
-                  //                                       },
-                  //                                       child: const Text('OK'),
-                  //                                     ),
-                  //                                   ],
-                  //                                 ),
-                  //                               );
-                  //                               setState(() {});
-                  //                             },
-                  //                             icon: const Icon(
-                  //                               Icons.new_label,
-                  //                             ),
-                  //                           ),
-                  //                         ],
-                  //                       ),
-                  //                       content: SizedBox(
-                  //                         width: 400,
-                  //                         height: 300,
-                  //                         child: ListView.builder(
-                  //                           itemBuilder: (context, indexList) {
-                  //                             return SizedBox(
-                  //                               height: 40,
-                  //                               child: Row(
-                  //                                 children: [
-                  //                                   const SizedBox(
-                  //                                     width: 6,
-                  //                                   ),
-                  //                                   const Icon(
-                  //                                     Icons
-                  //                                         .label_outline_rounded,
-                  //                                   ),
-                  //                                   const SizedBox(
-                  //                                     width: 6,
-                  //                                   ),
-                  //                                   Expanded(
-                  //                                     child: Text(
-                  //                                       maxLines: 1,
-                  //                                       overflow: TextOverflow
-                  //                                           .ellipsis,
-                  //                                       widget
-                  //                                           .listItem
-                  //                                           .items[index]
-                  //                                           .tags[indexList],
-                  //                                       style: const TextStyle(
-                  //                                           fontSize: 18),
-                  //                                     ),
-                  //                                   ),
-                  //                                   IconButton(
-                  //                                     onPressed: () {
-                  //                                       LibraryHelper
-                  //                                           .removeTagFromProblem(
-                  //                                               widget.listItem,
-                  //                                               index,
-                  //                                               widget
-                  //                                                       .listItem
-                  //                                                       .items[
-                  //                                                           index]
-                  //                                                       .tags[
-                  //                                                   indexList]);
-                  //                                       setState(() {});
-                  //                                     },
-                  //                                     icon: const Icon(
-                  //                                       Icons.close,
-                  //                                     ),
-                  //                                   ),
-                  //                                 ],
-                  //                               ),
-                  //                             );
-                  //                           },
-                  //                           itemCount: widget.listItem
-                  //                               .items[index].tags.length,
-                  //                         ),
-                  //                       ),
-                  //                     );
-                  //                   })).then((value) {
-                  //             setState(() {});
-                  //           });
-                  //         },
-                  //         icon: const Icon(Icons.label_outline),
-                  //       ),
+                  widget.online
+                      ? const SizedBox()
+                      : IconButton(
+                          tooltip: 'Edit tags',
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) => StatefulBuilder(
+                                        builder: (context, setState) {
+                                      return AlertDialog(
+                                        title: Row(
+                                          children: [
+                                            const Expanded(
+                                                child: Text('Edit Tags')),
+                                            IconButton(
+                                              tooltip: 'Add a tag',
+                                              onPressed: () {
+                                                editingController.clear();
+                                                showDialog(
+                                                  barrierColor: colorScheme
+                                                      .surfaceTint
+                                                      .withOpacity(0.06),
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          AlertDialog(
+                                                    title:
+                                                        const Text('Add a tag'),
+                                                    content: TextField(
+                                                      autofocus: true,
+                                                      maxLines: 1,
+                                                      controller:
+                                                          editingController,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                        border:
+                                                            OutlineInputBorder(),
+                                                        labelText: 'tag name',
+                                                      ),
+                                                      onSubmitted: (value) {
+                                                        LibraryHelper
+                                                            .addTagToProblem(
+                                                                widget.listItem,
+                                                                index,
+                                                                value);
+                                                        setState(() {});
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text(
+                                                            'Cancel'),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          LibraryHelper
+                                                              .addTagToProblem(
+                                                                  widget
+                                                                      .listItem,
+                                                                  index,
+                                                                  editingController
+                                                                      .text);
+                                                          setState(() {});
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text('OK'),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                                setState(() {});
+                                              },
+                                              icon: const Icon(
+                                                Icons.new_label,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        content: SizedBox(
+                                          width: 400,
+                                          height: 300,
+                                          child: ListView.builder(
+                                            itemBuilder: (context, indexList) {
+                                              return SizedBox(
+                                                height: 40,
+                                                child: Row(
+                                                  children: [
+                                                    const SizedBox(
+                                                      width: 6,
+                                                    ),
+                                                    const Icon(
+                                                      Icons
+                                                          .label_outline_rounded,
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 6,
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        widget
+                                                            .listItem
+                                                            .items[index]
+                                                            .tags[indexList],
+                                                        style: const TextStyle(
+                                                            fontSize: 18),
+                                                      ),
+                                                    ),
+                                                    IconButton(
+                                                      onPressed: () {
+                                                        LibraryHelper
+                                                            .removeTagFromProblem(
+                                                                widget.listItem,
+                                                                index,
+                                                                widget
+                                                                        .listItem
+                                                                        .items[
+                                                                            index]
+                                                                        .tags[
+                                                                    indexList]);
+                                                        setState(() {});
+                                                      },
+                                                      icon: const Icon(
+                                                        Icons.close,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                            itemCount: widget.listItem
+                                                .items[index].tags.length,
+                                          ),
+                                        ),
+                                      );
+                                    })).then((value) {
+                              setState(() {});
+                            });
+                          },
+                          icon: const Icon(Icons.label_outline),
+                        ),
                   widget.online
                       ? const SizedBox()
                       : IconButton(

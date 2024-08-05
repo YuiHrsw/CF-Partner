@@ -1,4 +1,5 @@
-import 'package:cf_partner/pages/tracker.dart';
+import 'package:cf_partner/pages/toolbox/anti_macros.dart';
+import 'package:cf_partner/pages/toolbox/tracker.dart';
 import 'package:flutter/material.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
@@ -65,7 +66,13 @@ class ToolboxState extends State<Toolbox> {
               Icons.find_replace,
             ),
             title: const Text('Anti-Macros'),
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const AntiMacros(),
+                ),
+              );
+            },
           ),
           ListTile(
             leading: const Icon(
