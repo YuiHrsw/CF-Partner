@@ -19,6 +19,15 @@ class AntiMacrosState extends State<AntiMacros> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          constraints: const BoxConstraints(),
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        titleSpacing: 0,
         title: const Text(
           'Anti-Macros',
         ),

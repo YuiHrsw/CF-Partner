@@ -1,6 +1,5 @@
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/pages/challenge.dart';
-import 'package:cf_partner/pages/codespace.dart';
 import 'package:cf_partner/pages/exercises.dart';
 import 'package:cf_partner/pages/toolbox.dart';
 import 'package:cf_partner/pages/settings.dart';
@@ -16,7 +15,6 @@ class Home extends StatefulWidget {
 class HomeState extends State<Home> {
   int currentPageIndex = 0;
   final exercise = GlobalKey<NavigatorState>();
-  final tracker = GlobalKey<NavigatorState>();
   final challenge = GlobalKey<NavigatorState>();
   final toolbox = GlobalKey<NavigatorState>();
   final settings = GlobalKey<NavigatorState>();
@@ -73,14 +71,6 @@ class HomeState extends State<Home> {
             NavigationRailDestination(
               padding: EdgeInsets.symmetric(vertical: 4),
               icon: Icon(
-                Icons.feed,
-                size: 28,
-              ),
-              label: Text('Codespace'),
-            ),
-            NavigationRailDestination(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              icon: Icon(
                 Icons.category,
                 size: 28,
               ),
@@ -116,13 +106,6 @@ class HomeState extends State<Home> {
           child: IndexedStack(
             index: currentPageIndex,
             children: [
-              Navigator(
-                key: tracker,
-                onGenerateRoute: (route) => MaterialPageRoute(
-                  settings: route,
-                  builder: (context) => const Codespace(),
-                ),
-              ),
               Navigator(
                 key: exercise,
                 onGenerateRoute: (route) => MaterialPageRoute(
