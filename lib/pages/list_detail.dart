@@ -83,7 +83,9 @@ class ListDetailState extends State<ListDetail> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    server.close();
+    if (!widget.online) {
+      server.close();
+    }
   }
 
   @override
@@ -105,11 +107,13 @@ class ListDetailState extends State<ListDetail> {
         actions: [
           IconButton(
             tooltip: 'Refresh',
-            onPressed: () async {
-              LibraryHelper.refreshList(widget.listItem).then((value) {
-                setState(() {});
-              });
-            },
+            onPressed: locked || widget.online
+                ? null
+                : () async {
+                    LibraryHelper.refreshList(widget.listItem).then((value) {
+                      setState(() {});
+                    });
+                  },
             icon: const Icon(Icons.refresh_rounded),
           ),
           IconButton(
