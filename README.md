@@ -1,11 +1,23 @@
 # CF Partner
 
-Customize your own problem list, and check whether a problem is accepted.
+Competitive Programming Tools Collection.
 
-The app is based on the [Codeforces Official API](https://codeforces.com/apiHelp).
+![screenshot](res/images/screenshot/screenshot.png)
 
-## Build msix package for Windows
+## Download
 
-```shell
-dart run msix:create
-```
+[Microsoft Store](https://apps.microsoft.com/detail/9n7h24z5rg0q?hl=en-lc&gl=LC)
+
+[Github Release](https://github.com/YuiHrsw/CF-Partner/releases/tag/v2.2)
+
+[Nightly Builds](https://github.com/YuiHrsw/CF-Partner/actions)
+
+## Features
+
+- Custom Problem list
+- Codeforces Status Check
+- Remove Macros
+
+## Thanks
+
+[Daily CF Problems](https://github.com/Yawn-Sean/Daily_CF_Problems)

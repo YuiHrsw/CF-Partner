@@ -31,7 +31,7 @@ dev_dependencies:
 flutter_launcher_icons:
   windows:
     generate: true
-    image_path: "res/images/icon.png"
+    image_path: "res/images/icon/icon512.png"
     icon_size: 256
 
 flutter:
