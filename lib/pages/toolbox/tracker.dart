@@ -17,12 +17,12 @@ class TrackerPage extends StatefulWidget {
 
 class TrackerPageState extends State<TrackerPage> {
   final ScrollController _scrollController = ScrollController();
-  List<ListItem> contests = [];
-  bool locked = true;
-  bool urlMode = true;
-  final int pageCount = 100;
-  int currentPage = 0;
-  int totalPage = 1;
+  final List<ListItem> _contests = [];
+  bool _locked = true;
+  bool _urlMode = true;
+  final int _pageCount = 100;
+  int _currentPage = 0;
+  int _totalPage = 1;
 
   @override
   void initState() {
@@ -31,11 +31,11 @@ class TrackerPageState extends State<TrackerPage> {
   }
 
   void init() async {
-    contests.addAll(await CFHelper.getContestsWithProblems());
+    _contests.addAll(await CFHelper.getContestsWithProblems());
     if (!mounted) return;
     setState(() {
-      locked = false;
-      totalPage = (contests.length + pageCount - 1) ~/ 100;
+      _locked = false;
+      _totalPage = (_contests.length + _pageCount - 1) ~/ 100;
     });
   }
 
@@ -72,7 +72,7 @@ class TrackerPageState extends State<TrackerPage> {
             const SizedBox(
               width: 10,
             ),
-            locked
+            _locked
                 ? const SizedBox(
                     height: 20,
                     width: 20,
@@ -87,30 +87,30 @@ class TrackerPageState extends State<TrackerPage> {
             child: TextButton(
               onPressed: () {
                 setState(() {
-                  urlMode = !urlMode;
+                  _urlMode = !_urlMode;
                 });
               },
               child: Text(
-                urlMode ? 'URL Mode' : 'Copy Mode',
+                _urlMode ? 'URL Mode' : 'Copy Mode',
               ),
             ),
           ),
           IconButton(
             tooltip: 'Refresh personal status',
-            onPressed: locked
+            onPressed: _locked
                 ? null
                 : () async {
                     setState(() {
-                      currentPage = 0;
-                      totalPage = 1;
-                      locked = true;
+                      _currentPage = 0;
+                      _totalPage = 1;
+                      _locked = true;
                     });
-                    contests.clear();
-                    contests
+                    _contests.clear();
+                    _contests
                         .addAll(await CFHelper.getContestsWithProblemsCached());
                     setState(() {
-                      totalPage = (contests.length + pageCount - 1) ~/ 100;
-                      locked = false;
+                      _totalPage = (_contests.length + _pageCount - 1) ~/ 100;
+                      _locked = false;
                     });
                   },
             icon: const Icon(
@@ -120,8 +120,8 @@ class TrackerPageState extends State<TrackerPage> {
           IconButton(
             onPressed: () {
               setState(() {
-                currentPage--;
-                currentPage %= totalPage;
+                _currentPage--;
+                _currentPage %= _totalPage;
               });
               _scrollController.jumpTo(0);
             },
@@ -132,13 +132,13 @@ class TrackerPageState extends State<TrackerPage> {
           Container(
             alignment: Alignment.center,
             width: 50,
-            child: Text('${currentPage + 1} / $totalPage'),
+            child: Text('${_currentPage + 1} / $_totalPage'),
           ),
           IconButton(
             onPressed: () {
               setState(() {
-                currentPage++;
-                currentPage %= totalPage;
+                _currentPage++;
+                _currentPage %= _totalPage;
               });
               _scrollController.jumpTo(0);
             },
@@ -147,35 +147,36 @@ class TrackerPageState extends State<TrackerPage> {
             ),
           ),
           IconButton(
-            tooltip: locked ? 'Cancel loading' : 'Reload problems and contests',
-            onPressed: locked
+            tooltip:
+                _locked ? 'Cancel loading' : 'Reload problems and contests',
+            onPressed: _locked
                 ? () {
                     WebHelper().cancel(token: CancelToken());
                     setState(() {
-                      locked = false;
+                      _locked = false;
                     });
                   }
                 : () async {
                     setState(() {
-                      currentPage = 0;
-                      totalPage = 1;
-                      locked = true;
+                      _currentPage = 0;
+                      _totalPage = 1;
+                      _locked = true;
                     });
-                    contests.clear();
-                    contests.addAll(await CFHelper.getContestsWithProblems());
+                    _contests.clear();
+                    _contests.addAll(await CFHelper.getContestsWithProblems());
                     setState(() {
-                      totalPage = (contests.length + pageCount - 1) ~/ 100;
-                      locked = false;
+                      _totalPage = (_contests.length + _pageCount - 1) ~/ 100;
+                      _locked = false;
                     });
                   },
-            icon: Icon(locked ? Icons.close : Icons.refresh),
+            icon: Icon(_locked ? Icons.close : Icons.refresh),
           ),
           const SizedBox(
             width: 6,
           )
         ],
       ),
-      body: contests.isEmpty
+      body: _contests.isEmpty
           ? const Center(
               child: Text('List is empty'),
             )
@@ -183,7 +184,7 @@ class TrackerPageState extends State<TrackerPage> {
               itemExtent: 100,
               controller: _scrollController,
               itemBuilder: (context, index) {
-                index += pageCount * currentPage;
+                index += _pageCount * _currentPage;
                 return SizedBox(
                   height: 100,
                   child: Column(
@@ -193,7 +194,7 @@ class TrackerPageState extends State<TrackerPage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => ListDetail(
-                                listItem: contests[index],
+                                listItem: _contests[index],
                                 online: true,
                               ),
                             ),
@@ -208,7 +209,7 @@ class TrackerPageState extends State<TrackerPage> {
                               ),
                               Expanded(
                                 child: Text(
-                                  contests[index].title,
+                                  _contests[index].title,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -226,13 +227,14 @@ class TrackerPageState extends State<TrackerPage> {
                           padding: const EdgeInsets.only(left: 4),
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, problemIndex) {
-                            var problem = contests[index].items[problemIndex];
+                            var problem = _contests[index].items[problemIndex];
                             return InkWell(
                               borderRadius: BorderRadius.circular(12),
                               onTap: () {
-                                if (urlMode) {
-                                  launchUrl(Uri.parse(
-                                      contests[index].items[problemIndex].url));
+                                if (_urlMode) {
+                                  launchUrl(Uri.parse(_contests[index]
+                                      .items[problemIndex]
+                                      .url));
                                 } else {
                                   showDialog(
                                     barrierColor: colorScheme.surfaceTint
@@ -256,7 +258,8 @@ class TrackerPageState extends State<TrackerPage> {
                                                           AppStorage()
                                                                   .problemlists[
                                                               indexList],
-                                                          contests[index].items[
+                                                          _contests[index]
+                                                                  .items[
                                                               problemIndex]);
                                                   Navigator.pop(context);
                                                 },
@@ -310,7 +313,7 @@ class TrackerPageState extends State<TrackerPage> {
                               child: Tooltip(
                                 waitDuration: const Duration(milliseconds: 500),
                                 message:
-                                    '${problem.title} - ${problem.tags.last}\n${problem.url}\n\nClick to ${urlMode ? 'open url' : 'copy problem'}',
+                                    '${problem.title} - ${problem.tags.last}\n${problem.url}\n\nClick to ${_urlMode ? 'open url' : 'copy problem'}',
                                 child: Ink(
                                   decoration: BoxDecoration(
                                     border: problem.status == 'unknown'
@@ -340,7 +343,7 @@ class TrackerPageState extends State<TrackerPage> {
                               ),
                             );
                           },
-                          itemCount: contests[index].items.length,
+                          itemCount: _contests[index].items.length,
                           separatorBuilder: (BuildContext context, int index) {
                             return const SizedBox(
                               width: 4,
@@ -355,9 +358,9 @@ class TrackerPageState extends State<TrackerPage> {
                   ),
                 );
               },
-              itemCount: currentPage == totalPage - 1
-                  ? contests.length % pageCount
-                  : pageCount,
+              itemCount: _currentPage == _totalPage - 1
+                  ? _contests.length % _pageCount
+                  : _pageCount,
             ),
     );
   }

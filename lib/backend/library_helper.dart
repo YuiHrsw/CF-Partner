@@ -67,6 +67,11 @@ class LibraryHelper {
     saveList(list);
   }
 
+  static void renameProblem(ListItem list, int index, String name) {
+    list.items[index].title = name;
+    saveList(list);
+  }
+
   static void removeTagFromProblem(ListItem list, int index, String tag) {
     var p = list.items[index].tags;
     p.remove(tag);

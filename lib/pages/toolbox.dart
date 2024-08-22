@@ -1,4 +1,5 @@
 import 'package:cf_partner/pages/toolbox/anti_macros.dart';
+import 'package:cf_partner/pages/toolbox/randcontest.dart';
 import 'package:cf_partner/pages/toolbox/tracker.dart';
 import 'package:flutter/material.dart';
 // import 'package:url_launcher/url_launcher.dart';
@@ -11,8 +12,6 @@ class Toolbox extends StatefulWidget {
 }
 
 class ToolboxState extends State<Toolbox> {
-  TextEditingController controller = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,33 +20,9 @@ class ToolboxState extends State<Toolbox> {
           'Toolbox',
           style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
         ),
-        actions: [
-          IconButton(
-            tooltip: 'Request new features',
-            onPressed: () {},
-            icon: const Icon(Icons.message),
-          ),
-          const SizedBox(
-            width: 6,
-          )
-        ],
       ),
       body: ListView(
         children: [
-          ListTile(
-            leading: const Icon(
-              Icons.fact_check_outlined,
-            ),
-            title: const Text('Comparer'),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(
-              Icons.baby_changing_station,
-            ),
-            title: const Text('Testcase Generator'),
-            onTap: () {},
-          ),
           ListTile(
             leading: const Icon(
               Icons.track_changes_outlined,
@@ -76,10 +51,16 @@ class ToolboxState extends State<Toolbox> {
           ),
           ListTile(
             leading: const Icon(
-              Icons.link,
+              Icons.bar_chart_rounded,
             ),
-            title: const Text('Link Generator'),
-            onTap: () {},
+            title: const Text('Rand Contest'),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const Playground(),
+                ),
+              );
+            },
           ),
         ],
       ),

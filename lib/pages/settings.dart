@@ -10,7 +10,7 @@ class Settings extends StatefulWidget {
 }
 
 class SettingsState extends State<Settings> {
-  TextEditingController controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +47,7 @@ class SettingsState extends State<Settings> {
               ),
               child: TextField(
                 textAlign: TextAlign.center,
-                controller: controller,
+                controller: _controller,
                 maxLines: 1,
                 decoration: InputDecoration.collapsed(
                   hintText: AppStorage().settings.handle,
@@ -56,7 +56,7 @@ class SettingsState extends State<Settings> {
                   AppStorage().settings.handle = value;
                   AppStorage().saveSettings();
                   setState(() {});
-                  controller.clear();
+                  _controller.clear();
                 },
               ),
             ),
@@ -225,7 +225,7 @@ class SettingsState extends State<Settings> {
             ),
             title: const Text('CF Partner 2'),
             trailing: const Text(
-              'v 2.4',
+              'v 2.5',
               style: TextStyle(
                 fontSize: 16,
               ),

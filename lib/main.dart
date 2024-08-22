@@ -8,7 +8,9 @@ void main() async {
   await AppStorage().init();
   runApp(
     ChangeNotifierProvider(
-        create: (context) => AppStorage(), child: const CFPartner()),
+      create: (context) => AppStorage(),
+      child: const CFPartner(),
+    ),
   );
 }
 

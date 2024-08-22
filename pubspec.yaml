@@ -18,6 +18,9 @@ dependencies:
   url_launcher: ^6.2.5
   file_picker: ^8.0.0+1
   process_run: ^1.1.0
+  code_text_field: ^1.1.0
+  highlight: ^0.7.0
+  flutter_highlight: ^0.7.0
   
 dev_dependencies:
   flutter_test:

@@ -13,11 +13,11 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
-  int currentPageIndex = 0;
-  final exercise = GlobalKey<NavigatorState>();
-  final challenge = GlobalKey<NavigatorState>();
-  final toolbox = GlobalKey<NavigatorState>();
-  final settings = GlobalKey<NavigatorState>();
+  int _currentPageIndex = 0;
+  final _exercise = GlobalKey<NavigatorState>();
+  final _challenge = GlobalKey<NavigatorState>();
+  final _toolbox = GlobalKey<NavigatorState>();
+  final _settings = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +25,10 @@ class HomeState extends State<Home> {
     return Row(
       children: <Widget>[
         NavigationRail(
-          selectedIndex: currentPageIndex,
+          selectedIndex: _currentPageIndex,
           onDestinationSelected: (int index) {
             setState(() {
-              currentPageIndex = index;
+              _currentPageIndex = index;
             });
           },
           // indicatorShape: const CircleBorder(),
@@ -71,18 +71,18 @@ class HomeState extends State<Home> {
             NavigationRailDestination(
               padding: EdgeInsets.symmetric(vertical: 4),
               icon: Icon(
-                Icons.category,
-                size: 28,
-              ),
-              label: Text('Categories'),
-            ),
-            NavigationRailDestination(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              icon: Icon(
                 Icons.home_filled,
                 size: 28,
               ),
               label: Text('Challenge'),
+            ),
+            NavigationRailDestination(
+              padding: EdgeInsets.symmetric(vertical: 4),
+              icon: Icon(
+                Icons.bookmark,
+                size: 28,
+              ),
+              label: Text('Categories'),
             ),
             NavigationRailDestination(
               padding: EdgeInsets.symmetric(vertical: 4),
@@ -104,31 +104,31 @@ class HomeState extends State<Home> {
         ),
         Expanded(
           child: IndexedStack(
-            index: currentPageIndex,
+            index: _currentPageIndex,
             children: [
               Navigator(
-                key: exercise,
-                onGenerateRoute: (route) => MaterialPageRoute(
-                  settings: route,
-                  builder: (context) => const Exercises(),
-                ),
-              ),
-              Navigator(
-                key: challenge,
+                key: _challenge,
                 onGenerateRoute: (route) => MaterialPageRoute(
                   settings: route,
                   builder: (context) => const Challenge(),
                 ),
               ),
               Navigator(
-                key: toolbox,
+                key: _exercise,
+                onGenerateRoute: (route) => MaterialPageRoute(
+                  settings: route,
+                  builder: (context) => const Exercises(),
+                ),
+              ),
+              Navigator(
+                key: _toolbox,
                 onGenerateRoute: (route) => MaterialPageRoute(
                   settings: route,
                   builder: (context) => const Toolbox(),
                 ),
               ),
               Navigator(
-                key: settings,
+                key: _settings,
                 onGenerateRoute: (route) => MaterialPageRoute(
                   settings: route,
                   builder: (context) => const Settings(),

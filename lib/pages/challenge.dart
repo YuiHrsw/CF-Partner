@@ -13,9 +13,9 @@ class Challenge extends StatefulWidget {
 }
 
 class ChallengeState extends State<Challenge> {
-  TextEditingController controller = TextEditingController();
-  List<ChallengeProblem> problems = [];
-  String errorMsg = '';
+  List<ChallengeProblem> _dailyProblems = [];
+  String _errMsg = '';
+  bool _listening = true;
 
   @override
   void initState() {
@@ -28,12 +28,12 @@ class ChallengeState extends State<Challenge> {
       var res = await WebHelper().get(
           "https://raw.githubusercontent.com/Yawn-Sean/Daily_CF_Problems/main/README.md");
       setState(() {
-        problems = parse(res.data);
-        errorMsg = '';
+        _dailyProblems = parse(res.data);
+        _errMsg = '';
       });
     } catch (e) {
       setState(() {
-        errorMsg = e.toString();
+        _errMsg = e.toString();
       });
     }
   }
@@ -41,79 +41,138 @@ class ChallengeState extends State<Challenge> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Challenge',
-          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
+        appBar: AppBar(
+          title: const Text(
+            'Dashboard',
+            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
+          ),
+          // actions: [
+          //   IconButton(
+          //     tooltip: 'Add a problem',
+          //     onPressed: () {},
+          //     icon: const Icon(Icons.add_circle),
+          //   ),
+          //   const SizedBox(
+          //     width: 6,
+          //   )
+          // ],
         ),
-        actions: [
-          IconButton(
-            tooltip: 'Open Project Website',
-            onPressed: () {
-              launchUrl(
-                  Uri.parse('https://github.com/Yawn-Sean/Daily_CF_Problems'));
-            },
-            icon: const Icon(Icons.open_in_new),
-          ),
-          IconButton(
-            tooltip: 'Refresh',
-            onPressed: () async {
-              try {
-                var res = await WebHelper().get(
-                    "https://raw.githubusercontent.com/Yawn-Sean/Daily_CF_Problems/main/README.md");
-                setState(() {
-                  problems = parse(res.data);
-                  errorMsg = '';
-                });
-              } catch (e) {
-                setState(() {
-                  errorMsg = e.toString();
-                });
-              }
-            },
-            icon: const Icon(Icons.refresh),
-          ),
-          const SizedBox(
-            width: 6,
-          )
-        ],
-      ),
-      body: errorMsg != ''
-          ? Center(
-              child: Text(errorMsg),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Container(
-                    height: 260,
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '${DateTime.now().year} - ${DateTime.now().month} - ${DateTime.now().day}',
-                          style: const TextStyle(fontSize: 30),
-                        ),
-                        const Text(
-                          'Daily CF Problems by Yawn-Sean',
-                        )
-                      ],
+        body: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Container(
+                height: 100,
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '${DateTime.now().year} - ${DateTime.now().month} - ${DateTime.now().day}',
+                      style: const TextStyle(fontSize: 30),
                     ),
-                  );
-                } else {
-                  return buildProblemListTile(problems[index - 1]);
-                }
-              },
-              itemCount: problems.length + 1,
+                  ],
+                ),
+              ),
             ),
-    );
+            SliverToBoxAdapter(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Row(
+                  children: [
+                    Text(
+                      'Daily Problems',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Refresh',
+                      onPressed: () async {
+                        try {
+                          var res = await WebHelper().get(
+                              "https://raw.githubusercontent.com/Yawn-Sean/Daily_CF_Problems/main/README.md");
+                          setState(() {
+                            _dailyProblems = parse(res.data);
+                            _errMsg = '';
+                          });
+                        } catch (e) {
+                          setState(() {
+                            _errMsg = e.toString();
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.refresh_rounded),
+                    ),
+                    IconButton(
+                      tooltip: 'Open repo',
+                      onPressed: () {
+                        launchUrl(
+                          Uri.parse(
+                            'https://github.com/Yawn-Sean/Daily_CF_Problems',
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.open_in_browser),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            _errMsg != ''
+                ? SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(_errMsg),
+                    ),
+                  )
+                : SliverList.builder(
+                    itemBuilder: (context, index) {
+                      return buildProblemListTile(_dailyProblems[index]);
+                    },
+                    itemCount: _dailyProblems.length,
+                  ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Text(
+                      'Contests',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Refresh',
+                      onPressed: () async {},
+                      icon: const Icon(Icons.refresh_rounded),
+                    ),
+                    IconButton(
+                      tooltip: 'Open clist.by',
+                      onPressed: () {
+                        launchUrl(
+                          Uri.parse('https://clist.by/?view=list'),
+                        );
+                      },
+                      icon: const Icon(Icons.open_in_browser),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 
   Widget buildProblemListTile(ChallengeProblem p) {
     var colorScheme = Theme.of(context).colorScheme;
-    return SizedBox(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       height: 46,
       child: InkWell(
         onTap: () {
@@ -248,7 +307,7 @@ class ChallengeState extends State<Challenge> {
                       );
                     },
                     icon: const Icon(
-                      Icons.star_outline,
+                      Icons.copy_rounded,
                     ),
                   ),
                 ],

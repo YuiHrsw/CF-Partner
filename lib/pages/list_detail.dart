@@ -17,12 +17,14 @@ class ListDetail extends StatefulWidget {
   ListDetailState createState() => ListDetailState();
 }
 
+// TODO: rename problem
 class ListDetailState extends State<ListDetail> {
-  final TextEditingController editingController = TextEditingController();
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController urlController = TextEditingController();
-  bool locked = false;
-  late final HttpServer server;
+  final TextEditingController _editingController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _urlController = TextEditingController();
+  final bool _locked = false;
+  late final HttpServer _server;
+  bool _listening = true;
 
   @override
   void initState() {
@@ -33,13 +35,13 @@ class ListDetailState extends State<ListDetail> {
   }
 
   void initServer() async {
-    server = await HttpServer.bind(
+    _server = await HttpServer.bind(
       InternetAddress.loopbackIPv4,
       10043,
     );
     // listen to competitive companion
-    await for (HttpRequest request in server) {
-      if (request.method == 'POST' && request.uri.path == '/') {
+    await for (HttpRequest request in _server) {
+      if (request.method == 'POST' && request.uri.path == '/' && _listening) {
         try {
           String content = await utf8.decoder.bind(request).join();
           Map<String, dynamic> data = jsonDecode(content);
@@ -55,7 +57,7 @@ class ListDetailState extends State<ListDetail> {
           );
           if (data['url'].contains('codeforces.com')) {
             p.source = 'Codeforces';
-          } else if (data['url'].contains('atcoder.com')) {
+          } else if (data['url'].contains('atcoder.jp')) {
             p.source = 'AtCoder';
           }
           LibraryHelper.addProblemToList(
@@ -70,21 +72,15 @@ class ListDetailState extends State<ListDetail> {
             ..write('Error processing request')
             ..close();
         }
-      } else {
-        request.response
-          ..statusCode = HttpStatus.methodNotAllowed
-          ..write('Only POST requests with JSON content are allowed')
-          ..close();
       }
     }
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     if (!widget.online) {
-      server.close();
+      _server.close();
     }
   }
 
@@ -93,184 +89,238 @@ class ListDetailState extends State<ListDetail> {
     late final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          constraints: const BoxConstraints(),
-          icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        titleSpacing: 0,
-        title: Text(widget.listItem.title),
-        actions: [
-          IconButton(
-            tooltip: 'Refresh',
-            onPressed: locked || widget.online
-                ? null
-                : () async {
-                    LibraryHelper.refreshList(widget.listItem).then((value) {
-                      setState(() {});
-                    });
-                  },
-            icon: const Icon(Icons.refresh_rounded),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            constraints: const BoxConstraints(),
+            icon: const Icon(Icons.arrow_back_ios_new),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          IconButton(
-            tooltip: 'New problem',
-            onPressed: locked || widget.online
-                ? null
-                : () {
-                    titleController.clear();
-                    urlController.clear();
-                    showDialog(
-                      barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                        surfaceTintColor: Colors.transparent,
-                        title: const Text('Add a problem'),
-                        content: SizedBox(
-                          height: 200,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              TextField(
-                                autofocus: true,
-                                maxLines: 1,
-                                controller: titleController,
-                                decoration: const InputDecoration(
-                                  label: Text('Title'),
-                                  border: OutlineInputBorder(),
-                                  hintText: 'A + B Problem',
+          titleSpacing: 0,
+          title: Text(widget.listItem.title),
+          actions: [
+            // IconButton(
+            //   tooltip: 'Refresh',
+            //   onPressed: _locked || widget.online
+            //       ? null
+            //       : () async {
+            //           LibraryHelper.refreshList(widget.listItem).then((value) {
+            //             setState(() {});
+            //           });
+            //         },
+            //   icon: const Icon(Icons.refresh_rounded),
+            // ),
+            IconButton(
+              tooltip: 'New problem',
+              onPressed: _locked || widget.online
+                  ? null
+                  : () {
+                      _titleController.clear();
+                      _urlController.clear();
+                      showDialog(
+                        barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          surfaceTintColor: Colors.transparent,
+                          title: const Text('Add a problem'),
+                          content: SizedBox(
+                            height: 200,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                TextField(
+                                  autofocus: true,
+                                  maxLines: 1,
+                                  controller: _titleController,
+                                  decoration: const InputDecoration(
+                                    label: Text('Title'),
+                                    border: OutlineInputBorder(),
+                                    hintText: 'A + B Problem',
+                                  ),
                                 ),
-                              ),
-                              TextField(
-                                autofocus: true,
-                                maxLines: 3,
-                                controller: urlController,
-                                decoration: const InputDecoration(
-                                  label: Text('URL'),
-                                  border: OutlineInputBorder(),
-                                  hintText:
-                                      'https://codeforces.com/problemset/problem/1772/A',
+                                TextField(
+                                  autofocus: true,
+                                  maxLines: 3,
+                                  controller: _urlController,
+                                  decoration: const InputDecoration(
+                                    label: Text('URL'),
+                                    border: OutlineInputBorder(),
+                                    hintText:
+                                        'https://codeforces.com/problemset/problem/1772/A',
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                var p = ProblemItem(
+                                  title: _titleController.text,
+                                  url: _urlController.text,
+                                  status: 'unknown',
+                                  source: 'others',
+                                  tags: [],
+                                  note: '',
+                                );
+                                if (_urlController.text
+                                    .contains('codeforces.com')) {
+                                  p.source = 'Codeforces';
+                                } else if (_urlController.text
+                                    .contains('atcoder.jp')) {
+                                  p.source = 'AtCoder';
+                                }
+                                LibraryHelper.addProblemToList(
+                                  widget.listItem,
+                                  p,
+                                );
+                                Navigator.pop(context);
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
                         ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              var p = ProblemItem(
-                                title: titleController.text,
-                                url: urlController.text,
-                                status: 'unknown',
-                                source: 'others',
-                                tags: [],
-                                note: '',
-                              );
-                              if (urlController.text
-                                  .contains('codeforces.com')) {
-                                p.source = 'Codeforces';
-                              } else if (urlController.text
-                                  .contains('atcoder.com')) {
-                                p.source = 'AtCoder';
-                              }
-                              LibraryHelper.addProblemToList(
-                                widget.listItem,
-                                p,
-                              );
-                              Navigator.pop(context);
-                            },
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      ),
-                    ).then((value) {
-                      setState(() {});
-                    });
-                  },
-            icon: const Icon(
-              Icons.add_circle,
-            ),
-          ),
-          const SizedBox(
-            width: 6,
-          )
-        ],
-      ),
-      body: ListView.separated(
-        separatorBuilder: (context, index) {
-          return const Divider();
-        },
-        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
-        itemBuilder: (context, index) {
-          return Column(
-            children: [
-              buildListItem(colorScheme, index),
-              const SizedBox(
-                height: 4,
+                      ).then((value) {
+                        setState(() {});
+                      });
+                    },
+              icon: const Icon(
+                Icons.add,
               ),
-              SizedBox(
-                height: widget.listItem.items[index].tags.isEmpty ? 0 : 20,
-                child: ListView.separated(
-                  padding: const EdgeInsets.only(left: 4),
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, tagIndex) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: colorScheme.secondaryContainer,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      height:
-                          widget.listItem.items[index].tags.isEmpty ? 0 : 20,
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: FittedBox(
-                            child: Text(
-                              widget.listItem.items[index].tags[tagIndex],
-                              style: TextStyle(
-                                color: colorScheme.onSecondaryContainer,
-                                fontWeight: FontWeight.w500,
-                              ),
+            ),
+            const SizedBox(
+              width: 6,
+            )
+          ],
+        ),
+        body: Column(
+          children: [
+            widget.online
+                ? const SizedBox()
+                : SizedBox(
+                    height: 80,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      child: SwitchListTile(
+                        tileColor: _listening
+                            ? Theme.of(context)
+                                .colorScheme
+                                .primaryContainer
+                                .withOpacity(0.4)
+                            : Theme.of(context)
+                                .colorScheme
+                                .tertiaryContainer
+                                .withOpacity(0.4),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        title: Container(
+                          alignment: Alignment.centerLeft,
+                          height: 40,
+                          child: Text(
+                            'Automatically add parsed problems',
+                            style: TextStyle(
+                              color: _listening
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .onTertiaryContainer,
                             ),
                           ),
                         ),
+                        value: _listening,
+                        onChanged: (bool value) {
+                          setState(() {
+                            _listening = value;
+                          });
+                        },
                       ),
-                    );
-                  },
-                  itemCount: widget.listItem.items[index].tags.length,
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const SizedBox(
-                      width: 4,
-                    );
-                  },
-                ),
-              )
-            ],
-          );
-        },
-        itemCount: widget.listItem.items.length,
-      ),
-    );
+                    ),
+                  ),
+            Expanded(
+              child: ListView.separated(
+                separatorBuilder: (context, index) {
+                  return const Divider();
+                },
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      buildListItem(colorScheme, index, widget.listItem.items),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      SizedBox(
+                        height:
+                            widget.listItem.items[index].tags.isEmpty ? 0 : 20,
+                        child: ListView.separated(
+                          padding: const EdgeInsets.only(left: 4),
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, tagIndex) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: colorScheme.secondaryContainer,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              height: widget.listItem.items[index].tags.isEmpty
+                                  ? 0
+                                  : 20,
+                              child: Center(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 6),
+                                  child: FittedBox(
+                                    child: Text(
+                                      widget
+                                          .listItem.items[index].tags[tagIndex],
+                                      style: TextStyle(
+                                        color: colorScheme.onSecondaryContainer,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          itemCount: widget.listItem.items[index].tags.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const SizedBox(
+                              width: 4,
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  );
+                },
+                itemCount: widget.listItem.items.length,
+              ),
+            )
+          ],
+        ));
   }
 
-  Widget buildListItem(ColorScheme colorScheme, int index) {
+  Widget buildListItem(
+      ColorScheme colorScheme, int index, List<ProblemItem> items) {
     return SizedBox(
       height: 46,
       child: InkWell(
         onTap: () {
-          launchUrl(Uri.parse(widget.listItem.items[index].url));
+          launchUrl(Uri.parse(items[index].url));
         },
         borderRadius: BorderRadius.circular(14),
-        child: Ink(
+        child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -279,21 +329,20 @@ class ListDetailState extends State<ListDetail> {
               const SizedBox(
                 width: 4,
               ),
-              widget.listItem.items[index].status == 'unknown'
+              items[index].status == 'unknown'
                   ? const SizedBox()
-                  : Ink(
+                  : Container(
                       decoration: BoxDecoration(
-                        color: widget.listItem.items[index].status == 'Accepted'
+                        color: items[index].status == 'Accepted'
                             ? colorScheme.primaryContainer
                             : colorScheme.tertiaryContainer,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: FittedBox(
                         child: Text(
-                          ' ${widget.listItem.items[index].status} ',
+                          ' ${items[index].status} ',
                           style: TextStyle(
-                            color: widget.listItem.items[index].status ==
-                                    'Accepted'
+                            color: items[index].status == 'Accepted'
                                 ? colorScheme.onPrimaryContainer
                                 : colorScheme.onTertiaryContainer,
                             fontWeight: FontWeight.w500,
@@ -306,16 +355,15 @@ class ListDetailState extends State<ListDetail> {
               ),
               Text(
                 // AppStorage().problemlists[index].title,
-                widget.listItem.items[index].title,
+                items[index].title,
                 style: TextStyle(
                     fontSize: 18,
-                    color: widget.listItem.items[index].status == 'Accepted'
+                    color: items[index].status == 'Accepted'
                         ? colorScheme.onPrimaryContainer
                         : null,
-                    fontWeight:
-                        widget.listItem.items[index].status == 'Accepted'
-                            ? FontWeight.w500
-                            : null),
+                    fontWeight: items[index].status == 'Accepted'
+                        ? FontWeight.w500
+                        : null),
               ),
               Expanded(
                   child: Row(
@@ -491,7 +539,7 @@ class ListDetailState extends State<ListDetail> {
                                             IconButton(
                                               tooltip: 'Add a tag',
                                               onPressed: () {
-                                                editingController.clear();
+                                                _editingController.clear();
                                                 showDialog(
                                                   barrierColor: colorScheme
                                                       .surfaceTint
@@ -506,7 +554,7 @@ class ListDetailState extends State<ListDetail> {
                                                       autofocus: true,
                                                       maxLines: 1,
                                                       controller:
-                                                          editingController,
+                                                          _editingController,
                                                       decoration:
                                                           const InputDecoration(
                                                         border:
@@ -539,7 +587,7 @@ class ListDetailState extends State<ListDetail> {
                                                                   widget
                                                                       .listItem,
                                                                   index,
-                                                                  editingController
+                                                                  _editingController
                                                                       .text);
                                                           setState(() {});
                                                           Navigator.pop(
@@ -628,13 +676,12 @@ class ListDetailState extends State<ListDetail> {
                       : IconButton(
                           tooltip: 'Note',
                           onPressed: () {
-                            editingController.text =
-                                widget.listItem.items[index].note;
+                            _editingController.text = items[index].note;
                             showDialog(
                               context: context,
                               builder: (BuildContext context) => AlertDialog(
                                 title: Text(
-                                  widget.listItem.items[index].title,
+                                  items[index].title,
                                 ),
                                 content: SizedBox(
                                   height: 400,
@@ -644,7 +691,7 @@ class ListDetailState extends State<ListDetail> {
                                     minLines: null,
                                     maxLines: null,
                                     expands: true,
-                                    controller: editingController,
+                                    controller: _editingController,
                                     decoration: const InputDecoration(
                                       border: OutlineInputBorder(),
                                     ),
@@ -671,7 +718,7 @@ class ListDetailState extends State<ListDetail> {
                                       LibraryHelper.changeProblemNote(
                                         widget.listItem,
                                         index,
-                                        editingController.text,
+                                        _editingController.text,
                                       );
                                       setState(() {});
                                       Navigator.pop(context);
@@ -703,7 +750,7 @@ class ListDetailState extends State<ListDetail> {
                                     onTap: () {
                                       LibraryHelper.addProblemToList(
                                           AppStorage().problemlists[indexList],
-                                          widget.listItem.items[index]);
+                                          items[index]);
                                       Navigator.pop(context);
                                     },
                                     borderRadius: BorderRadius.circular(20),
@@ -755,9 +802,34 @@ class ListDetailState extends State<ListDetail> {
                       : IconButton(
                           tooltip: 'Delete problem',
                           onPressed: () {
-                            LibraryHelper.removeProblemFromList(
-                                widget.listItem, widget.listItem.items[index]);
-                            setState(() {});
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text(
+                                  'Confirm',
+                                ),
+                                content: Text(
+                                  'Delete problem ${items[index].title}',
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      LibraryHelper.removeProblemFromList(
+                                          widget.listItem, items[index]);
+                                      setState(() {});
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
                           },
                           icon: const Icon(Icons.delete_outline),
                         ),

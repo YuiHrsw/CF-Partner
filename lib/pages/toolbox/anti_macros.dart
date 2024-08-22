@@ -1,8 +1,12 @@
 import 'dart:io';
 
 import 'package:cf_partner/backend/storage.dart';
+import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:process_run/process_run.dart';
+
+import 'package:highlight/languages/cpp.dart';
+import 'package:flutter_highlight/themes/monokai-sublime.dart';
 
 class AntiMacros extends StatefulWidget {
   const AntiMacros({super.key});
@@ -12,8 +16,10 @@ class AntiMacros extends StatefulWidget {
 }
 
 class AntiMacrosState extends State<AntiMacros> {
-  TextEditingController inputController = TextEditingController();
-  TextEditingController outputController = TextEditingController();
+  final CodeController _inputController =
+      CodeController(text: '// copy your code here\n', language: cpp);
+  final CodeController _outputController =
+      CodeController(text: '// click run to see result\n', language: cpp);
 
   @override
   Widget build(BuildContext context) {
@@ -70,30 +76,32 @@ class AntiMacrosState extends State<AntiMacros> {
               child: Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      minLines: null,
-                      maxLines: null,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
+                    child: CodeTheme(
+                      data: const CodeThemeData(styles: monokaiSublimeTheme),
+                      child: CodeField(
+                        expands: true,
+                        controller: _inputController,
+                        textStyle: const TextStyle(
+                          fontFamily: "Fira Code",
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                      controller: inputController,
-                      textAlign: TextAlign.start,
-                      expands: true,
                     ),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
                   Expanded(
-                    child: TextField(
-                      minLines: null,
-                      maxLines: null,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
+                    child: CodeTheme(
+                      data: const CodeThemeData(styles: monokaiSublimeTheme),
+                      child: CodeField(
+                        expands: true,
+                        controller: _outputController,
+                        textStyle: const TextStyle(
+                          fontFamily: "Fira Code",
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                      controller: outputController,
-                      textAlign: TextAlign.start,
-                      expands: true,
                     ),
                   ),
                 ],
@@ -105,6 +113,7 @@ class AntiMacrosState extends State<AntiMacros> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // TODO: pick files
                   TextButton.icon(
                     onPressed: () {},
                     style: ButtonStyle(
@@ -135,7 +144,7 @@ class AntiMacrosState extends State<AntiMacros> {
                         await outputFile.create();
                       }
 
-                      List<String> lines = inputController.text.split('\n');
+                      List<String> lines = _inputController.text.split('\n');
                       List<String> filteredLines = lines
                           .where((line) => !line.trim().startsWith('#include'))
                           .toList();
@@ -144,11 +153,11 @@ class AntiMacrosState extends State<AntiMacros> {
                       try {
                         await shell.run('''
 
-# Display dart version
 gcc -E -P "$orignPath" -o "$outputPath"
 
 ''');
-                        outputController.text = await outputFile.readAsString();
+                        _outputController.text =
+                            await outputFile.readAsString();
                         setState(() {});
                       } catch (e) {
                         if (!context.mounted) return;
@@ -158,7 +167,7 @@ gcc -E -P "$orignPath" -o "$outputPath"
                             title: const Text(
                               'Error',
                             ),
-                            content: const Text('Failed to run command g++.'),
+                            content: const Text('Failed to run command gcc.'),
                             actions: <Widget>[
                               TextButton(
                                 onPressed: () {

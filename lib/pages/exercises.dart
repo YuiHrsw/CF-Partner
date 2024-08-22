@@ -13,8 +13,8 @@ class Exercises extends StatefulWidget {
 }
 
 class ExercisesState extends State<Exercises> {
-  final TextEditingController editingController = TextEditingController();
-  bool loaded = false;
+  final TextEditingController _editingController = TextEditingController();
+  bool _loaded = false;
 
   @override
   void initState() {
@@ -26,7 +26,7 @@ class ExercisesState extends State<Exercises> {
     AppStorage().problemlists.addAll(await LibraryHelper.loadLists());
     if (!mounted) return;
     setState(() {
-      loaded = true;
+      _loaded = true;
     });
   }
 
@@ -40,32 +40,32 @@ class ExercisesState extends State<Exercises> {
           style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
         ),
         actions: [
-          IconButton(
-            tooltip: 'Refresh',
-            onPressed: () async {
-              setState(() {
-                loaded = false;
-              });
-              AppStorage().problemlists.clear();
-              AppStorage().problemlists.addAll(await LibraryHelper.loadLists());
-              setState(() {
-                loaded = true;
-              });
-            },
-            icon: const Icon(Icons.refresh_rounded),
-          ),
-          IconButton(
-            tooltip: 'Open folder',
-            onPressed: () {
-              var path = "${AppStorage().dataPath}/lists/";
-              launchUrl(Uri.directory(path));
-            },
-            icon: const Icon(Icons.folder),
-          ),
+          // IconButton(
+          //   tooltip: 'Refresh',
+          //   onPressed: () async {
+          //     setState(() {
+          //       _loaded = false;
+          //     });
+          //     AppStorage().problemlists.clear();
+          //     AppStorage().problemlists.addAll(await LibraryHelper.loadLists());
+          //     setState(() {
+          //       _loaded = true;
+          //     });
+          //   },
+          //   icon: const Icon(Icons.refresh_rounded),
+          // ),
+          // IconButton(
+          //   tooltip: 'Open folder',
+          //   onPressed: () {
+          //     var path = "${AppStorage().dataPath}/lists/";
+          //     launchUrl(Uri.directory(path));
+          //   },
+          //   icon: const Icon(Icons.folder),
+          // ),
           IconButton(
               tooltip: 'New list',
               onPressed: () {
-                editingController.clear();
+                _editingController.clear();
                 showDialog(
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
@@ -73,7 +73,7 @@ class ExercisesState extends State<Exercises> {
                     content: TextField(
                       autofocus: true,
                       maxLines: 1,
-                      controller: editingController,
+                      controller: _editingController,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'name',
@@ -101,7 +101,7 @@ class ExercisesState extends State<Exercises> {
                         onPressed: () {
                           var pl = ListItem(
                             items: [],
-                            title: editingController.text,
+                            title: _editingController.text,
                           );
                           LibraryHelper.saveList(pl);
                           setState(() {
@@ -115,13 +115,13 @@ class ExercisesState extends State<Exercises> {
                   ),
                 );
               },
-              icon: const Icon(Icons.add_circle)),
+              icon: const Icon(Icons.add)),
           const SizedBox(
             width: 6,
           )
         ],
       ),
-      body: loaded
+      body: _loaded
           ? ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               itemBuilder: (context, index) {
@@ -172,7 +172,7 @@ class ExercisesState extends State<Exercises> {
                             IconButton(
                               tooltip: 'Rename list',
                               onPressed: () {
-                                editingController.clear();
+                                _editingController.clear();
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) =>
@@ -181,7 +181,7 @@ class ExercisesState extends State<Exercises> {
                                     content: TextField(
                                       autofocus: true,
                                       maxLines: 1,
-                                      controller: editingController,
+                                      controller: _editingController,
                                       decoration: const InputDecoration(
                                         border: OutlineInputBorder(),
                                         labelText: 'name',
@@ -206,10 +206,10 @@ class ExercisesState extends State<Exercises> {
                                         onPressed: () {
                                           LibraryHelper.renameList(
                                               AppStorage().problemlists[index],
-                                              editingController.text);
+                                              _editingController.text);
                                           AppStorage()
                                               .problemlists[index]
-                                              .title = editingController.text;
+                                              .title = _editingController.text;
                                           Navigator.pop(context);
                                         },
                                         child: const Text('OK'),
@@ -227,10 +227,38 @@ class ExercisesState extends State<Exercises> {
                             IconButton(
                               tooltip: 'Delete list',
                               onPressed: () {
-                                LibraryHelper.deleteList(
-                                    AppStorage().problemlists[index]);
-                                AppStorage().problemlists.removeAt(index);
-                                setState(() {});
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    title: const Text(
+                                      'Confirm',
+                                    ),
+                                    content: Text(
+                                      'Delete list ${AppStorage().problemlists[index].title}',
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          LibraryHelper.deleteList(
+                                              AppStorage().problemlists[index]);
+                                          AppStorage()
+                                              .problemlists
+                                              .removeAt(index);
+                                          setState(() {});
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                );
                               },
                               icon: const Icon(
                                 Icons.delete_outline,
