@@ -353,488 +353,465 @@ class ListDetailState extends State<ListDetail> {
               const SizedBox(
                 width: 6,
               ),
-              Text(
-                // AppStorage().problemlists[index].title,
-                items[index].title,
-                style: TextStyle(
+              Expanded(
+                child: Text(
+                  // AppStorage().problemlists[index].title,
+                  items[index].title,
+                  style: TextStyle(
                     fontSize: 18,
                     color: items[index].status == 'Accepted'
                         ? colorScheme.onPrimaryContainer
                         : null,
                     fontWeight: items[index].status == 'Accepted'
                         ? FontWeight.w500
-                        : null),
+                        : null,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ),
-              Expanded(
-                  child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  widget.online
-                      ? const SizedBox()
-                      : IconButton(
-                          tooltip: 'Change status',
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                title: const Text('Change status'),
-                                content: SizedBox(
-                                  width: 200,
-                                  height: 200,
-                                  child: ListView(
-                                    children: [
-                                      SizedBox(
-                                        height: 50,
-                                        child: InkWell(
-                                          onTap: () {
-                                            LibraryHelper.changeProblemStatus(
-                                                widget.listItem,
-                                                index,
-                                                'Accepted');
-                                            setState(() {});
-                                            Navigator.pop(context);
-                                          },
+              widget.online
+                  ? const SizedBox()
+                  : IconButton(
+                      tooltip: 'Change status',
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: const Text('Change status'),
+                            content: SizedBox(
+                              width: 200,
+                              height: 200,
+                              child: ListView(
+                                children: [
+                                  SizedBox(
+                                    height: 50,
+                                    child: InkWell(
+                                      onTap: () {
+                                        LibraryHelper.changeProblemStatus(
+                                            widget.listItem, index, 'Accepted');
+                                        setState(() {});
+                                        Navigator.pop(context);
+                                      },
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Ink(
+                                        decoration: BoxDecoration(
+                                          color: colorScheme.primaryContainer,
                                           borderRadius:
                                               BorderRadius.circular(20),
-                                          child: Ink(
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  colorScheme.primaryContainer,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                const SizedBox(
-                                                  width: 12,
-                                                ),
-                                                Icon(
-                                                  Icons.check_circle_outline,
-                                                  color: colorScheme
-                                                      .onPrimaryContainer,
-                                                ),
-                                                const SizedBox(
-                                                  width: 6,
-                                                ),
-                                                Text(
-                                                  'Accepted',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: colorScheme
-                                                        .onPrimaryContainer,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      SizedBox(
-                                        height: 50,
-                                        child: InkWell(
-                                          onTap: () {
-                                            LibraryHelper.changeProblemStatus(
-                                                widget.listItem,
-                                                index,
-                                                'Attempted');
-                                            setState(() {});
-                                            Navigator.pop(context);
-                                          },
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  colorScheme.tertiaryContainer,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                const SizedBox(
-                                                  width: 12,
-                                                ),
-                                                Icon(
-                                                  Icons.cancel_outlined,
-                                                  color: colorScheme
-                                                      .onTertiaryContainer,
-                                                ),
-                                                const SizedBox(
-                                                  width: 6,
-                                                ),
-                                                Text(
-                                                  'Attempted',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: colorScheme
-                                                        .onTertiaryContainer,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      // TODO: custom status
-                                      SizedBox(
-                                        height: 50,
-                                        child: InkWell(
-                                          onTap: () {
-                                            LibraryHelper.changeProblemStatus(
-                                                widget.listItem,
-                                                index,
-                                                'unknown');
-                                            setState(() {});
-                                            Navigator.pop(context);
-                                          },
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          child: const Row(
-                                            children: [
-                                              SizedBox(
-                                                width: 12,
-                                              ),
-                                              Icon(Icons.remove_circle_outline),
-                                              SizedBox(
-                                                width: 6,
-                                              ),
-                                              Text(
-                                                'Clear Status',
-                                                style: TextStyle(fontSize: 18),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.flag_outlined,
-                          ),
-                        ),
-                  widget.online
-                      ? const SizedBox()
-                      : IconButton(
-                          tooltip: 'Edit tags',
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) => StatefulBuilder(
-                                        builder: (context, setState) {
-                                      return AlertDialog(
-                                        title: Row(
+                                        child: Row(
                                           children: [
-                                            const Expanded(
-                                                child: Text('Edit Tags')),
-                                            IconButton(
-                                              tooltip: 'Add a tag',
-                                              onPressed: () {
-                                                _editingController.clear();
-                                                showDialog(
-                                                  barrierColor: colorScheme
-                                                      .surfaceTint
-                                                      .withOpacity(0.06),
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          AlertDialog(
-                                                    title:
-                                                        const Text('Add a tag'),
-                                                    content: TextField(
-                                                      autofocus: true,
-                                                      maxLines: 1,
-                                                      controller:
-                                                          _editingController,
-                                                      decoration:
-                                                          const InputDecoration(
-                                                        border:
-                                                            OutlineInputBorder(),
-                                                        labelText: 'tag name',
-                                                      ),
-                                                      onSubmitted: (value) {
-                                                        LibraryHelper
-                                                            .addTagToProblem(
-                                                                widget.listItem,
-                                                                index,
-                                                                value);
-                                                        setState(() {});
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: const Text(
-                                                            'Cancel'),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          LibraryHelper
-                                                              .addTagToProblem(
-                                                                  widget
-                                                                      .listItem,
-                                                                  index,
-                                                                  _editingController
-                                                                      .text);
-                                                          setState(() {});
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: const Text('OK'),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                                setState(() {});
-                                              },
-                                              icon: const Icon(
-                                                Icons.new_label,
+                                            const SizedBox(
+                                              width: 12,
+                                            ),
+                                            Icon(
+                                              Icons.check_circle_outline,
+                                              color: colorScheme
+                                                  .onPrimaryContainer,
+                                            ),
+                                            const SizedBox(
+                                              width: 6,
+                                            ),
+                                            Text(
+                                              'Accepted',
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: colorScheme
+                                                    .onPrimaryContainer,
                                               ),
                                             ),
                                           ],
                                         ),
-                                        content: SizedBox(
-                                          width: 400,
-                                          height: 300,
-                                          child: ListView.builder(
-                                            itemBuilder: (context, indexList) {
-                                              return SizedBox(
-                                                height: 40,
-                                                child: Row(
-                                                  children: [
-                                                    const SizedBox(
-                                                      width: 6,
-                                                    ),
-                                                    const Icon(
-                                                      Icons
-                                                          .label_outline_rounded,
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 6,
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        widget
-                                                            .listItem
-                                                            .items[index]
-                                                            .tags[indexList],
-                                                        style: const TextStyle(
-                                                            fontSize: 18),
-                                                      ),
-                                                    ),
-                                                    IconButton(
-                                                      onPressed: () {
-                                                        LibraryHelper
-                                                            .removeTagFromProblem(
-                                                                widget.listItem,
-                                                                index,
-                                                                widget
-                                                                        .listItem
-                                                                        .items[
-                                                                            index]
-                                                                        .tags[
-                                                                    indexList]);
-                                                        setState(() {});
-                                                      },
-                                                      icon: const Icon(
-                                                        Icons.close,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                            itemCount: widget.listItem
-                                                .items[index].tags.length,
-                                          ),
-                                        ),
-                                      );
-                                    })).then((value) {
-                              setState(() {});
-                            });
-                          },
-                          icon: const Icon(Icons.label_outline),
-                        ),
-                  widget.online
-                      ? const SizedBox()
-                      : IconButton(
-                          tooltip: 'Note',
-                          onPressed: () {
-                            _editingController.text = items[index].note;
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                title: Text(
-                                  items[index].title,
-                                ),
-                                content: SizedBox(
-                                  height: 400,
-                                  width: 600,
-                                  child: TextField(
-                                    autofocus: true,
-                                    minLines: null,
-                                    maxLines: null,
-                                    expands: true,
-                                    controller: _editingController,
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
+                                      ),
                                     ),
-                                    onSubmitted: (value) {
-                                      LibraryHelper.changeProblemNote(
-                                        widget.listItem,
-                                        index,
-                                        value,
-                                      );
-                                      setState(() {});
-                                      Navigator.pop(context);
-                                    },
                                   ),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Cancel'),
+                                  const SizedBox(
+                                    height: 10,
                                   ),
-                                  TextButton(
-                                    onPressed: () {
-                                      LibraryHelper.changeProblemNote(
-                                        widget.listItem,
-                                        index,
-                                        _editingController.text,
-                                      );
-                                      setState(() {});
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('OK'),
+                                  SizedBox(
+                                    height: 50,
+                                    child: InkWell(
+                                      onTap: () {
+                                        LibraryHelper.changeProblemStatus(
+                                            widget.listItem,
+                                            index,
+                                            'Attempted');
+                                        setState(() {});
+                                        Navigator.pop(context);
+                                      },
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: colorScheme.tertiaryContainer,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            const SizedBox(
+                                              width: 12,
+                                            ),
+                                            Icon(
+                                              Icons.cancel_outlined,
+                                              color: colorScheme
+                                                  .onTertiaryContainer,
+                                            ),
+                                            const SizedBox(
+                                              width: 6,
+                                            ),
+                                            Text(
+                                              'Attempted',
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: colorScheme
+                                                    .onTertiaryContainer,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  // TODO: custom status
+                                  SizedBox(
+                                    height: 50,
+                                    child: InkWell(
+                                      onTap: () {
+                                        LibraryHelper.changeProblemStatus(
+                                            widget.listItem, index, 'unknown');
+                                        setState(() {});
+                                        Navigator.pop(context);
+                                      },
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: const Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 12,
+                                          ),
+                                          Icon(Icons.remove_circle_outline),
+                                          SizedBox(
+                                            width: 6,
+                                          ),
+                                          Text(
+                                            'Clear Status',
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
-                            );
-                            setState(() {});
-                          },
-                          icon: const Icon(Icons.notes_outlined),
-                        ),
-                  IconButton(
-                    tooltip: 'Copy problem',
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: const Text('Copy to'),
-                          content: SizedBox(
-                            width: 400,
-                            height: 300,
-                            child: ListView.builder(
-                              itemBuilder: (context, indexList) {
-                                return SizedBox(
-                                  height: 60,
-                                  child: InkWell(
-                                    onTap: () {
-                                      LibraryHelper.addProblemToList(
-                                          AppStorage().problemlists[indexList],
-                                          items[index]);
-                                      Navigator.pop(context);
-                                    },
-                                    borderRadius: BorderRadius.circular(20),
-                                    child: Row(
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.flag_outlined,
+                      ),
+                    ),
+              widget.online
+                  ? const SizedBox()
+                  : IconButton(
+                      tooltip: 'Edit tags',
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) =>
+                                StatefulBuilder(builder: (context, setState) {
+                                  return AlertDialog(
+                                    title: Row(
                                       children: [
-                                        const SizedBox(
-                                          width: 6,
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: colorScheme.primaryContainer,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
+                                        const Expanded(
+                                            child: Text('Edit Tags')),
+                                        IconButton(
+                                          tooltip: 'Add a tag',
+                                          onPressed: () {
+                                            _editingController.clear();
+                                            showDialog(
+                                              barrierColor: colorScheme
+                                                  .surfaceTint
+                                                  .withOpacity(0.06),
+                                              context: context,
+                                              builder: (BuildContext context) =>
+                                                  AlertDialog(
+                                                title: const Text('Add a tag'),
+                                                content: TextField(
+                                                  autofocus: true,
+                                                  maxLines: 1,
+                                                  controller:
+                                                      _editingController,
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    border:
+                                                        OutlineInputBorder(),
+                                                    labelText: 'tag name',
+                                                  ),
+                                                  onSubmitted: (value) {
+                                                    LibraryHelper
+                                                        .addTagToProblem(
+                                                            widget.listItem,
+                                                            index,
+                                                            value);
+                                                    setState(() {});
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: const Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      LibraryHelper
+                                                          .addTagToProblem(
+                                                              widget.listItem,
+                                                              index,
+                                                              _editingController
+                                                                  .text);
+                                                      setState(() {});
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: const Text('OK'),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                            setState(() {});
+                                          },
+                                          icon: const Icon(
+                                            Icons.new_label,
                                           ),
-                                          height: 50,
-                                          width: 50,
-                                          child: Icon(
-                                            Icons.star_rounded,
-                                            color:
-                                                colorScheme.onPrimaryContainer,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 6,
-                                        ),
-                                        Text(
-                                          AppStorage()
-                                              .problemlists[indexList]
-                                              .title,
-                                          style: const TextStyle(fontSize: 18),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                );
-                              },
-                              itemCount: AppStorage().problemlists.length,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.copy_rounded,
+                                    content: SizedBox(
+                                      width: 400,
+                                      height: 300,
+                                      child: ListView.builder(
+                                        itemBuilder: (context, indexList) {
+                                          return SizedBox(
+                                            height: 40,
+                                            child: Row(
+                                              children: [
+                                                const SizedBox(
+                                                  width: 6,
+                                                ),
+                                                const Icon(
+                                                  Icons.label_outline_rounded,
+                                                ),
+                                                const SizedBox(
+                                                  width: 6,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    widget.listItem.items[index]
+                                                        .tags[indexList],
+                                                    style: const TextStyle(
+                                                        fontSize: 18),
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  onPressed: () {
+                                                    LibraryHelper
+                                                        .removeTagFromProblem(
+                                                            widget.listItem,
+                                                            index,
+                                                            widget
+                                                                    .listItem
+                                                                    .items[index]
+                                                                    .tags[
+                                                                indexList]);
+                                                    setState(() {});
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.close,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        itemCount: widget
+                                            .listItem.items[index].tags.length,
+                                      ),
+                                    ),
+                                  );
+                                })).then((value) {
+                          setState(() {});
+                        });
+                      },
+                      icon: const Icon(Icons.label_outline),
                     ),
-                  ),
-                  widget.online
-                      ? const SizedBox()
-                      : IconButton(
-                          tooltip: 'Delete problem',
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                title: const Text(
-                                  'Confirm',
+              widget.online
+                  ? const SizedBox()
+                  : IconButton(
+                      tooltip: 'Note',
+                      onPressed: () {
+                        _editingController.text = items[index].note;
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: Text(
+                              items[index].title,
+                            ),
+                            content: SizedBox(
+                              height: 400,
+                              width: 600,
+                              child: TextField(
+                                autofocus: true,
+                                minLines: null,
+                                maxLines: null,
+                                expands: true,
+                                controller: _editingController,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
                                 ),
-                                content: Text(
-                                  'Delete problem ${items[index].title}',
+                                onSubmitted: (value) {
+                                  LibraryHelper.changeProblemNote(
+                                    widget.listItem,
+                                    index,
+                                    value,
+                                  );
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  LibraryHelper.changeProblemNote(
+                                    widget.listItem,
+                                    index,
+                                    _editingController.text,
+                                  );
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.notes_outlined),
+                    ),
+              IconButton(
+                tooltip: 'Copy problem',
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Copy to'),
+                      content: SizedBox(
+                        width: 400,
+                        height: 300,
+                        child: ListView.builder(
+                          itemBuilder: (context, indexList) {
+                            return SizedBox(
+                              height: 60,
+                              child: InkWell(
+                                onTap: () {
+                                  LibraryHelper.addProblemToList(
+                                      AppStorage().problemlists[indexList],
+                                      items[index]);
+                                  Navigator.pop(context);
+                                },
+                                borderRadius: BorderRadius.circular(20),
+                                child: Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: colorScheme.primaryContainer,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      height: 50,
+                                      width: 50,
+                                      child: Icon(
+                                        Icons.star_rounded,
+                                        color: colorScheme.onPrimaryContainer,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      AppStorage()
+                                          .problemlists[indexList]
+                                          .title,
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
+                                  ],
                                 ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      LibraryHelper.removeProblemFromList(
-                                          widget.listItem, items[index]);
-                                      setState(() {});
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('OK'),
-                                  ),
-                                ],
                               ),
                             );
                           },
-                          icon: const Icon(Icons.delete_outline),
+                          itemCount: AppStorage().problemlists.length,
                         ),
-                ],
-              )),
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(
+                  Icons.copy_rounded,
+                ),
+              ),
+              widget.online
+                  ? const SizedBox()
+                  : IconButton(
+                      tooltip: 'Delete problem',
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: const Text(
+                              'Confirm',
+                            ),
+                            content: Text(
+                              'Delete problem ${items[index].title}',
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  LibraryHelper.removeProblemFromList(
+                                      widget.listItem, items[index]);
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.delete_outline),
+                    ),
               const SizedBox(
                 width: 6,
               )
