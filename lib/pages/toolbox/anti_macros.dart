@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cf_partner/backend/storage.dart';
 import 'package:code_text_field/code_text_field.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:process_run/process_run.dart';
 
@@ -113,9 +114,19 @@ class AntiMacrosState extends State<AntiMacros> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // TODO: pick files
                   TextButton.icon(
-                    onPressed: () {},
+                    onPressed: () async {
+                      FilePickerResult? result =
+                          await FilePicker.platform.pickFiles();
+
+                      if (result != null) {
+                        File file = File(result.files.single.path!);
+                        var str = await file.readAsString();
+                        setState(() {
+                          _inputController.text = str;
+                        });
+                      }
+                    },
                     style: ButtonStyle(
                       backgroundColor: WidgetStatePropertyAll(
                         Theme.of(context).colorScheme.primaryContainer,
