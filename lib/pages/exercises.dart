@@ -171,7 +171,9 @@ class ExercisesState extends State<Exercises> {
                             IconButton(
                               tooltip: 'Rename list',
                               onPressed: () {
-                                _editingController.clear();
+                                // _editingController.clear();
+                                _editingController.text =
+                                    AppStorage().problemlists[index].title;
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) =>

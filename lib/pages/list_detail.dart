@@ -372,7 +372,7 @@ class ListDetailState extends State<ListDetail> {
               widget.online
                   ? const SizedBox()
                   : IconButton(
-                      tooltip: 'Change status',
+                      tooltip: 'Mark',
                       onPressed: () {
                         showDialog(
                           context: context,
@@ -516,7 +516,7 @@ class ListDetailState extends State<ListDetail> {
               widget.online
                   ? const SizedBox()
                   : IconButton(
-                      tooltip: 'Edit tags',
+                      tooltip: 'Tags',
                       onPressed: () {
                         showDialog(
                             context: context,
@@ -713,8 +713,60 @@ class ListDetailState extends State<ListDetail> {
                       },
                       icon: const Icon(Icons.notes_outlined),
                     ),
+              widget.online
+                  ? const SizedBox()
+                  : IconButton(
+                      tooltip: 'Rename',
+                      onPressed: () {
+                        _editingController.text = items[index].title;
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: const Text('Rename'),
+                            content: TextField(
+                              autofocus: true,
+                              controller: _editingController,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                              ),
+                              onSubmitted: (value) {
+                                LibraryHelper.renameProblem(
+                                  widget.listItem,
+                                  index,
+                                  value,
+                                );
+                                setState(() {});
+                                Navigator.pop(context);
+                              },
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  LibraryHelper.renameProblem(
+                                    widget.listItem,
+                                    index,
+                                    _editingController.text,
+                                  );
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.drive_file_rename_outline),
+                    ),
               IconButton(
-                tooltip: 'Copy problem',
+                tooltip: 'Copy',
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -779,7 +831,7 @@ class ListDetailState extends State<ListDetail> {
               widget.online
                   ? const SizedBox()
                   : IconButton(
-                      tooltip: 'Delete problem',
+                      tooltip: 'Delete',
                       onPressed: () {
                         showDialog(
                           context: context,
