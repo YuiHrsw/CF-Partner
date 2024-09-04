@@ -245,7 +245,7 @@ class TrackerPageState extends State<TrackerPage> {
                                       surfaceTintColor: Colors.transparent,
                                       title: const Text('Copy to'),
                                       content: SizedBox(
-                                        width: 200,
+                                        width: 400,
                                         height: 300,
                                         child: ListView.builder(
                                           itemBuilder: (context, indexList) {

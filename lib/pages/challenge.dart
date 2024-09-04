@@ -15,7 +15,7 @@ class Challenge extends StatefulWidget {
 class ChallengeState extends State<Challenge> {
   List<ChallengeProblem> _dailyProblems = [];
   String _errMsg = '';
-  bool _listening = true;
+  // final bool _listening = true;
 
   @override
   void initState() {

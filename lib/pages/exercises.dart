@@ -3,7 +3,6 @@ import 'package:cf_partner/backend/list_item.dart';
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/pages/list_detail.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Exercises extends StatefulWidget {
   const Exercises({super.key});
