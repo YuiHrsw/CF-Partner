@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cf_partner/backend/storage.dart';
+import 'package:cf_partner/backend/web_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -11,6 +14,7 @@ class Settings extends StatefulWidget {
 
 class SettingsState extends State<Settings> {
   final TextEditingController _controller = TextEditingController();
+  final TextEditingController _handleController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +51,7 @@ class SettingsState extends State<Settings> {
               ),
               child: TextField(
                 textAlign: TextAlign.center,
-                controller: _controller,
+                controller: _handleController,
                 maxLines: 1,
                 decoration: InputDecoration.collapsed(
                   hintText: AppStorage().settings.handle,
@@ -56,9 +60,67 @@ class SettingsState extends State<Settings> {
                   AppStorage().settings.handle = value;
                   AppStorage().saveSettings();
                   setState(() {});
-                  _controller.clear();
+                  _handleController.clear();
                 },
               ),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.cookie_outlined),
+            title: const Text('Clist sessionid'),
+            trailing: OutlinedButton(
+              onPressed: () {
+                _controller.clear();
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    surfaceTintColor: Colors.transparent,
+                    title: const Text('cookies'),
+                    content: SizedBox(
+                      width: 400,
+                      height: 300,
+                      child: TextField(
+                        autofocus: true,
+                        maxLines: null,
+                        minLines: null,
+                        expands: true,
+                        controller: _controller,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Clist sessonid',
+                        ),
+                        onSubmitted: (value) async {
+                          await WebHelper.cookieManager.cookieJar
+                              .saveFromResponse(Uri.parse('https://clist.by'),
+                                  [Cookie('sessionid', value)]);
+                          if (!context.mounted) return;
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          String value = _controller.text;
+                          await WebHelper.cookieManager.cookieJar
+                              .saveFromResponse(Uri.parse('https://clist.by'),
+                                  [Cookie('sessionid', value)]);
+                          if (!context.mounted) return;
+                          Navigator.pop(context);
+                        },
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: const Text('Set'),
             ),
           ),
           Container(
@@ -225,7 +287,7 @@ class SettingsState extends State<Settings> {
             ),
             title: const Text('CF Partner 2'),
             trailing: const Text(
-              'v 2.5',
+              'v 2.6',
               style: TextStyle(
                 fontSize: 16,
               ),

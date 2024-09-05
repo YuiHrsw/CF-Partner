@@ -14,7 +14,10 @@ class Challenge extends StatefulWidget {
 
 class ChallengeState extends State<Challenge> {
   List<ChallengeProblem> _dailyProblems = [];
+  final List<OnlineContest> _contests = [];
+  int clistCnt = 100;
   String _errMsg = '';
+  String _clistErrMsg = '';
   // final bool _listening = true;
 
   @override
@@ -36,137 +39,221 @@ class ChallengeState extends State<Challenge> {
         _errMsg = e.toString();
       });
     }
+    try {
+      _contests.clear();
+
+      String now = DateTime.now().toString();
+      now = now.substring(0, 19).replaceAll(' ', 'T');
+      var data = await WebHelper().get(
+        'https://clist.by/api/v4/contest/',
+        queryParameters: {
+          'order_by': 'start',
+          'upcoming': true,
+          'limit': clistCnt,
+          'start__gt': now,
+          'filtered': true,
+        },
+      );
+      var clist = data.data['objects'];
+      for (var c in clist) {
+        _contests.add(
+          OnlineContest(
+            title: c['event'],
+            url: c['href'],
+            host: c['host'],
+            duration: c['duration'],
+            start: c['start'],
+            end: c['end'],
+          ),
+        );
+      }
+      setState(() {});
+    } catch (e) {
+      setState(() {
+        _clistErrMsg = e.toString();
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Dashboard',
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
-          ),
-          // actions: [
-          //   IconButton(
-          //     tooltip: 'Add a problem',
-          //     onPressed: () {},
-          //     icon: const Icon(Icons.add_circle),
-          //   ),
-          //   const SizedBox(
-          //     width: 6,
-          //   )
-          // ],
+      appBar: AppBar(
+        title: const Text(
+          'Dashboard',
+          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
         ),
-        body: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Container(
-                height: 100,
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${DateTime.now().year} - ${DateTime.now().month} - ${DateTime.now().day}',
-                      style: const TextStyle(fontSize: 30),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                child: Row(
-                  children: [
-                    Text(
-                      'Daily Problems',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    IconButton(
-                      tooltip: 'Refresh',
-                      onPressed: () async {
-                        try {
-                          var res = await WebHelper().get(
-                              "https://raw.githubusercontent.com/Yawn-Sean/Daily_CF_Problems/main/README.md");
-                          setState(() {
-                            _dailyProblems = parse(res.data);
-                            _errMsg = '';
-                          });
-                        } catch (e) {
-                          setState(() {
-                            _errMsg = e.toString();
-                          });
-                        }
-                      },
-                      icon: const Icon(Icons.refresh_rounded),
-                    ),
-                    IconButton(
-                      tooltip: 'Open repo',
-                      onPressed: () {
-                        launchUrl(
-                          Uri.parse(
-                            'https://github.com/Yawn-Sean/Daily_CF_Problems',
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.open_in_browser),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            _errMsg != ''
-                ? SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(_errMsg),
-                    ),
-                  )
-                : SliverList.builder(
-                    itemBuilder: (context, index) {
-                      return buildProblemListTile(_dailyProblems[index]);
-                    },
-                    itemCount: _dailyProblems.length,
+        // actions: [
+        //   IconButton(
+        //     tooltip: 'Add a problem',
+        //     onPressed: () {},
+        //     icon: const Icon(Icons.add_circle),
+        //   ),
+        //   const SizedBox(
+        //     width: 6,
+        //   )
+        // ],
+      ),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Container(
+              height: 100,
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '${DateTime.now().year} - ${DateTime.now().month} - ${DateTime.now().day}',
+                    style: const TextStyle(fontSize: 30),
                   ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Text(
-                      'Contests',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    IconButton(
-                      tooltip: 'Refresh',
-                      onPressed: () async {},
-                      icon: const Icon(Icons.refresh_rounded),
-                    ),
-                    IconButton(
-                      tooltip: 'Open clist.by',
-                      onPressed: () {
-                        launchUrl(
-                          Uri.parse('https://clist.by/?view=list'),
-                        );
-                      },
-                      icon: const Icon(Icons.open_in_browser),
-                    ),
-                  ],
-                ),
+                ],
               ),
             ),
-          ],
-        ));
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                children: [
+                  Text(
+                    'Daily Problems',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Refresh',
+                    onPressed: () async {
+                      try {
+                        var res = await WebHelper().get(
+                            "https://raw.githubusercontent.com/Yawn-Sean/Daily_CF_Problems/main/README.md");
+                        setState(() {
+                          _dailyProblems = parse(res.data);
+                          _errMsg = '';
+                        });
+                      } catch (e) {
+                        setState(() {
+                          _errMsg = e.toString();
+                        });
+                      }
+                    },
+                    icon: const Icon(Icons.refresh_rounded),
+                  ),
+                  IconButton(
+                    tooltip: 'Open repo',
+                    onPressed: () {
+                      launchUrl(
+                        Uri.parse(
+                          'https://github.com/Yawn-Sean/Daily_CF_Problems',
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.open_in_browser),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          _clistErrMsg != ''
+              ? SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(_errMsg),
+                  ),
+                )
+              : SliverList.builder(
+                  itemBuilder: (context, index) {
+                    return buildProblemListTile(_dailyProblems[index]);
+                  },
+                  itemCount: _dailyProblems.length,
+                ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Text(
+                    'Contests',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Refresh',
+                    onPressed: () async {
+                      try {
+                        _contests.clear();
+
+                        String now = DateTime.now().toString();
+                        now = now.substring(0, 19).replaceAll(' ', 'T');
+                        var data = await WebHelper().get(
+                          'https://clist.by/api/v4/contest/',
+                          queryParameters: {
+                            'order_by': 'start',
+                            'upcoming': true,
+                            'limit': clistCnt,
+                            'start__gt': now,
+                            'filtered': true,
+                          },
+                        );
+                        var clist = data.data['objects'];
+                        for (var c in clist) {
+                          _contests.add(
+                            OnlineContest(
+                              title: c['event'],
+                              url: c['href'],
+                              host: c['host'],
+                              duration: c['duration'],
+                              start: c['start'],
+                              end: c['end'],
+                            ),
+                          );
+                        }
+                        setState(() {
+                          _clistErrMsg = '';
+                        });
+                      } catch (e) {
+                        setState(() {
+                          _clistErrMsg = e.toString();
+                        });
+                      }
+                    },
+                    icon: const Icon(Icons.refresh_rounded),
+                  ),
+                  IconButton(
+                    tooltip: 'Open clist.by',
+                    onPressed: () {
+                      launchUrl(
+                        Uri.parse('https://clist.by/?view=list'),
+                      );
+                    },
+                    icon: const Icon(Icons.open_in_browser),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          _clistErrMsg != ''
+              ? SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(_clistErrMsg),
+                  ),
+                )
+              : SliverList.builder(
+                  itemBuilder: (context, index) {
+                    return buildContestListTile(_contests[index]);
+                  },
+                  itemCount: _contests.length,
+                ),
+        ],
+      ),
+    );
   }
 
   Widget buildProblemListTile(ChallengeProblem p) {
@@ -321,6 +408,69 @@ class ChallengeState extends State<Challenge> {
       ),
     );
   }
+
+  Widget buildContestListTile(OnlineContest p) {
+    var colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      height: 46,
+      child: InkWell(
+        onTap: () {
+          launchUrl(Uri.parse(p.url));
+        },
+        borderRadius: BorderRadius.circular(14),
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Row(
+            children: [
+              const SizedBox(
+                width: 4,
+              ),
+              Ink(
+                decoration: BoxDecoration(
+                  color: colorScheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: FittedBox(
+                  child: Text(
+                    ' ${p.host} ',
+                    style: TextStyle(
+                      color: colorScheme.onSecondaryContainer,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 6,
+              ),
+              Expanded(
+                child: Text(
+                  p.title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Text(
+                p.start,
+                style: TextStyle(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                width: 6,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 List<ChallengeProblem> parse(String markdownContent) {
@@ -399,4 +549,21 @@ class ChallengeProblem extends ProblemItem {
   String difficulty;
   String hint;
   String tutorial;
+}
+
+class OnlineContest {
+  OnlineContest({
+    required this.title,
+    required this.url,
+    required this.host,
+    required this.duration,
+    required this.start,
+    required this.end,
+  });
+  String title;
+  String url;
+  String host;
+  int duration;
+  String start;
+  String end;
 }

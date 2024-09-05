@@ -15,6 +15,8 @@ dependencies:
   json_annotation: ^4.8.1
   provider: ^6.1.1
   dio: ^5.3.3
+  dio_cookie_manager: ^3.1.1
+  cookie_jar: ^4.0.8
   url_launcher: ^6.2.5
   file_picker: ^8.0.0+1
   process_run: ^1.1.0
