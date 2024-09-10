@@ -1,7 +1,9 @@
+import 'package:cf_partner/backend/cfapi/cf_helper.dart';
 import 'package:cf_partner/pages/toolbox/anti_macros.dart';
 import 'package:cf_partner/pages/toolbox/randcontest.dart';
 import 'package:cf_partner/pages/toolbox/tracker.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 class Toolbox extends StatefulWidget {
@@ -12,6 +14,8 @@ class Toolbox extends StatefulWidget {
 }
 
 class ToolboxState extends State<Toolbox> {
+  final TextEditingController _controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,6 +64,61 @@ class ToolboxState extends State<Toolbox> {
                   builder: (context) => const Playground(),
                 ),
               );
+            },
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.link,
+            ),
+            title: const Text('CF Jumping'),
+            onTap: () {
+              _controller.clear();
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text('Jumping'),
+                  content: TextField(
+                    autofocus: true,
+                    maxLines: 1,
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'code',
+                    ),
+                    onSubmitted: (value) {
+                      var res = CFHelper().parseProblemCode(value);
+                      launchUrl(
+                        Uri.parse(
+                          'https://codeforces.com/contest/${res.first}/problem/${res.last}',
+                        ),
+                      );
+                      Navigator.pop(context);
+                    },
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        var res = CFHelper().parseProblemCode(_controller.text);
+                        launchUrl(
+                          Uri.parse(
+                            'https://codeforces.com/contest/${res.first}/problem/${res.last}',
+                          ),
+                        );
+                        Navigator.pop(context);
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              ).then((value) {
+                setState(() {});
+              });
             },
           ),
         ],

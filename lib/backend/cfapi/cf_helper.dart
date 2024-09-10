@@ -190,4 +190,20 @@ class CFHelper {
 
   // static Future<ProblemItem> getProblem(int id, String index) async {}
   // static Future<String> getPloblemStatus(Problem p) async {}
+
+  List<String> parseProblemCode(String str) {
+    String prefix = '';
+    String suffix = '';
+
+    for (int i = 0; i < str.length; i++) {
+      if (RegExp(r'\d').hasMatch(str[i])) {
+        prefix += str[i];
+      } else {
+        suffix = str.substring(i);
+        break;
+      }
+    }
+
+    return [prefix, suffix];
+  }
 }

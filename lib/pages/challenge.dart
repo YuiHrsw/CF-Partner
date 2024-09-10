@@ -42,7 +42,11 @@ class ChallengeState extends State<Challenge> {
     try {
       _contests.clear();
 
-      String now = DateTime.now().toString();
+      String now = DateTime.now()
+          .subtract(
+            const Duration(days: 1),
+          )
+          .toString();
       now = now.substring(0, 19).replaceAll(' ', 'T');
       var data = await WebHelper().get(
         'https://clist.by/api/v4/contest/',
@@ -62,7 +66,7 @@ class ChallengeState extends State<Challenge> {
             url: c['href'],
             host: c['host'],
             duration: c['duration'],
-            start: c['start'],
+            start: (c['start'] as String).replaceFirst('T', ' '),
             end: c['end'],
           ),
         );
@@ -78,42 +82,52 @@ class ChallengeState extends State<Challenge> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Dashboard',
-          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
-        ),
-        // actions: [
-        //   IconButton(
-        //     tooltip: 'Add a problem',
-        //     onPressed: () {},
-        //     icon: const Icon(Icons.add_circle),
-        //   ),
-        //   const SizedBox(
-        //     width: 6,
-        //   )
-        // ],
-      ),
+      // appBar: AppBar(
+      //   title: const Text(
+      //     'Dashboard',
+      //     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
+      //   ),
+      //   actions: [
+      //     IconButton(
+      //       tooltip: 'Edit title',
+      //       onPressed: () {},
+      //       icon: const Icon(Icons.edit_outlined),
+      //     ),
+      //     const SizedBox(
+      //       width: 6,
+      //     )
+      //   ],
+      // ),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: Container(
-              height: 100,
+              height: 160,
               alignment: Alignment.center,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '${DateTime.now().year} - ${DateTime.now().month} - ${DateTime.now().day}',
-                    style: const TextStyle(fontSize: 30),
+                    // '📅 ${DateTime.now().year} - ${DateTime.now().month} - ${DateTime.now().day}',
+                    'Welcome back, ${AppStorage().settings.handle}! 🥰',
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
             ),
           ),
+          const SliverToBoxAdapter(
+            child: Divider(
+              indent: 16,
+              endIndent: 16,
+            ),
+          ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
                   Text(
@@ -170,13 +184,19 @@ class ChallengeState extends State<Challenge> {
                   },
                   itemCount: _dailyProblems.length,
                 ),
+          const SliverToBoxAdapter(
+            child: Divider(
+              indent: 16,
+              endIndent: 16,
+            ),
+          ),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
                   Text(
-                    'Contests',
+                    'Upcoming Contests',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontSize: 22,
@@ -189,7 +209,11 @@ class ChallengeState extends State<Challenge> {
                       try {
                         _contests.clear();
 
-                        String now = DateTime.now().toString();
+                        String now = DateTime.now()
+                            .subtract(
+                              const Duration(days: 1),
+                            )
+                            .toString();
                         now = now.substring(0, 19).replaceAll(' ', 'T');
                         var data = await WebHelper().get(
                           'https://clist.by/api/v4/contest/',
@@ -209,7 +233,8 @@ class ChallengeState extends State<Challenge> {
                               url: c['href'],
                               host: c['host'],
                               duration: c['duration'],
-                              start: c['start'],
+                              start:
+                                  (c['start'] as String).replaceFirst('T', ' '),
                               end: c['end'],
                             ),
                           );

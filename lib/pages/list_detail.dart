@@ -659,6 +659,7 @@ class ListDetailState extends State<ListDetail> {
                       onPressed: () {
                         _editingController.text = items[index].note;
                         showDialog(
+                          barrierDismissible: false,
                           context: context,
                           builder: (BuildContext context) => AlertDialog(
                             title: Text(
