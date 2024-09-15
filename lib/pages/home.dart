@@ -1,5 +1,5 @@
 import 'package:cf_partner/backend/storage.dart';
-import 'package:cf_partner/pages/challenge.dart';
+import 'package:cf_partner/pages/dashboard.dart';
 import 'package:cf_partner/pages/exercises.dart';
 import 'package:cf_partner/pages/toolbox.dart';
 import 'package:cf_partner/pages/settings.dart';
