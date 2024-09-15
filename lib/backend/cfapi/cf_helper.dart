@@ -9,10 +9,22 @@ import 'package:cf_partner/backend/list_item.dart';
 import 'package:cf_partner/backend/problem_item.dart';
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/backend/web_helper.dart';
+import 'package:flutter/material.dart';
 
 class CFHelper {
-  static List<Contest> contests = [];
-  static List<Problem> problems = [];
+  static Color getColor(int rating) {
+    if (rating < 1200) return Colors.grey;
+    if (rating < 1400) return Colors.teal;
+    if (rating < 1600) return Colors.cyan;
+    if (rating < 1900) return Colors.blueAccent;
+    if (rating < 2100) return Colors.deepPurpleAccent;
+    if (rating < 2400) return Colors.deepOrangeAccent;
+    if (rating < 3000) return Colors.redAccent;
+    return Colors.pinkAccent;
+  }
+
+  static List<Contest> _contests = [];
+  static List<Problem> _problems = [];
   static ProblemItem toLocalProblem(Problem p) {
     return ProblemItem(
       title: '${p.index!}. ${p.name!}',
@@ -68,8 +80,8 @@ class CFHelper {
 
   static Future<List<ListItem>> getContestsWithProblems() async {
     try {
-      contests = await getContestList();
-      problems = await getProblemSet();
+      _contests = await getContestList();
+      _problems = await getProblemSet();
       var submissions = await getSubmissions();
       Map<int, ListItem> res = {};
       Map<String, String> status = {};
@@ -87,11 +99,11 @@ class CFHelper {
         }
       }
 
-      for (var c in contests) {
+      for (var c in _contests) {
         res.addAll({c.id!: ListItem(title: c.name!, items: [])});
       }
 
-      for (var p in problems.reversed) {
+      for (var p in _problems.reversed) {
         if (!res.containsKey(p.contestId!)) {
           res.addAll({
             p.contestId!: ListItem(title: 'Contest ${p.contestId!}', items: [])
@@ -131,11 +143,11 @@ class CFHelper {
         }
       }
 
-      for (var c in contests) {
+      for (var c in _contests) {
         res.addAll({c.id!: ListItem(title: c.name!, items: [])});
       }
 
-      for (var p in problems.reversed) {
+      for (var p in _problems.reversed) {
         if (!res.containsKey(p.contestId!)) {
           res.addAll({
             p.contestId!: ListItem(title: 'Contest ${p.contestId!}', items: [])

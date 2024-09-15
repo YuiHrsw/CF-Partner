@@ -132,7 +132,7 @@ class ChallengeState extends State<Challenge> {
               child: Row(
                 children: [
                   Text(
-                    'Daily Problems',
+                    'Daily CF Problems',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontSize: 22,
@@ -303,14 +303,14 @@ class ChallengeState extends State<Challenge> {
               ),
               Ink(
                 decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
+                  color: colorScheme.secondaryContainer,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: FittedBox(
                   child: Text(
-                    ' ${p.difficulty} ',
+                    ' Difficulty: ${p.difficulty} ',
                     style: TextStyle(
-                      color: colorScheme.onPrimaryContainer,
+                      color: colorScheme.onSecondaryContainer,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

@@ -43,14 +43,9 @@ class TrackerPageState extends State<TrackerPage> {
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
     final Map<String, Color> statusColor = {
-      'Accepted': colorScheme.secondaryContainer,
-      'Attempted': colorScheme.tertiaryContainer,
+      'Accepted': Colors.green.withOpacity(0.15),
+      'Attempted': Colors.red.withOpacity(0.15),
       'unknown': colorScheme.surface,
-    };
-    final Map<String, Color> textColor = {
-      'Accepted': colorScheme.onSecondaryContainer,
-      'Attempted': colorScheme.onTertiaryContainer,
-      'unknown': colorScheme.onSurface,
     };
     return Scaffold(
       appBar: AppBar(
@@ -181,7 +176,7 @@ class TrackerPageState extends State<TrackerPage> {
               child: Text('List is empty'),
             )
           : ListView.builder(
-              itemExtent: 100,
+              itemExtent: 110,
               controller: _scrollController,
               itemBuilder: (context, index) {
                 index += _pageCount * _currentPage;
@@ -210,8 +205,9 @@ class TrackerPageState extends State<TrackerPage> {
                               Expanded(
                                 child: Text(
                                   _contests[index].title,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.w500,
+                                    color: colorScheme.secondary,
                                   ),
                                 ),
                               ),
@@ -295,7 +291,8 @@ class TrackerPageState extends State<TrackerPage> {
                                                               indexList]
                                                           .title,
                                                       style: const TextStyle(
-                                                          fontSize: 18),
+                                                        fontSize: 18,
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -311,15 +308,16 @@ class TrackerPageState extends State<TrackerPage> {
                                 }
                               },
                               child: Tooltip(
-                                waitDuration: const Duration(milliseconds: 500),
+                                waitDuration: const Duration(seconds: 1),
                                 message:
                                     '${problem.title} - ${problem.tags.last}\n${problem.url}\n\nClick to ${_urlMode ? 'open url' : 'copy problem'}',
                                 child: Ink(
                                   decoration: BoxDecoration(
                                     border: problem.status == 'unknown'
                                         ? Border.all(
-                                            color:
-                                                colorScheme.secondaryContainer,
+                                            color: colorScheme
+                                                .secondaryContainer
+                                                .withOpacity(0.6),
                                             width: 4,
                                           )
                                         : null,
@@ -327,16 +325,17 @@ class TrackerPageState extends State<TrackerPage> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   padding: const EdgeInsets.all(4),
-                                  width: 110,
+                                  width: 150,
                                   child: Text(
                                     problem.title,
                                     overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
+                                    maxLines: 3,
                                     style: TextStyle(
-                                      color: textColor[problem.status],
-                                      // fontWeight: problem.status == 'unknown'
-                                      //     ? null
-                                      //     : FontWeight.w500,
+                                      color: problem.tags.last == 'N/A'
+                                          ? colorScheme.onSurface
+                                          : CFHelper.getColor(
+                                              int.parse(problem.tags.last)),
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ),
