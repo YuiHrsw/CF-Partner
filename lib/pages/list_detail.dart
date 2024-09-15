@@ -17,7 +17,6 @@ class ListDetail extends StatefulWidget {
   ListDetailState createState() => ListDetailState();
 }
 
-// TODO: rename problem
 class ListDetailState extends State<ListDetail> {
   final TextEditingController _editingController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();

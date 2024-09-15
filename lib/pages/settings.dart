@@ -260,8 +260,6 @@ class SettingsState extends State<Settings> {
               ),
             ),
           ),
-          // TODO: data backup
-          // TODO: change work directory
           ListTile(
             onTap: () {
               launchUrl(Uri.directory(AppStorage().dataPath));

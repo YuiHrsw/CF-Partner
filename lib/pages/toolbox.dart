@@ -1,10 +1,9 @@
 import 'package:cf_partner/backend/cfapi/cf_helper.dart';
 import 'package:cf_partner/pages/toolbox/anti_macros.dart';
-import 'package:cf_partner/pages/toolbox/randcontest.dart';
+// import 'package:cf_partner/pages/toolbox/randcontest.dart';
 import 'package:cf_partner/pages/toolbox/tracker.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-// import 'package:url_launcher/url_launcher.dart';
 
 class Toolbox extends StatefulWidget {
   const Toolbox({super.key});
@@ -53,19 +52,19 @@ class ToolboxState extends State<Toolbox> {
               );
             },
           ),
-          ListTile(
-            leading: const Icon(
-              Icons.bar_chart_rounded,
-            ),
-            title: const Text('Rand Contest'),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const Playground(),
-                ),
-              );
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(
+          //     Icons.bar_chart_rounded,
+          //   ),
+          //   title: const Text('Rand Contest'),
+          //   onTap: () {
+          //     Navigator.of(context).push(
+          //       MaterialPageRoute(
+          //         builder: (context) => const Playground(),
+          //       ),
+          //     );
+          //   },
+          // ),
           ListTile(
             leading: const Icon(
               Icons.link,

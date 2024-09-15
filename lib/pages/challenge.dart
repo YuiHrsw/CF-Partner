@@ -56,6 +56,7 @@ class ChallengeState extends State<Challenge> {
           'limit': clistCnt,
           'start__gt': now,
           'filtered': true,
+          'format_time': true,
         },
       );
       var clist = data.data['objects'];
@@ -66,7 +67,7 @@ class ChallengeState extends State<Challenge> {
             url: c['href'],
             host: c['host'],
             duration: c['duration'],
-            start: (c['start'] as String).replaceFirst('T', ' '),
+            start: c['start'],
             end: c['end'],
           ),
         );
@@ -171,7 +172,7 @@ class ChallengeState extends State<Challenge> {
               ),
             ),
           ),
-          _clistErrMsg != ''
+          _errMsg != ''
               ? SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -223,6 +224,7 @@ class ChallengeState extends State<Challenge> {
                             'limit': clistCnt,
                             'start__gt': now,
                             'filtered': true,
+                            'format_time': true,
                           },
                         );
                         var clist = data.data['objects'];
@@ -233,8 +235,7 @@ class ChallengeState extends State<Challenge> {
                               url: c['href'],
                               host: c['host'],
                               duration: c['duration'],
-                              start:
-                                  (c['start'] as String).replaceFirst('T', ' '),
+                              start: c['start'],
                               end: c['end'],
                             ),
                           );
@@ -328,6 +329,23 @@ class ChallengeState extends State<Challenge> {
                   child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  IconButton(
+                    tooltip: 'Submit',
+                    onPressed: () {
+                      RegExp regExp = RegExp(r'/(\d{4})/(\d{2})/(\d{4})/');
+                      Match? match = regExp.firstMatch(p.tutorial);
+
+                      if (match != null) {
+                        String year = match.group(1)!;
+                        String month = match.group(2)!;
+                        String day = match.group(3)!;
+                        launchUrl(Uri.parse(
+                          'https://github.com/Yawn-Sean/Daily_CF_Problems/new/main/daily_problems/$year/$month/$day/personal_submission',
+                        ));
+                      }
+                    },
+                    icon: const Icon(Icons.send_outlined),
+                  ),
                   IconButton(
                     tooltip: 'Hint',
                     onPressed: () {
@@ -588,7 +606,7 @@ class OnlineContest {
   String title;
   String url;
   String host;
-  int duration;
+  String duration;
   String start;
   String end;
 }
