@@ -46,5 +46,5 @@ msix_config:
   display_name: CF Partner
   identity_name: YuiHrsw.CFPartner
   msix_version: 2.7.0.0
-  logo_path: res/images/icon.png
+  logo_path: res/images/icon/icon512.png
   trim_logo: false
