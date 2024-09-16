@@ -8,7 +8,7 @@ Competitive Programming Tools Collection.
 
 [Microsoft Store](https://apps.microsoft.com/detail/9n7h24z5rg0q?hl=en-lc&gl=LC)
 
-[Github Release](https://github.com/YuiHrsw/CF-Partner/releases/tag/v2.2)
+[Github Release](https://github.com/YuiHrsw/CF-Partner/releases)
 
 [Nightly Builds](https://github.com/YuiHrsw/CF-Partner/actions)
 
