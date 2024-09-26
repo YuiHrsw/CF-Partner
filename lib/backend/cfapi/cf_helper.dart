@@ -18,9 +18,9 @@ class CFHelper {
     if (rating < 1600) return Colors.cyan;
     if (rating < 1900) return Colors.blueAccent;
     if (rating < 2100) return Colors.deepPurpleAccent;
-    if (rating < 2400) return Colors.deepOrangeAccent;
+    if (rating < 2400) return Colors.orange;
     if (rating < 3000) return Colors.redAccent;
-    return Colors.pinkAccent;
+    return Colors.pink.shade200;
   }
 
   static List<Contest> _contests = [];
