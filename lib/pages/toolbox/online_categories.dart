@@ -48,7 +48,7 @@ class OnlineCategoriesState extends State<OnlineCategories> {
     OnlineList(
       icon: Icons.calculate_outlined,
       title: 'Counting',
-      url: '$_baseUrl/Counting.md',
+      url: '$_baseUrl/counting.md',
     ),
     OnlineList(
       icon: Icons.line_style,
