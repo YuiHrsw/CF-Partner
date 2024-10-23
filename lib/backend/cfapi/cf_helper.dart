@@ -91,11 +91,11 @@ class CFHelper {
           continue;
         }
         var id = '${s.contestId!}${s.problem!.index!}';
-        var result = s.verdict! == 'OK' ? 'Accepted' : 'Attempted';
+        var result = s.verdict! == 'OK' ? 'AC' : 'Tried';
         if (!status.containsKey(id)) {
           status.addAll({id: result});
-        } else if ((status[id] == 'Attempted') && (result == 'Accepted')) {
-          status[id] = 'Accepted';
+        } else if ((status[id] == 'Tried') && (result == 'AC')) {
+          status[id] = 'AC';
         }
       }
 
@@ -135,11 +135,11 @@ class CFHelper {
           continue;
         }
         var id = '${s.contestId!}${s.problem!.index!}';
-        var result = s.verdict! == 'OK' ? 'Accepted' : 'Attempted';
+        var result = s.verdict! == 'OK' ? 'AC' : 'Tried';
         if (!status.containsKey(id)) {
           status.addAll({id: result});
-        } else if ((status[id] == 'Attempted') && (result == 'Accepted')) {
-          status[id] = 'Accepted';
+        } else if ((status[id] == 'Tried') && (result == 'AC')) {
+          status[id] = 'AC';
         }
       }
 
@@ -188,9 +188,9 @@ class CFHelper {
         return List.generate(problems.length, (index) {
           var res = toLocalProblem(problems[index]);
           if (results[index].points != 0) {
-            res.status = 'Accepted';
+            res.status = 'AC';
           } else if (results[index].rejectedAttemptCount != 0) {
-            res.status = 'Attempted';
+            res.status = 'Tried';
           }
           return res;
         });
@@ -230,12 +230,12 @@ class CFHelper {
           continue;
         }
         var id = 'CF${s.contestId!}${s.problem!.index!}';
-        var result = s.verdict! == 'OK' ? 'Accepted' : 'Attempted';
+        var result = s.verdict! == 'OK' ? 'AC' : 'Tried';
 
         if (!status.containsKey(id)) {
           status.addAll({id: result});
-        } else if ((status[id] == 'Attempted') && (result == 'Accepted')) {
-          status[id] = 'Accepted';
+        } else if ((status[id] == 'Tried') && (result == 'AC')) {
+          status[id] = 'AC';
         }
       }
       for (var p in problems) {

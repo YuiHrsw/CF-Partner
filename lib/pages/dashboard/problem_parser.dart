@@ -95,7 +95,7 @@ List<ProblemItem> parseToLocal(String markdownContent) {
         .where((col) => col.isNotEmpty)
         .toList();
     if (columns.length == 4) {
-      final difficulty = columns[0];
+      // final difficulty = columns[0];
       final problemName =
           RegExp(r'\[(.*?)\]').firstMatch(columns[1])?.group(1) ?? 'N/A';
       final problemLink =
@@ -111,7 +111,7 @@ List<ProblemItem> parseToLocal(String markdownContent) {
           url: problemLink,
           status: 'unknown',
           note: 'Hint:\n$hint\n\nTutorial:\n$solutionLink',
-          tags: [difficulty],
+          tags: [],
         ),
       );
     }

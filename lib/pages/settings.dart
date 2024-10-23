@@ -296,7 +296,7 @@ class SettingsState extends State<Settings> {
             ),
             title: const Text('CF Partner 2'),
             trailing: const Text(
-              'v 2.8',
+              'v 2.9',
               style: TextStyle(
                 fontSize: 16,
               ),

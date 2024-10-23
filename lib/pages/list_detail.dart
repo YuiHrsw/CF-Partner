@@ -19,6 +19,7 @@ class ListDetail extends StatefulWidget {
 
 class ListDetailState extends State<ListDetail> {
   final TextEditingController _editingController = TextEditingController();
+
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _urlController = TextEditingController();
   final bool _locked = false;
@@ -268,7 +269,8 @@ class ListDetailState extends State<ListDetail> {
                           itemBuilder: (context, tagIndex) {
                             return Container(
                               decoration: BoxDecoration(
-                                color: colorScheme.secondaryContainer,
+                                color: colorScheme.secondaryContainer
+                                    .withOpacity(0.6),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               height: widget.listItem.items[index].tags.isEmpty
@@ -283,7 +285,8 @@ class ListDetailState extends State<ListDetail> {
                                       widget
                                           .listItem.items[index].tags[tagIndex],
                                       style: TextStyle(
-                                        color: colorScheme.onSecondaryContainer,
+                                        color: colorScheme.onSecondaryContainer
+                                            .withOpacity(0.8),
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -312,6 +315,11 @@ class ListDetailState extends State<ListDetail> {
 
   Widget buildListItem(
       ColorScheme colorScheme, int index, List<ProblemItem> items) {
+    final Map<String, Color> statusColor = {
+      'AC': Colors.green.withOpacity(0.15),
+      'Tried': Colors.red.withOpacity(0.15),
+      'unknown': colorScheme.surface,
+    };
     return SizedBox(
       height: 46,
       child: InkWell(
@@ -332,18 +340,18 @@ class ListDetailState extends State<ListDetail> {
                   ? const SizedBox()
                   : Container(
                       decoration: BoxDecoration(
-                        color: items[index].status == 'Accepted'
-                            ? colorScheme.primaryContainer
-                            : colorScheme.tertiaryContainer,
+                        color: statusColor[items[index].status] ??
+                            colorScheme.tertiaryContainer.withOpacity(0.6),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: FittedBox(
                         child: Text(
                           ' ${items[index].status} ',
                           style: TextStyle(
-                            color: items[index].status == 'Accepted'
-                                ? colorScheme.onPrimaryContainer
-                                : colorScheme.onTertiaryContainer,
+                            // color: items[index].status == 'AC'
+                            //     ? colorScheme.onPrimaryContainer
+                            //     : colorScheme.onTertiaryContainer,
+                            color: colorScheme.onSurface.withOpacity(0.75),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -358,12 +366,16 @@ class ListDetailState extends State<ListDetail> {
                   items[index].title,
                   style: TextStyle(
                     fontSize: 18,
-                    color: items[index].status == 'Accepted'
+                    color: items[index].status == 'AC'
                         ? colorScheme.onPrimaryContainer
                         : null,
-                    fontWeight: items[index].status == 'Accepted'
+                    fontWeight: items[index].status != 'unknown'
                         ? FontWeight.w500
                         : null,
+                    decoration: items[index].status == 'Tried'
+                        ? TextDecoration.lineThrough
+                        : null,
+                    // decorationThickness: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -377,7 +389,7 @@ class ListDetailState extends State<ListDetail> {
                       title: const Text('Change status'),
                       content: SizedBox(
                         width: 200,
-                        height: 200,
+                        height: 240,
                         child: ListView(
                           children: [
                             SizedBox(
@@ -388,19 +400,179 @@ class ListDetailState extends State<ListDetail> {
                                     LibraryHelper.changeProblemStatus(
                                       widget.listItem,
                                       index,
-                                      'Accepted',
+                                      'AC',
                                     );
                                   } else {
-                                    widget.listItem.items[index].status =
-                                        'Accepted';
+                                    widget.listItem.items[index].status = 'AC';
                                   }
                                   setState(() {});
                                   Navigator.pop(context);
                                 },
                                 borderRadius: BorderRadius.circular(20),
-                                child: Ink(
+                                child: Container(
                                   decoration: BoxDecoration(
-                                    color: colorScheme.primaryContainer,
+                                    color: statusColor['AC'],
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: const Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 12,
+                                      ),
+                                      Icon(
+                                        Icons.check_circle_outline,
+                                        // color: colorScheme.onPrimaryContainer,
+                                      ),
+                                      SizedBox(
+                                        width: 6,
+                                      ),
+                                      Text(
+                                        'AC',
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          // color: colorScheme.onPrimaryContainer,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            SizedBox(
+                              height: 50,
+                              child: InkWell(
+                                onTap: () {
+                                  if (!widget.online) {
+                                    LibraryHelper.changeProblemStatus(
+                                      widget.listItem,
+                                      index,
+                                      'Tried',
+                                    );
+                                  } else {
+                                    widget.listItem.items[index].status =
+                                        'Tried';
+                                  }
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                },
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: statusColor['Tried'],
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: const Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 12,
+                                      ),
+                                      Icon(
+                                        Icons.cancel_outlined,
+                                        // color: colorScheme.onErrorContainer,
+                                      ),
+                                      SizedBox(
+                                        width: 6,
+                                      ),
+                                      Text(
+                                        'Tried',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          // color: colorScheme.onErrorContainer,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            SizedBox(
+                              height: 50,
+                              child: InkWell(
+                                onTap: () {
+                                  // if (!widget.online) {
+                                  //   LibraryHelper.changeProblemStatus(
+                                  //     widget.listItem,
+                                  //     index,
+                                  //     'Custom',
+                                  //   );
+                                  // } else {
+                                  //   widget.listItem.items[index].status =
+                                  //       'Custom';
+                                  // }
+                                  // setState(() {});
+                                  // Navigator.pop(context);
+                                  _editingController.clear();
+                                  showDialog(
+                                    barrierColor: colorScheme.surfaceTint
+                                        .withOpacity(0.06),
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      title: const Text('Custom status'),
+                                      content: TextField(
+                                        autofocus: true,
+                                        maxLines: 1,
+                                        controller: _editingController,
+                                        decoration: const InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          labelText: 'status',
+                                        ),
+                                        onSubmitted: (value) {
+                                          if (!widget.online) {
+                                            LibraryHelper.changeProblemStatus(
+                                              widget.listItem,
+                                              index,
+                                              value,
+                                            );
+                                          } else {
+                                            widget.listItem.items[index]
+                                                .status = value;
+                                          }
+                                          setState(() {});
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            if (!widget.online) {
+                                              LibraryHelper.changeProblemStatus(
+                                                widget.listItem,
+                                                index,
+                                                _editingController.text,
+                                              );
+                                            } else {
+                                              widget.listItem.items[index]
+                                                      .status =
+                                                  _editingController.text;
+                                            }
+                                            setState(() {});
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                  setState(() {});
+                                },
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.primaryContainer
+                                        .withOpacity(0.4),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Row(
@@ -409,14 +581,14 @@ class ListDetailState extends State<ListDetail> {
                                         width: 12,
                                       ),
                                       Icon(
-                                        Icons.check_circle_outline,
+                                        Icons.drive_file_rename_outline,
                                         color: colorScheme.onPrimaryContainer,
                                       ),
                                       const SizedBox(
                                         width: 6,
                                       ),
                                       Text(
-                                        'Accepted',
+                                        'Edit',
                                         style: TextStyle(
                                           fontSize: 18,
                                           color: colorScheme.onPrimaryContainer,
@@ -430,58 +602,6 @@ class ListDetailState extends State<ListDetail> {
                             const SizedBox(
                               height: 10,
                             ),
-                            SizedBox(
-                              height: 50,
-                              child: InkWell(
-                                onTap: () {
-                                  if (!widget.online) {
-                                    LibraryHelper.changeProblemStatus(
-                                      widget.listItem,
-                                      index,
-                                      'Attempted',
-                                    );
-                                  } else {
-                                    widget.listItem.items[index].status =
-                                        'Attempted';
-                                  }
-                                  setState(() {});
-                                  Navigator.pop(context);
-                                },
-                                borderRadius: BorderRadius.circular(20),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: colorScheme.tertiaryContainer,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const SizedBox(
-                                        width: 12,
-                                      ),
-                                      Icon(
-                                        Icons.cancel_outlined,
-                                        color: colorScheme.onTertiaryContainer,
-                                      ),
-                                      const SizedBox(
-                                        width: 6,
-                                      ),
-                                      Text(
-                                        'Attempted',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color:
-                                              colorScheme.onTertiaryContainer,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            // TODO: custom status
                             SizedBox(
                               height: 50,
                               child: InkWell(

@@ -43,8 +43,8 @@ class TrackerPageState extends State<TrackerPage> {
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
     final Map<String, Color> statusColor = {
-      'Accepted': Colors.green.withOpacity(0.15),
-      'Attempted': Colors.red.withOpacity(0.15),
+      'AC': Colors.green.withOpacity(0.15),
+      'Tried': Colors.red.withOpacity(0.15),
       'unknown': colorScheme.surface,
     };
     return Scaffold(
