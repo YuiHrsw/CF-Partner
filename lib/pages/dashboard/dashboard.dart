@@ -265,14 +265,14 @@ class ChallengeState extends State<Challenge> {
               ),
               Ink(
                 decoration: BoxDecoration(
-                  color: colorScheme.secondaryContainer,
+                  color: colorScheme.secondaryContainer.withOpacity(0.6),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: FittedBox(
                   child: Text(
-                    ' Difficulty: ${p.difficulty} ',
+                    ' Diff: ${p.difficulty} ',
                     style: TextStyle(
-                      color: colorScheme.onSecondaryContainer,
+                      color: colorScheme.onSecondaryContainer.withOpacity(0.8),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -435,14 +435,14 @@ class ChallengeState extends State<Challenge> {
               ),
               Ink(
                 decoration: BoxDecoration(
-                  color: colorScheme.secondaryContainer,
+                  color: colorScheme.secondaryContainer.withOpacity(0.6),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: FittedBox(
                   child: Text(
                     ' ${p.host} ',
                     style: TextStyle(
-                      color: colorScheme.onSecondaryContainer,
+                      color: colorScheme.onSecondaryContainer.withOpacity(0.8),
                       fontWeight: FontWeight.w500,
                     ),
                   ),

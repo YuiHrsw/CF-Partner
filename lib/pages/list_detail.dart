@@ -101,22 +101,11 @@ class ListDetailState extends State<ListDetail> {
           titleSpacing: 0,
           title: Text(widget.listItem.title),
           actions: [
-            // IconButton(
-            //   tooltip: 'Refresh',
-            //   onPressed: _locked || widget.online
-            //       ? null
-            //       : () async {
-            //           LibraryHelper.refreshList(widget.listItem).then((value) {
-            //             setState(() {});
-            //           });
-            //         },
-            //   icon: const Icon(Icons.refresh_rounded),
-            // ),
-            IconButton(
-              tooltip: 'New problem',
-              onPressed: _locked || widget.online
-                  ? null
-                  : () {
+            _locked || widget.online
+                ? const SizedBox()
+                : IconButton(
+                    tooltip: 'New problem',
+                    onPressed: () {
                       _titleController.clear();
                       _urlController.clear();
                       showDialog(
@@ -163,6 +152,9 @@ class ListDetailState extends State<ListDetail> {
                             ),
                             TextButton(
                               onPressed: () {
+                                if (_titleController.text == '') {
+                                  return;
+                                }
                                 var p = ProblemItem(
                                   title: _titleController.text,
                                   url: _urlController.text,
@@ -192,10 +184,10 @@ class ListDetailState extends State<ListDetail> {
                         setState(() {});
                       });
                     },
-              icon: const Icon(
-                Icons.add,
-              ),
-            ),
+                    icon: const Icon(
+                      Icons.add,
+                    ),
+                  ),
             const SizedBox(
               width: 6,
             )
@@ -323,9 +315,11 @@ class ListDetailState extends State<ListDetail> {
     return SizedBox(
       height: 46,
       child: InkWell(
-        onTap: () {
-          launchUrl(Uri.parse(items[index].url));
-        },
+        onTap: items[index].url == ''
+            ? null
+            : () {
+                launchUrl(Uri.parse(items[index].url));
+              },
         borderRadius: BorderRadius.circular(14),
         child: Container(
           decoration: BoxDecoration(
@@ -428,7 +422,7 @@ class ListDetailState extends State<ListDetail> {
                                       ),
                                       Text(
                                         'AC',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 18,
                                           // color: colorScheme.onPrimaryContainer,
                                         ),
