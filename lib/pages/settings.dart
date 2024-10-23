@@ -26,6 +26,17 @@ class SettingsState extends State<Settings> {
       ),
       body: ListView(
         children: [
+          // Container(
+          //   padding: const EdgeInsets.all(12),
+          //   child: Text(
+          //     'General',
+          //     style: TextStyle(
+          //       fontSize: 20,
+          //       fontWeight: FontWeight.w500,
+          //       color: Theme.of(context).colorScheme.primary,
+          //     ),
+          //   ),
+          // ),
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
@@ -285,7 +296,7 @@ class SettingsState extends State<Settings> {
             ),
             title: const Text('CF Partner 2'),
             trailing: const Text(
-              'v 2.7',
+              'v 2.8',
               style: TextStyle(
                 fontSize: 16,
               ),

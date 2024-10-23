@@ -1,5 +1,6 @@
 import 'package:cf_partner/backend/cfapi/cf_helper.dart';
 import 'package:cf_partner/pages/toolbox/anti_macros.dart';
+import 'package:cf_partner/pages/toolbox/online_categories.dart';
 // import 'package:cf_partner/pages/toolbox/randcontest.dart';
 import 'package:cf_partner/pages/toolbox/tracker.dart';
 import 'package:flutter/material.dart';
@@ -52,30 +53,30 @@ class ToolboxState extends State<Toolbox> {
               );
             },
           ),
-          // ListTile(
-          //   leading: const Icon(
-          //     Icons.bar_chart_rounded,
-          //   ),
-          //   title: const Text('Rand Contest'),
-          //   onTap: () {
-          //     Navigator.of(context).push(
-          //       MaterialPageRoute(
-          //         builder: (context) => const Playground(),
-          //       ),
-          //     );
-          //   },
-          // ),
+          ListTile(
+            leading: const Icon(
+              Icons.archive_outlined,
+            ),
+            title: const Text('Online Categories'),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const OnlineCategories(),
+                ),
+              );
+            },
+          ),
           ListTile(
             leading: const Icon(
               Icons.link,
             ),
-            title: const Text('CF Jumping'),
+            title: const Text('CF Links'),
             onTap: () {
               _controller.clear();
               showDialog(
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
-                  title: const Text('Jumping'),
+                  title: const Text('Goto'),
                   content: TextField(
                     autofocus: true,
                     maxLines: 1,
@@ -83,9 +84,10 @@ class ToolboxState extends State<Toolbox> {
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'code',
+                      hintText: 'e.g. 1954a',
                     ),
                     onSubmitted: (value) {
-                      var res = CFHelper().parseProblemCode(value);
+                      var res = CFHelper.parseProblemCode(value);
                       launchUrl(
                         Uri.parse(
                           'https://codeforces.com/contest/${res.first}/problem/${res.last}',
@@ -103,7 +105,7 @@ class ToolboxState extends State<Toolbox> {
                     ),
                     TextButton(
                       onPressed: () {
-                        var res = CFHelper().parseProblemCode(_controller.text);
+                        var res = CFHelper.parseProblemCode(_controller.text);
                         launchUrl(
                           Uri.parse(
                             'https://codeforces.com/contest/${res.first}/problem/${res.last}',

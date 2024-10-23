@@ -163,9 +163,7 @@ class AntiMacrosState extends State<AntiMacros> {
 
                       try {
                         await shell.run('''
-
 gcc -E -P "$orignPath" -o "$outputPath"
-
 ''');
                         _outputController.text =
                             await outputFile.readAsString();

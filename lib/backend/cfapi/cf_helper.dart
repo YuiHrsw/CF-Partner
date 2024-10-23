@@ -203,7 +203,7 @@ class CFHelper {
   // static Future<ProblemItem> getProblem(int id, String index) async {}
   // static Future<String> getPloblemStatus(Problem p) async {}
 
-  List<String> parseProblemCode(String str) {
+  static List<String> parseProblemCode(String str) {
     String prefix = '';
     String suffix = '';
 
@@ -217,5 +217,37 @@ class CFHelper {
     }
 
     return [prefix, suffix];
+  }
+
+  static Future<List<ProblemItem>> refreshProblemStatus(
+      List<ProblemItem> problems) async {
+    try {
+      var submissions = await getSubmissions();
+      Map<String, String> status = {};
+
+      for (var s in submissions) {
+        if (s.contestId == null || s.verdict == null) {
+          continue;
+        }
+        var id = 'CF${s.contestId!}${s.problem!.index!}';
+        var result = s.verdict! == 'OK' ? 'Accepted' : 'Attempted';
+
+        if (!status.containsKey(id)) {
+          status.addAll({id: result});
+        } else if ((status[id] == 'Attempted') && (result == 'Accepted')) {
+          status[id] = 'Accepted';
+        }
+      }
+      for (var p in problems) {
+        // TODO: get code from url
+        if (status.containsKey(p.title)) {
+          p.status = status[p.title]!;
+        }
+      }
+
+      return problems;
+    } catch (e) {
+      return problems;
+    }
   }
 }

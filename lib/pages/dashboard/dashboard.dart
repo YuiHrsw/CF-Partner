@@ -1,7 +1,10 @@
 import 'package:cf_partner/backend/library_helper.dart';
-import 'package:cf_partner/backend/problem_item.dart';
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/backend/web_helper.dart';
+import 'package:cf_partner/pages/dashboard/models/challenge_problem.dart';
+import 'package:cf_partner/pages/dashboard/models/online_contest.dart';
+import 'package:cf_partner/pages/dashboard/problem_parser.dart';
+import 'package:cf_partner/pages/toolbox/online_categories.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -18,18 +21,19 @@ class ChallengeState extends State<Challenge> {
   int clistCnt = 100;
   String _errMsg = '';
   String _clistErrMsg = '';
-  // final bool _listening = true;
 
   @override
   void initState() {
     super.initState();
-    init();
+    _loadLatestDailyProblems();
+    _loadClistData();
   }
 
-  void init() async {
+  void _loadLatestDailyProblems() async {
     try {
       var res = await WebHelper().get(
-          "https://raw.githubusercontent.com/Yawn-Sean/Daily_CF_Problems/main/README.md");
+        "https://raw.githubusercontent.com/Yawn-Sean/Daily_CF_Problems/main/README.md",
+      );
       setState(() {
         _dailyProblems = parse(res.data);
         _errMsg = '';
@@ -39,6 +43,9 @@ class ChallengeState extends State<Challenge> {
         _errMsg = e.toString();
       });
     }
+  }
+
+  void _loadClistData() async {
     try {
       _contests.clear();
 
@@ -83,27 +90,11 @@ class ChallengeState extends State<Challenge> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text(
-      //     'Dashboard',
-      //     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 26),
-      //   ),
-      //   actions: [
-      //     IconButton(
-      //       tooltip: 'Edit title',
-      //       onPressed: () {},
-      //       icon: const Icon(Icons.edit_outlined),
-      //     ),
-      //     const SizedBox(
-      //       width: 6,
-      //     )
-      //   ],
-      // ),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: Container(
-              height: 160,
+              height: 100,
               alignment: Alignment.center,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -141,21 +132,19 @@ class ChallengeState extends State<Challenge> {
                   ),
                   IconButton(
                     tooltip: 'Refresh',
-                    onPressed: () async {
-                      try {
-                        var res = await WebHelper().get(
-                            "https://raw.githubusercontent.com/Yawn-Sean/Daily_CF_Problems/main/README.md");
-                        setState(() {
-                          _dailyProblems = parse(res.data);
-                          _errMsg = '';
-                        });
-                      } catch (e) {
-                        setState(() {
-                          _errMsg = e.toString();
-                        });
-                      }
-                    },
+                    onPressed: _loadLatestDailyProblems,
                     icon: const Icon(Icons.refresh_rounded),
+                  ),
+                  IconButton(
+                    tooltip: 'Categories',
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const OnlineCategories(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.stream),
                   ),
                   IconButton(
                     tooltip: 'Open repo',
@@ -172,6 +161,21 @@ class ChallengeState extends State<Challenge> {
               ),
             ),
           ),
+          // SliverToBoxAdapter(
+          //   child: Padding(
+          //     padding: const EdgeInsets.symmetric(horizontal: 16),
+          //     child: ContributionTileGrid(
+          //       contributionColors: [
+          //         Colors.grey.withOpacity(0.2),
+          //         Colors.green.withOpacity(0.2),
+          //         Colors.green.withOpacity(0.4),
+          //         Colors.green.withOpacity(0.6),
+          //         Colors.green,
+          //       ],
+          //       startDate: DateTime.now().subtract(const Duration(days: 363)),
+          //     ),
+          //   ),
+          // ),
           _errMsg != ''
               ? SliverToBoxAdapter(
                   child: Padding(
@@ -206,49 +210,7 @@ class ChallengeState extends State<Challenge> {
                   ),
                   IconButton(
                     tooltip: 'Refresh',
-                    onPressed: () async {
-                      try {
-                        _contests.clear();
-
-                        String now = DateTime.now()
-                            .subtract(
-                              const Duration(days: 1),
-                            )
-                            .toString();
-                        now = now.substring(0, 19).replaceAll(' ', 'T');
-                        var data = await WebHelper().get(
-                          'https://clist.by/api/v4/contest/',
-                          queryParameters: {
-                            'order_by': 'start',
-                            'upcoming': true,
-                            'limit': clistCnt,
-                            'start__gt': now,
-                            'filtered': true,
-                            'format_time': true,
-                          },
-                        );
-                        var clist = data.data['objects'];
-                        for (var c in clist) {
-                          _contests.add(
-                            OnlineContest(
-                              title: c['event'],
-                              url: c['href'],
-                              host: c['host'],
-                              duration: c['duration'],
-                              start: c['start'],
-                              end: c['end'],
-                            ),
-                          );
-                        }
-                        setState(() {
-                          _clistErrMsg = '';
-                        });
-                      } catch (e) {
-                        setState(() {
-                          _clistErrMsg = e.toString();
-                        });
-                      }
-                    },
+                    onPressed: _loadClistData,
                     icon: const Icon(Icons.refresh_rounded),
                   ),
                   IconButton(
@@ -514,99 +476,4 @@ class ChallengeState extends State<Challenge> {
       ),
     );
   }
-}
-
-List<ChallengeProblem> parse(String markdownContent) {
-  List<ChallengeProblem> res = [];
-
-  final tableStartPattern =
-      RegExp(r'\| Difficulty \| Problems \| Hints \| Solution \|');
-  final tableEndPattern =
-      RegExp(r'\| -------- \| -------- \| -------- \| -------- \|');
-
-  final lines = markdownContent.split('\n');
-
-  bool isTableSection = false;
-  final tableContent = <String>[];
-
-  for (final line in lines) {
-    if (tableStartPattern.hasMatch(line)) {
-      isTableSection = true;
-      continue;
-    } else if (isTableSection && tableEndPattern.hasMatch(line)) {
-      continue;
-    } else if (isTableSection && line.trim().isEmpty) {
-      isTableSection = false;
-    } else if (isTableSection) {
-      tableContent.add(line);
-    }
-  }
-
-  for (final row in tableContent) {
-    final columns = row
-        .split('|')
-        .map((col) => col.trim())
-        .where((col) => col.isNotEmpty)
-        .toList();
-    if (columns.length == 4) {
-      final difficulty = columns[0];
-      final problemName =
-          RegExp(r'\[(.*?)\]').firstMatch(columns[1])?.group(1) ?? 'N/A';
-      final problemLink =
-          RegExp(r'\((.*?)\)').firstMatch(columns[1])?.group(1) ?? 'N/A';
-      final hint = columns[2];
-      final solutionLink =
-          RegExp(r'\((.*?)\)').firstMatch(columns[3])?.group(1) ?? 'N/A';
-
-      res.add(
-        ChallengeProblem(
-          title: problemName,
-          source: 'Codeforces',
-          url: problemLink,
-          status: 'unknown',
-          note: '',
-          tags: [],
-          hint: hint,
-          tutorial: solutionLink,
-          difficulty: difficulty,
-        ),
-      );
-    }
-  }
-
-  return res;
-}
-
-class ChallengeProblem extends ProblemItem {
-  ChallengeProblem({
-    required super.title,
-    required super.source,
-    required super.url,
-    required super.status,
-    required super.note,
-    required super.tags,
-    required this.hint,
-    required this.tutorial,
-    required this.difficulty,
-  });
-  String difficulty;
-  String hint;
-  String tutorial;
-}
-
-class OnlineContest {
-  OnlineContest({
-    required this.title,
-    required this.url,
-    required this.host,
-    required this.duration,
-    required this.start,
-    required this.end,
-  });
-  String title;
-  String url;
-  String host;
-  String duration;
-  String start;
-  String end;
 }
