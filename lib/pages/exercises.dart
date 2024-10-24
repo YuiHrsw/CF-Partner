@@ -78,6 +78,9 @@ class ExercisesState extends State<Exercises> {
                         labelText: 'name',
                       ),
                       onSubmitted: (value) {
+                        if (value == '') {
+                          return;
+                        }
                         var pl = ListItem(
                           items: [],
                           title: value,
@@ -98,6 +101,9 @@ class ExercisesState extends State<Exercises> {
                       ),
                       TextButton(
                         onPressed: () {
+                          if (_editingController.text == '') {
+                            return;
+                          }
                           var pl = ListItem(
                             items: [],
                             title: _editingController.text,
@@ -188,6 +194,9 @@ class ExercisesState extends State<Exercises> {
                                         labelText: 'name',
                                       ),
                                       onSubmitted: (value) {
+                                        if (value == '') {
+                                          return;
+                                        }
                                         LibraryHelper.renameList(
                                             AppStorage().problemlists[index],
                                             value);
@@ -205,6 +214,9 @@ class ExercisesState extends State<Exercises> {
                                       ),
                                       TextButton(
                                         onPressed: () {
+                                          if (_editingController.text == '') {
+                                            return;
+                                          }
                                           LibraryHelper.renameList(
                                               AppStorage().problemlists[index],
                                               _editingController.text);

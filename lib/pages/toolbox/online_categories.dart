@@ -41,6 +41,11 @@ class OnlineCategoriesState extends State<OnlineCategories> {
       url: '$_baseUrl/brain_teaser.md',
     ),
     OnlineList(
+      icon: Icons.fitness_center,
+      title: 'Brute Force',
+      url: '$_baseUrl/brute_force.md',
+    ),
+    OnlineList(
       icon: Icons.lightbulb_outline,
       title: 'Constructive',
       url: '$_baseUrl/constructive.md',

@@ -859,6 +859,9 @@ class ListDetailState extends State<ListDetail> {
                                 border: OutlineInputBorder(),
                               ),
                               onSubmitted: (value) {
+                                if (value == '') {
+                                  return;
+                                }
                                 LibraryHelper.renameProblem(
                                   widget.listItem,
                                   index,
@@ -877,6 +880,9 @@ class ListDetailState extends State<ListDetail> {
                               ),
                               TextButton(
                                 onPressed: () {
+                                  if (_editingController.text == '') {
+                                    return;
+                                  }
                                   LibraryHelper.renameProblem(
                                     widget.listItem,
                                     index,
