@@ -6,8 +6,7 @@ List<ChallengeProblem> parse(String markdownContent) {
 
   final tableStartPattern =
       RegExp(r'\| Difficulty \| Problems \| Hints \| Solution \|');
-  final tableEndPattern =
-      RegExp(r'\| (-+) \| (-+) \| (-+) \| (-+) \|');
+  final tableEndPattern = RegExp(r'\| (-+) \| (-+) \| (-+) \| (-+) \|');
 
   final lines = markdownContent.split('\n');
 
@@ -67,8 +66,7 @@ List<ProblemItem> parseToLocal(String markdownContent) {
 
   final tableStartPattern =
       RegExp(r'\| Difficulty \| Problems \| Hints \| Solution \|');
-  final tableEndPattern =
-      RegExp(r'\| (-+) \| (-+) \| (-+) \| (-+) \|');
+  final tableEndPattern = RegExp(r'\| (-+) \| (-+) \| (-+) \| (-+) \|');
 
   final lines = markdownContent.split('\n');
 
