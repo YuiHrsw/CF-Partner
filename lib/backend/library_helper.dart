@@ -88,7 +88,7 @@ class LibraryHelper {
     saveList(list);
   }
 
-  static void saveListFile(String location) async {
+  static void importListFile(String location) async {
     var fp = File(location);
     var pl = ListItem.fromJson(jsonDecode(await fp.readAsString()));
     AppStorage().problemlists.add(pl);

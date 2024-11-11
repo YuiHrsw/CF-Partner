@@ -23,6 +23,20 @@ class CFHelper {
     return Colors.pink.shade200;
   }
 
+  static Color getColorDetailed(int rating) {
+    if (rating < 1200) return Colors.grey;
+    if (rating < 1400) return Colors.teal;
+    if (rating < 1600) return Colors.cyan;
+    if (rating < 1800) return Colors.blue;
+    if (rating < 1900) return Colors.indigo;
+    if (rating < 2000) return Colors.purple;
+    if (rating < 2100) return Colors.deepPurple;
+    if (rating < 2300) return Colors.amber;
+    if (rating < 2400) return Colors.orange;
+    if (rating < 3000) return Colors.red;
+    return Colors.black;
+  }
+
   static List<Contest> _contests = [];
   static List<Problem> _problems = [];
   static ProblemItem toLocalProblem(Problem p) {

@@ -294,9 +294,9 @@ class SettingsState extends State<Settings> {
             leading: const Icon(
               Icons.assessment_outlined,
             ),
-            title: const Text('CF Partner 2'),
+            title: const Text('CF Partner'),
             trailing: const Text(
-              'v 2.9',
+              'v 3.0',
               style: TextStyle(
                 fontSize: 16,
               ),

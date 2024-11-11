@@ -10,12 +10,16 @@ class AppSettings {
   ThemeMode themeMode;
   int themeCode;
   String handle;
+  int taskStatus;
+  List<int> taskRatings;
 
   AppSettings({
     this.listview = true,
     this.themeMode = ThemeMode.system,
     this.themeCode = 0,
     this.handle = 'tourist',
+    this.taskStatus = 0,
+    this.taskRatings = const [1200, 1400, 1600, 1900, 2100, 2400]
   });
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>

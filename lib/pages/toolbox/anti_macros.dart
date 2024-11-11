@@ -162,9 +162,8 @@ class AntiMacrosState extends State<AntiMacros> {
                       await orignFile.writeAsString(filteredLines.join('\n'));
 
                       try {
-                        await shell.run('''
-gcc -E -P "$orignPath" -o "$outputPath"
-''');
+                        await shell
+                            .run('gcc -E -P "$orignPath" -o "$outputPath"');
                         _outputController.text =
                             await outputFile.readAsString();
                         setState(() {});

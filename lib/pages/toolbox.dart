@@ -1,5 +1,6 @@
 import 'package:cf_partner/backend/cfapi/cf_helper.dart';
 import 'package:cf_partner/pages/toolbox/anti_macros.dart';
+// import 'package:cf_partner/pages/toolbox/bingo.dart';
 import 'package:cf_partner/pages/toolbox/online_categories.dart';
 // import 'package:cf_partner/pages/toolbox/randcontest.dart';
 import 'package:cf_partner/pages/toolbox/tracker.dart';
@@ -122,6 +123,19 @@ class ToolboxState extends State<Toolbox> {
               });
             },
           ),
+          // ListTile(
+          //   leading: const Icon(
+          //     Icons.task_alt,
+          //   ),
+          //   title: const Text('Bingo'),
+          //   onTap: () {
+          //     Navigator.of(context).push(
+          //       MaterialPageRoute(
+          //         builder: (context) => const Bingo(),
+          //       ),
+          //     );
+          //   },
+          // ),
         ],
       ),
     );

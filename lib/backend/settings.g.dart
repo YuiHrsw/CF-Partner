@@ -12,6 +12,11 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
           ThemeMode.system,
       themeCode: (json['themeCode'] as num?)?.toInt() ?? 0,
       handle: json['handle'] as String? ?? 'tourist',
+      taskStatus: (json['taskStatus'] as num?)?.toInt() ?? 0,
+      taskRatings: (json['taskRatings'] as List<dynamic>?)
+              ?.map((e) => (e as num).toInt())
+              .toList() ??
+          const [1200, 1400, 1600, 1900, 2100, 2400],
     );
 
 Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
@@ -20,6 +25,8 @@ Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
       'themeMode': _$ThemeModeEnumMap[instance.themeMode]!,
       'themeCode': instance.themeCode,
       'handle': instance.handle,
+      'taskStatus': instance.taskStatus,
+      'taskRatings': instance.taskRatings,
     };
 
 const _$ThemeModeEnumMap = {
