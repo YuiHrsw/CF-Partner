@@ -1,5 +1,5 @@
-import 'dart:convert';
-import 'dart:io';
+// import 'dart:convert';
+// import 'dart:io';
 
 import 'package:cf_partner/backend/library_helper.dart';
 import 'package:cf_partner/backend/list_item.dart';
@@ -23,231 +23,242 @@ class ListDetailState extends State<ListDetail> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _urlController = TextEditingController();
   final bool _locked = false;
-  late final HttpServer _server;
-  bool _listening = false;
+  // late final HttpServer _server;
+  // bool _listening = false;
 
-  @override
-  void initState() {
-    super.initState();
-    if (!widget.online) {
-      initServer();
-    }
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   if (!widget.online) {
+  //     initServer();
+  //   }
+  // }
 
-  void initServer() async {
-    _server = await HttpServer.bind(
-      InternetAddress.loopbackIPv4,
-      10043,
-    );
-    // listen to competitive companion
-    await for (HttpRequest request in _server) {
-      if (request.method == 'POST' && request.uri.path == '/' && _listening) {
-        try {
-          String content = await utf8.decoder.bind(request).join();
-          Map<String, dynamic> data = jsonDecode(content);
+  // void initServer() async {
+  //   _server = await HttpServer.bind(
+  //     InternetAddress.loopbackIPv4,
+  //     10043,
+  //   );
+  //   // listen to competitive companion
+  //   await for (HttpRequest request in _server) {
+  //     if (request.method == 'POST' && request.uri.path == '/' && _listening) {
+  //       try {
+  //         String content = await utf8.decoder.bind(request).join();
+  //         Map<String, dynamic> data = jsonDecode(content);
 
-          // print('Received JSON data');
-          var p = ProblemItem(
-            title: data['name'],
-            url: data['url'],
-            status: 'unknown',
-            source: 'others',
-            tags: [],
-            note: '',
-          );
-          if (data['url'].contains('codeforces.com')) {
-            p.source = 'Codeforces';
-          } else if (data['url'].contains('atcoder.jp')) {
-            p.source = 'AtCoder';
-          }
-          LibraryHelper.addProblemToList(
-            widget.listItem,
-            p,
-          );
-          setState(() {});
-        } catch (e) {
-          // print('Error processing request: $e');
-          request.response
-            ..statusCode = HttpStatus.internalServerError
-            ..write('Error processing request')
-            ..close();
-        }
-      }
-    }
-  }
+  //         // print('Received JSON data');
+  //         var p = ProblemItem(
+  //           title: data['name'],
+  //           url: data['url'],
+  //           status: 'unknown',
+  //           source: 'others',
+  //           tags: [],
+  //           note: '',
+  //         );
+  //         if (data['url'].contains('codeforces.com')) {
+  //           p.source = 'Codeforces';
+  //         } else if (data['url'].contains('atcoder.jp')) {
+  //           p.source = 'AtCoder';
+  //         }
+  //         LibraryHelper.addProblemToList(
+  //           widget.listItem,
+  //           p,
+  //         );
+  //         setState(() {});
+  //       } catch (e) {
+  //         // print('Error processing request: $e');
+  //         request.response
+  //           ..statusCode = HttpStatus.internalServerError
+  //           ..write('Error processing request')
+  //           ..close();
+  //       }
+  //     }
+  //   }
+  // }
 
-  @override
-  void dispose() {
-    super.dispose();
-    if (!widget.online) {
-      _server.close();
-    }
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   if (!widget.online) {
+  //     _server.close();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            constraints: const BoxConstraints(),
-            icon: const Icon(Icons.arrow_back_ios_new),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          titleSpacing: 0,
-          title: Text(widget.listItem.title),
-          actions: [
-            _locked || widget.online
-                ? const SizedBox()
-                : IconButton(
-                    tooltip: 'New problem',
-                    onPressed: () {
-                      _titleController.clear();
-                      _urlController.clear();
-                      showDialog(
-                        barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          surfaceTintColor: Colors.transparent,
-                          title: const Text('Add a problem'),
-                          content: SizedBox(
-                            height: 200,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                TextField(
-                                  autofocus: true,
-                                  maxLines: 1,
-                                  controller: _titleController,
-                                  decoration: const InputDecoration(
-                                    label: Text('Title'),
-                                    border: OutlineInputBorder(),
-                                    hintText: 'A + B Problem',
-                                  ),
-                                ),
-                                TextField(
-                                  autofocus: true,
-                                  maxLines: 3,
-                                  controller: _urlController,
-                                  decoration: const InputDecoration(
-                                    label: Text('URL'),
-                                    border: OutlineInputBorder(),
-                                    hintText:
-                                        'https://codeforces.com/problemset/problem/1772/A',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                if (_titleController.text == '') {
-                                  return;
-                                }
-                                var p = ProblemItem(
-                                  title: _titleController.text,
-                                  url: _urlController.text,
-                                  status: 'unknown',
-                                  source: 'others',
-                                  tags: [],
-                                  note: '',
-                                );
-                                if (_urlController.text
-                                    .contains('codeforces.com')) {
-                                  p.source = 'Codeforces';
-                                } else if (_urlController.text
-                                    .contains('atcoder.jp')) {
-                                  p.source = 'AtCoder';
-                                }
-                                LibraryHelper.addProblemToList(
-                                  widget.listItem,
-                                  p,
-                                );
-                                Navigator.pop(context);
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                      ).then((value) {
-                        setState(() {});
-                      });
-                    },
-                    icon: const Icon(
-                      Icons.add,
-                    ),
-                  ),
-            const SizedBox(
-              width: 6,
-            )
-          ],
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          constraints: const BoxConstraints(),
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        body: Column(
-          children: [
-            widget.online
-                ? const SizedBox()
-                : SizedBox(
-                    height: 80,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
-                      child: SwitchListTile(
-                        tileColor: _listening
-                            ? Theme.of(context)
-                                .colorScheme
-                                .primaryContainer
-                                .withOpacity(0.4)
-                            : Theme.of(context)
-                                .colorScheme
-                                .tertiaryContainer
-                                .withOpacity(0.4),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        title: Container(
-                          alignment: Alignment.centerLeft,
-                          height: 40,
-                          child: Text(
-                            'Parse Competitive Companion Problems',
-                            style: TextStyle(
-                              color: _listening
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .onTertiaryContainer,
-                            ),
+        titleSpacing: 0,
+        title: Text(widget.listItem.title),
+        actions: [
+          _locked || widget.online
+              ? const SizedBox()
+              : IconButton(
+                  tooltip: 'New problem',
+                  onPressed: () {
+                    _titleController.clear();
+                    _urlController.clear();
+                    showDialog(
+                      barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        surfaceTintColor: Colors.transparent,
+                        title: const Text('Add a problem'),
+                        content: SizedBox(
+                          height: 200,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              TextField(
+                                autofocus: true,
+                                maxLines: 1,
+                                controller: _titleController,
+                                decoration: const InputDecoration(
+                                  label: Text('Title'),
+                                  border: OutlineInputBorder(),
+                                  hintText: 'A + B Problem',
+                                ),
+                              ),
+                              TextField(
+                                autofocus: true,
+                                maxLines: 3,
+                                controller: _urlController,
+                                decoration: const InputDecoration(
+                                  label: Text('URL'),
+                                  border: OutlineInputBorder(),
+                                  hintText:
+                                      'https://codeforces.com/problemset/problem/1772/A',
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        value: _listening,
-                        onChanged: (bool value) {
-                          setState(() {
-                            _listening = value;
-                          });
-                        },
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              if (_titleController.text == '') {
+                                return;
+                              }
+                              var p = ProblemItem(
+                                title: _titleController.text,
+                                url: _urlController.text,
+                                status: 'unknown',
+                                source: 'others',
+                                tags: [],
+                                note: '',
+                              );
+                              if (_urlController.text
+                                  .contains('codeforces.com')) {
+                                p.source = 'Codeforces';
+                              } else if (_urlController.text
+                                  .contains('atcoder.jp')) {
+                                p.source = 'AtCoder';
+                              }
+                              LibraryHelper.addProblemToList(
+                                widget.listItem,
+                                p,
+                              );
+                              Navigator.pop(context);
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
                       ),
-                    ),
+                    ).then((value) {
+                      setState(() {});
+                    });
+                  },
+                  icon: const Icon(
+                    Icons.add,
                   ),
-            Expanded(
-              child: ListView.separated(
-                separatorBuilder: (context, index) {
-                  return const Divider();
-                },
-                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
-                itemBuilder: (context, index) {
-                  return Column(
+                ),
+          const SizedBox(
+            width: 6,
+          )
+        ],
+      ),
+      body: Column(
+        children: [
+          // widget.online
+          //     ? const SizedBox()
+          //     : SizedBox(
+          //         height: 80,
+          //         child: Padding(
+          //           padding: const EdgeInsets.symmetric(
+          //               horizontal: 16, vertical: 10),
+          //           child: SwitchListTile(
+          //             tileColor: _listening
+          //                 ? Theme.of(context)
+          //                     .colorScheme
+          //                     .primaryContainer
+          //                     .withOpacity(0.4)
+          //                 : Theme.of(context)
+          //                     .colorScheme
+          //                     .tertiaryContainer
+          //                     .withOpacity(0.4),
+          //             shape: RoundedRectangleBorder(
+          //                 borderRadius: BorderRadius.circular(20)),
+          //             title: Container(
+          //               alignment: Alignment.centerLeft,
+          //               height: 40,
+          //               child: Text(
+          //                 'Parse Competitive Companion Problems',
+          //                 style: TextStyle(
+          //                   color: _listening
+          //                       ? Theme.of(context)
+          //                           .colorScheme
+          //                           .onPrimaryContainer
+          //                       : Theme.of(context)
+          //                           .colorScheme
+          //                           .onTertiaryContainer,
+          //                 ),
+          //               ),
+          //             ),
+          //             value: _listening,
+          //             onChanged: (bool value) {
+          //               setState(() {
+          //                 _listening = value;
+          //               });
+          //             },
+          //           ),
+          //         ),
+          //       ),
+          Expanded(
+            child: ReorderableListView.builder(
+              // separatorBuilder: (context, index) {
+              //   return const Divider();
+              // },
+              proxyDecorator: (child, index, animation) => Material(
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: colorScheme.primaryContainer.withOpacity(0.4)),
+                  child: child,
+                ),
+              ),
+              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+              itemBuilder: (context, index) {
+                return Container(
+                  key: ValueKey(widget.listItem.items[index]),
+                  child: Column(
                     children: [
+                      if (index > 0) const Divider(),
                       buildListItem(colorScheme, index, widget.listItem.items),
                       const SizedBox(
                         height: 4,
@@ -294,15 +305,30 @@ class ListDetailState extends State<ListDetail> {
                             );
                           },
                         ),
-                      )
+                      ),
+                      const SizedBox(height: 4),
                     ],
-                  );
-                },
-                itemCount: widget.listItem.items.length,
-              ),
-            )
-          ],
-        ));
+                  ),
+                );
+              },
+              itemCount: widget.listItem.items.length,
+              onReorder: (int oldIndex, int newIndex) {
+                setState(() {
+                  if (newIndex > oldIndex) {
+                    newIndex -= 1;
+                  }
+                  final p = widget.listItem.items.removeAt(oldIndex);
+                  widget.listItem.items.insert(newIndex, p);
+                });
+                if (!widget.online) {
+                  LibraryHelper.saveList(widget.listItem);
+                }
+              },
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Widget buildListItem(
@@ -1000,7 +1026,7 @@ class ListDetailState extends State<ListDetail> {
                       icon: const Icon(Icons.delete_outline),
                     ),
               const SizedBox(
-                width: 6,
+                width: 40,
               )
             ],
           ),
