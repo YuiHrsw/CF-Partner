@@ -10,7 +10,16 @@ class TaskEditor extends StatefulWidget {
 }
 
 class TaskEditorState extends State<TaskEditor> {
-  final List<TextEditingController> _controllers = List.generate(6, (_) => TextEditingController());
+  late final List<TextEditingController> _controllers;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = List.generate(
+        6,
+        (index) => TextEditingController(
+            text: AppStorage().settings.taskRatings[index].toString()));
+  }
 
   @override
   void dispose() {
@@ -45,7 +54,9 @@ class TaskEditorState extends State<TaskEditor> {
         ),
         TextButton(
           onPressed: () {
-            final newRatings = _controllers.map((controller) => int.tryParse(controller.text) ?? 800).toList();
+            final newRatings = _controllers
+                .map((controller) => int.tryParse(controller.text) ?? 800)
+                .toList();
             AppStorage().settings.taskRatings = newRatings;
             AppStorage().saveSettings();
             Navigator.of(context).pop();
