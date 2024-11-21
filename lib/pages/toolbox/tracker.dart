@@ -45,6 +45,7 @@ class TrackerPageState extends State<TrackerPage> {
     final Map<String, Color> statusColor = {
       'AC': Colors.green.withOpacity(0.15),
       'Tried': Colors.red.withOpacity(0.15),
+      'Ignored': Colors.amber.withOpacity(0.15),
       'unknown': colorScheme.surface,
     };
     return Scaffold(

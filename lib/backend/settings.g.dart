@@ -17,6 +17,7 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
               ?.map((e) => (e as num).toInt())
               .toList() ??
           const [1200, 1400, 1600, 1900, 2100, 2400],
+      ignoreRating: (json['ignoreRating'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
@@ -27,6 +28,7 @@ Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
       'handle': instance.handle,
       'taskStatus': instance.taskStatus,
       'taskRatings': instance.taskRatings,
+      'ignoreRating': instance.ignoreRating,
     };
 
 const _$ThemeModeEnumMap = {

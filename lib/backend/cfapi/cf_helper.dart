@@ -40,7 +40,7 @@ class CFHelper {
   static List<Contest> _contests = [];
   static List<Problem> _problems = [];
   static ProblemItem toLocalProblem(Problem p) {
-    return ProblemItem(
+    var res = ProblemItem(
       title: '${p.index!}. ${p.name!}',
       source: 'Codeforces',
       url: 'https://codeforces.com/contest/${p.contestId!}/problem/${p.index!}',
@@ -48,6 +48,10 @@ class CFHelper {
       note: '',
       tags: p.tags,
     );
+    if (p.rating != null && p.rating! < AppStorage().settings.ignoreRating) {
+      res.status = 'Ignored';
+    }
+    return res;
   }
 
   static Future<List<Contest>> getContestList() async {

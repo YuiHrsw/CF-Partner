@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cf_partner/backend/storage.dart';
 import 'package:cf_partner/backend/web_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatefulWidget {
@@ -15,6 +16,7 @@ class Settings extends StatefulWidget {
 class SettingsState extends State<Settings> {
   final TextEditingController _controller = TextEditingController();
   final TextEditingController _handleController = TextEditingController();
+  final TextEditingController _ratingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,6 +74,38 @@ class SettingsState extends State<Settings> {
                   AppStorage().saveSettings();
                   setState(() {});
                   _handleController.clear();
+                },
+              ),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.remove_circle_outline),
+            title: const Text('Ignore Rating'),
+            subtitle: const Text('Used by CF Tracker and Online Categories'),
+            trailing: Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              width: 140,
+              height: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Theme.of(context).colorScheme.secondaryContainer,
+              ),
+              child: TextField(
+                textAlign: TextAlign.center,
+                controller: _ratingController,
+                maxLines: 1,
+                decoration: InputDecoration.collapsed(
+                  hintText: AppStorage().settings.ignoreRating.toString(),
+                ),
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                onSubmitted: (value) {
+                  final newRating = int.tryParse(value) ?? 0;
+                  AppStorage().settings.ignoreRating = newRating;
+                  AppStorage().saveSettings();
+                  setState(() {});
+                  _ratingController.clear();
                 },
               ),
             ),
@@ -296,7 +330,7 @@ class SettingsState extends State<Settings> {
             ),
             title: const Text('CF Partner'),
             trailing: const Text(
-              'v 3.1',
+              'v 3.2',
               style: TextStyle(
                 fontSize: 16,
               ),
