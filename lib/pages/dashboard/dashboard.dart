@@ -4,7 +4,6 @@ import 'package:cf_partner/backend/web_helper.dart';
 import 'package:cf_partner/pages/dashboard/models/challenge_problem.dart';
 import 'package:cf_partner/pages/dashboard/models/online_contest.dart';
 import 'package:cf_partner/pages/dashboard/problem_parser.dart';
-import 'package:cf_partner/pages/toolbox/bingo.dart';
 import 'package:cf_partner/pages/toolbox/online_categories.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -106,37 +105,52 @@ class ChallengeState extends State<Challenge> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
+          SliverToBoxAdapter(
+            child: Container(
+              height: 120,
+              alignment: Alignment.center,
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    // '📅 ${DateTime.now().year} - ${DateTime.now().month} - ${DateTime.now().day}',
+                    'Dashboard',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // const SliverToBoxAdapter(
+          //   child: Divider(
+          //     indent: 16,
+          //     endIndent: 16,
+          //   ),
+          // ),
+          // const SliverToBoxAdapter(
+          //   child: SizedBox(
+          //     height: 300,
+          //     child: Bingo(),
+          //   ),
+          // ),
           // SliverToBoxAdapter(
-          //   child: Container(
-          //     height: 120,
-          //     alignment: Alignment.center,
-          //     child: Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         Text(
-          //           // '📅 ${DateTime.now().year} - ${DateTime.now().month} - ${DateTime.now().day}',
-          //           'Welcome back, ${AppStorage().settings.handle}! ${_emoji[Random().nextInt(_emoji.length)]}',
-          //           style: const TextStyle(
-          //             fontSize: 30,
-          //             fontWeight: FontWeight.bold,
-          //           ),
-          //         ),
+          //   child: Padding(
+          //     padding: const EdgeInsets.symmetric(horizontal: 16),
+          //     child: ContributionTileGrid(
+          //       contributionColors: [
+          //         Colors.grey.withOpacity(0.2),
+          //         Colors.green.withOpacity(0.2),
+          //         Colors.green.withOpacity(0.4),
+          //         Colors.green.withOpacity(0.6),
+          //         Colors.green,
           //       ],
+          //       startDate: DateTime.now().subtract(const Duration(days: 363)),
           //     ),
           //   ),
           // ),
-          const SliverToBoxAdapter(
-            child: Divider(
-              indent: 16,
-              endIndent: 16,
-            ),
-          ),
-          const SliverToBoxAdapter(
-            child: SizedBox(
-              height: 300,
-              child: Bingo(),
-            ),
-          ),
           const SliverToBoxAdapter(
             child: Divider(
               indent: 16,
@@ -187,21 +201,6 @@ class ChallengeState extends State<Challenge> {
               ),
             ),
           ),
-          // SliverToBoxAdapter(
-          //   child: Padding(
-          //     padding: const EdgeInsets.symmetric(horizontal: 16),
-          //     child: ContributionTileGrid(
-          //       contributionColors: [
-          //         Colors.grey.withOpacity(0.2),
-          //         Colors.green.withOpacity(0.2),
-          //         Colors.green.withOpacity(0.4),
-          //         Colors.green.withOpacity(0.6),
-          //         Colors.green,
-          //       ],
-          //       startDate: DateTime.now().subtract(const Duration(days: 363)),
-          //     ),
-          //   ),
-          // ),
           _errMsg != ''
               ? SliverToBoxAdapter(
                   child: Padding(

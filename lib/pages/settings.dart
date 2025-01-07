@@ -80,8 +80,7 @@ class SettingsState extends State<Settings> {
           ),
           ListTile(
             leading: const Icon(Icons.remove_circle_outline),
-            title: const Text('Ignore Rating'),
-            subtitle: const Text('Used by CF Tracker and Online Categories'),
+            title: const Text('Ignore Rating in CF Tracker'),
             trailing: Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -132,7 +131,7 @@ class SettingsState extends State<Settings> {
                         controller: _controller,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Clist sessonid',
+                          labelText: 'Clist sessionid',
                         ),
                         onSubmitted: (value) async {
                           await WebHelper.cookieManager.cookieJar
@@ -165,7 +164,7 @@ class SettingsState extends State<Settings> {
                   ),
                 );
               },
-              child: const Text('Set'),
+              child: const Text('Modify'),
             ),
           ),
           Container(
@@ -330,7 +329,7 @@ class SettingsState extends State<Settings> {
             ),
             title: const Text('CF Partner'),
             trailing: const Text(
-              'v 3.2',
+              'v 3.3',
               style: TextStyle(
                 fontSize: 16,
               ),

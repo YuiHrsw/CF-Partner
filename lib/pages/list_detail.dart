@@ -5,7 +5,10 @@ import 'package:cf_partner/backend/library_helper.dart';
 import 'package:cf_partner/backend/list_item.dart';
 import 'package:cf_partner/backend/problem_item.dart';
 import 'package:cf_partner/backend/storage.dart';
+import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_highlight/themes/monokai-sublime.dart';
+import 'package:highlight/languages/cpp.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ListDetail extends StatefulWidget {
@@ -19,6 +22,7 @@ class ListDetail extends StatefulWidget {
 
 class ListDetailState extends State<ListDetail> {
   final TextEditingController _editingController = TextEditingController();
+  final CodeController _codeController = CodeController(language: cpp);
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _urlController = TextEditingController();
@@ -809,7 +813,7 @@ class ListDetailState extends State<ListDetail> {
               IconButton(
                 tooltip: 'Note',
                 onPressed: () {
-                  _editingController.text = items[index].note;
+                  _codeController.text = items[index].note;
                   showDialog(
                     barrierDismissible: false,
                     context: context,
@@ -818,26 +822,19 @@ class ListDetailState extends State<ListDetail> {
                         items[index].title,
                       ),
                       content: SizedBox(
-                        height: 400,
-                        width: 600,
-                        child: TextField(
-                          autofocus: true,
-                          minLines: null,
-                          maxLines: null,
-                          expands: true,
-                          controller: _editingController,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
+                        height: double.infinity,
+                        width: double.maxFinite,
+                        child: CodeTheme(
+                          data:
+                              const CodeThemeData(styles: monokaiSublimeTheme),
+                          child: CodeField(
+                            expands: true,
+                            controller: _codeController,
+                            textStyle: const TextStyle(
+                              fontFamily: "Fira Code",
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                          onSubmitted: (value) {
-                            LibraryHelper.changeProblemNote(
-                              widget.listItem,
-                              index,
-                              value,
-                            );
-                            setState(() {});
-                            Navigator.pop(context);
-                          },
                         ),
                       ),
                       actions: <Widget>[
@@ -854,7 +851,7 @@ class ListDetailState extends State<ListDetail> {
                                   LibraryHelper.changeProblemNote(
                                     widget.listItem,
                                     index,
-                                    _editingController.text,
+                                    _codeController.text,
                                   );
                                   setState(() {});
                                   Navigator.pop(context);
