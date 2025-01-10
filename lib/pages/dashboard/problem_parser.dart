@@ -7,11 +7,12 @@ List<ChallengeProblem> parse(String markdownContent) {
   final tableStartPattern =
       RegExp(r'\| Difficulty \| Problems \| Hints \| Solution \|');
   final tableEndPattern = RegExp(r'\| (-+) \| (-+) \| (-+) \| (-+) \|');
+  final rowPattern =
+      RegExp(r'^\| ([^\|]+) \| ([^\|]+) \| (.+?) \| ([^\|]+) \|$'); // 精确匹配表格行
 
   final lines = markdownContent.split('\n');
 
   bool isTableSection = false;
-  final tableContent = <String>[];
 
   for (final line in lines) {
     if (tableStartPattern.hasMatch(line)) {
@@ -21,40 +22,38 @@ List<ChallengeProblem> parse(String markdownContent) {
       continue;
     } else if (isTableSection && line.trim().isEmpty) {
       isTableSection = false;
-    } else if (isTableSection) {
-      tableContent.add(line);
+      continue;
     }
-  }
 
-  for (final row in tableContent) {
-    final columns = row
-        .split('|')
-        .map((col) => col.trim())
-        .where((col) => col.isNotEmpty)
-        .toList();
-    if (columns.length == 4) {
-      final difficulty = columns[0];
-      final problemName =
-          RegExp(r'\[(.*?)\]').firstMatch(columns[1])?.group(1) ?? 'N/A';
-      final problemLink =
-          RegExp(r'\((.*?)\)').firstMatch(columns[1])?.group(1) ?? 'N/A';
-      final hint = columns[2];
-      final solutionLink =
-          RegExp(r'\((.*?)\)').firstMatch(columns[3])?.group(1) ?? 'N/A';
+    if (isTableSection) {
+      final match = rowPattern.firstMatch(line);
+      if (match != null) {
+        final difficulty = match.group(1)?.trim() ?? 'N/A';
+        final problemColumn = match.group(2)?.trim() ?? '';
+        final hints = match.group(3)?.trim() ?? 'N/A';
+        final solutionColumn = match.group(4)?.trim() ?? '';
 
-      res.add(
-        ChallengeProblem(
-          title: problemName,
-          source: 'Codeforces',
-          url: problemLink,
-          status: 'unknown',
-          note: '',
-          tags: [],
-          hint: hint,
-          tutorial: solutionLink,
-          difficulty: difficulty,
-        ),
-      );
+        final problemName =
+            RegExp(r'\[(.*?)\]').firstMatch(problemColumn)?.group(1) ?? 'N/A';
+        final problemLink =
+            RegExp(r'\((.*?)\)').firstMatch(problemColumn)?.group(1) ?? 'N/A';
+        final solutionLink =
+            RegExp(r'\((.*?)\)').firstMatch(solutionColumn)?.group(1) ?? 'N/A';
+
+        res.add(
+          ChallengeProblem(
+            title: problemName,
+            source: 'Codeforces',
+            url: problemLink,
+            status: 'unknown',
+            note: '',
+            tags: [],
+            hint: hints,
+            tutorial: solutionLink,
+            difficulty: difficulty,
+          ),
+        );
+      }
     }
   }
 
@@ -67,11 +66,12 @@ List<ProblemItem> parseToLocal(String markdownContent) {
   final tableStartPattern =
       RegExp(r'\| Difficulty \| Problems \| Hints \| Solution \|');
   final tableEndPattern = RegExp(r'\| (-+) \| (-+) \| (-+) \| (-+) \|');
+  final rowPattern =
+      RegExp(r'^\| ([^\|]+) \| ([^\|]+) \| (.+?) \| ([^\|]+) \|$'); // 精确匹配表格行
 
   final lines = markdownContent.split('\n');
 
   bool isTableSection = false;
-  final tableContent = <String>[];
 
   for (final line in lines) {
     if (tableStartPattern.hasMatch(line)) {
@@ -81,37 +81,35 @@ List<ProblemItem> parseToLocal(String markdownContent) {
       continue;
     } else if (isTableSection && line.trim().isEmpty) {
       isTableSection = false;
-    } else if (isTableSection) {
-      tableContent.add(line);
+      continue;
     }
-  }
 
-  for (final row in tableContent) {
-    final columns = row
-        .split('|')
-        .map((col) => col.trim())
-        .where((col) => col.isNotEmpty)
-        .toList();
-    if (columns.length == 4) {
-      final difficulty = columns[0];
-      final problemName =
-          RegExp(r'\[(.*?)\]').firstMatch(columns[1])?.group(1) ?? 'N/A';
-      final problemLink =
-          RegExp(r'\((.*?)\)').firstMatch(columns[1])?.group(1) ?? 'N/A';
-      final hint = columns[2];
-      final solutionLink =
-          RegExp(r'\((.*?)\)').firstMatch(columns[3])?.group(1) ?? 'N/A';
+    if (isTableSection) {
+      final match = rowPattern.firstMatch(line);
+      if (match != null) {
+        final difficulty = match.group(1)?.trim() ?? 'N/A';
+        final problemColumn = match.group(2)?.trim() ?? '';
+        final hints = match.group(3)?.trim() ?? 'N/A';
+        final solutionColumn = match.group(4)?.trim() ?? '';
 
-      res.add(
-        ProblemItem(
-          title: problemName,
-          source: 'Codeforces',
-          url: problemLink,
-          status: difficulty,
-          note: 'Hint:\n$hint\n\nTutorial:\n$solutionLink',
-          tags: [],
-        ),
-      );
+        final problemName =
+            RegExp(r'\[(.*?)\]').firstMatch(problemColumn)?.group(1) ?? 'N/A';
+        final problemLink =
+            RegExp(r'\((.*?)\)').firstMatch(problemColumn)?.group(1) ?? 'N/A';
+        final solutionLink =
+            RegExp(r'\((.*?)\)').firstMatch(solutionColumn)?.group(1) ?? 'N/A';
+
+        res.add(
+          ProblemItem(
+            title: problemName,
+            source: 'Codeforces',
+            url: problemLink,
+            status: difficulty,
+            note: 'Hint:\n$hints\n\nTutorial:\n$solutionLink',
+            tags: [],
+          ),
+        );
+      }
     }
   }
 
