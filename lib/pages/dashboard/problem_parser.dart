@@ -27,11 +27,21 @@ List<ChallengeProblem> parse(String markdownContent) {
   }
 
   for (final row in tableContent) {
-    final columns = row
-        .split('|')
-        .map((col) => col.trim())
-        .where((col) => col.isNotEmpty)
-        .toList();
+    // final columns = row
+    //     .split('|')
+    //     .map((col) => col.trim())
+    //     .where((col) => col.isNotEmpty)
+    //     .toList();
+    var columns = [];
+    int pre = 0;
+    int n = row.length;
+    for (int i = 1; i < n; i++) {
+      if (row[i] == '|' && row[i - 1] != '\\') {
+        var cur = row.substring(pre + 1, i - 1).trim();
+        columns.add(cur);
+        pre = i;
+      }
+    }
     if (columns.length == 4) {
       final difficulty = columns[0];
       final problemName =
@@ -87,11 +97,21 @@ List<ProblemItem> parseToLocal(String markdownContent) {
   }
 
   for (final row in tableContent) {
-    final columns = row
-        .split('|')
-        .map((col) => col.trim())
-        .where((col) => col.isNotEmpty)
-        .toList();
+    // final columns = row
+    //     .split('|')
+    //     .map((col) => col.trim())
+    //     .where((col) => col.isNotEmpty)
+    //     .toList();
+    var columns = [];
+    int pre = 0;
+    int n = row.length;
+    for (int i = 1; i < n; i++) {
+      if (row[i] == '|' && row[i - 1] != '\\') {
+        var cur = row.substring(pre + 1, i - 1).trim();
+        columns.add(cur);
+        pre = i;
+      }
+    }
     if (columns.length == 4) {
       final difficulty = columns[0];
       final problemName =
